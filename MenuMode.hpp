@@ -27,18 +27,26 @@ struct MenuMode : Mode {
 			std::string const &name_,
 			Sprite const *sprite_ = nullptr,
 			float scale_ = 1.0f,
+			int current_chr_ = 0,
+			float wait_to_print_ = 1.0f,
 			glm::u8vec4 const &tint_ = glm::u8vec4(0xff),
 			std::function< void(Item const &) > const &on_select_ = nullptr,
 			glm::vec2 const &at_ = glm::vec2(0.0f)
-			) : name(name_), sprite(sprite_), scale(scale_), tint(tint_), selected_tint(tint_), on_select(on_select_), at(at_) {
+			) : name(name_), sprite(sprite_), scale(scale_), current_chr(current_chr_), wait_to_print(wait_to_print_),
+				tint(tint_), selected_tint(tint_), on_select(on_select_), at(at_) {
 		}
 		std::string name;
 		Sprite const *sprite; //sprite drawn for item
 		float scale; //scale for sprite
+		int current_chr = 0;; //Used when drawing slowly. -1 if done
+		float wait_to_print = 0.0f; //Number of seconds to wait before printing
 		glm::u8vec4 tint; //tint for sprite (unselected)
 		glm::u8vec4 selected_tint; //tint for sprite (selected)
 		std::function< void(Item const &) > on_select; //if set, item is selectable
 		glm::vec2 at; //location to draw item
+		std::unordered_map <size_t, int> fit_list; //Used by the line wrapping to make 
+										   //sure words don't spill to the next line (ironic).
+
 	};
 	std::vector< Item > items;
 
@@ -56,7 +64,7 @@ struct MenuMode : Mode {
 	SpriteAtlas const *atlas = nullptr;
 
 	//currently selected item:
-	uint32_t selected = 0;
+	uint32_t selected = -1;
 
 	//area to display; by default, menu lays items out in the [-1,1]^2 box:
 	glm::uvec2 view_min = glm::vec2(-1.0f, -1.0f);

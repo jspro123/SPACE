@@ -15,6 +15,11 @@
 
 #include <vector>
 
+#define LINE_SKIP 12.0F
+#define FONT_SIZE 3.0f
+#define DRAWING_SPEED 1
+#define INDENT 20
+
 struct DrawSprites {
 	enum AlignMode {
 		AlignPixelPerfect,
@@ -27,7 +32,7 @@ struct DrawSprites {
 	void draw(Sprite const &sprite, glm::vec2 const &center, float scale = 1.0f, glm::u8vec4 const &tint = glm::u8vec4(0xff, 0xff, 0xff, 0xff));
 
 	//Add text to draw:
-	void draw_text(std::string const &name, glm::vec2 const &anchor, float scale = 1.0f, glm::u8vec4 const &tint = glm::u8vec4(0xff, 0xff, 0xff, 0xff), glm::vec2 *anchor_out = nullptr);
+	void draw_text(std::string const& name, glm::vec2 const& anchor, float scale, glm::u8vec4 const& color, int& current_chr, std::unordered_map <size_t, int>& fit_list);
 
 	//Measure text:
 	void get_text_extents(std::string const &name, glm::vec2 const &anchor, float scale, glm::vec2 *min, glm::vec2 *max);

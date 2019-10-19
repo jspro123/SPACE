@@ -54,6 +54,19 @@ MenuMode::~MenuMode() {
 }
 
 bool MenuMode::handle_event(SDL_Event const &evt, glm::uvec2 const &window_size) {
+
+	//Returns i if currently printing the (i+1)th line,
+	//-1 if done printing everything.
+	auto still_printing = [&]() {
+		for (int i = 0; i < items.size(); i++) {
+			auto& item = items[i];
+			if (item.current_chr != -1) {
+				return i;
+			}
+		}
+		return -1;
+	};
+
 	if (evt.type == SDL_KEYDOWN) {
 		if (evt.key.keysym.sym == SDLK_UP) {
 			//skip non-selectable items:
@@ -76,7 +89,14 @@ bool MenuMode::handle_event(SDL_Event const &evt, glm::uvec2 const &window_size)
 			}
 			return true;
 		} else if (evt.key.keysym.sym == SDLK_RETURN) {
-			if (selected < items.size() && items[selected].on_select) {
+
+			int i = still_printing();
+			if (i != -1) {
+				items[i].current_chr = -1;
+				items[i].wait_to_print = -1;
+			}
+
+			if (i == -1 && selected < items.size() && items[selected].on_select) {
 				Sound::play(*sound_clonk);
 				items[selected].on_select(items[selected]);
 				return true;
@@ -91,6 +111,27 @@ bool MenuMode::handle_event(SDL_Event const &evt, glm::uvec2 const &window_size)
 }
 
 void MenuMode::update(float elapsed) {
+
+	for (int i = 0; i < (int)items.size(); i++) {
+		auto& item = items[i];
+		if (!item.sprite) { //Text
+			if (item.wait_to_print < 0) {
+				continue;
+			}
+			if (i != 0 && items[i - 1].current_chr != -1) {
+				break;
+			}
+			item.wait_to_print -= elapsed;
+
+			if (item.wait_to_print < 0) {
+				continue;
+			}
+			else {
+				break;
+			}
+		}
+
+	}
 
 	select_bounce_acc = select_bounce_acc + elapsed / 0.7f;
 	select_bounce_acc -= std::floor(select_bounce_acc);
@@ -111,6 +152,18 @@ void MenuMode::draw(glm::uvec2 const &drawable_size) {
 		glClear(GL_COLOR_BUFFER_BIT);
 	}
 
+
+	//Wasteful to copy the same function twice, but I'm lazy
+	auto still_printing = [&]() {
+		for (int i = 0; i < items.size(); i++) {
+			auto& item = items[i];
+			if (item.current_chr != -1) {
+				return i;
+			}
+		}
+		return -1;
+	};
+
 	//use alpha blending:
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -123,19 +176,33 @@ void MenuMode::draw(glm::uvec2 const &drawable_size) {
 		assert(atlas && "it is an error to try to draw a menu without an atlas");
 		DrawSprites draw_sprites(*atlas, view_min, view_max, drawable_size, DrawSprites::AlignPixelPerfect);
 
-		for (auto const &item : items) {
-			bool is_selected = (&item == &items[0] + selected);
-			glm::u8vec4 color = (is_selected ? item.selected_tint : item.tint);
+		bool is_selected = false;
+
+		for (int i = 0; i < (int)items.size(); i++) {
+			auto& item = items[i];
+
+			if (item.wait_to_print > 0) {
+				break;
+			}
+
+			if (item.on_select && selected == -1) {
+				selected = i;
+			}
+
+			if (still_printing() == -1) { //Printed everything
+				is_selected = (selected == i);
+			}
+			else {
+				is_selected = false;
+			}
+
+			glm::u8vec4 color = (is_selected ? glm::u8vec4(0xff, 0x00, 0xff, 0xff) : glm::u8vec4(0xff, 0xff, 0xff, 0xff));
 			float left, right;
 			if (!item.sprite) {
 				//draw item.name as text:
-				draw_sprites.draw_text(
-					item.name, item.at, item.scale, color
-				);
-				glm::vec2 min,max;
-				draw_sprites.get_text_extents(
-					item.name, item.at, item.scale, &min, &max
-				);
+				draw_sprites.draw_text(item.name, item.at, item.scale, color, item.current_chr, item.fit_list);
+				glm::vec2 min, max;
+				draw_sprites.get_text_extents(item.name, item.at, item.scale, &min, &max);
 				left = min.x;
 				right = max.x;
 			} else {
