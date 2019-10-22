@@ -1,4 +1,4 @@
-#include "StoryMode.hpp"
+#include "TerminalMode.hpp"
 
 #include "Sprite.hpp"
 #include "DrawSprites.hpp"
@@ -63,19 +63,19 @@ Load< Sound::Sample > music_cold_dunes(LoadTagDefault, []() -> Sound::Sample* {
 	return new Sound::Sample(data_path("cold-dunes.opus"));
 	});
 
-StoryMode::StoryMode() {
+TerminalMode::TerminalMode() {
 }
 
-StoryMode::~StoryMode() {
+TerminalMode::~TerminalMode() {
 }
 
-bool StoryMode::handle_event(SDL_Event const&, glm::uvec2 const& window_size) {
+bool TerminalMode::handle_event(SDL_Event const&, glm::uvec2 const& window_size) {
 	if (Mode::current.get() != this) return false;
 
 	return false;
 }
 
-void StoryMode::update(float elapsed) {
+void TerminalMode::update(float elapsed) {
 	if (Mode::current.get() == this) {
 		//there is no menu displayed! Make one:
 		enter_scene();
@@ -86,7 +86,7 @@ void StoryMode::update(float elapsed) {
 	}
 }
 
-void StoryMode::enter_scene() {
+void TerminalMode::enter_scene() {
 	//just entered this scene, adjust flags and build menu as appropriate:
 	std::vector< MenuMode::Item > items;
 	glm::vec2 at = screen_left; 
@@ -132,7 +132,7 @@ void StoryMode::enter_scene() {
 	Mode::current = menu;
 }
 
-void StoryMode::draw(glm::uvec2 const& drawable_size) {
+void TerminalMode::draw(glm::uvec2 const& drawable_size) {
 	//clear the color buffer:
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	glClear(GL_COLOR_BUFFER_BIT);

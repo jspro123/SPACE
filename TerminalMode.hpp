@@ -7,9 +7,9 @@
 #include "Mode.hpp"
 #include "Sound.hpp"
 
-struct StoryMode : Mode {
-	StoryMode();
-	virtual ~StoryMode();
+struct TerminalMode : Mode {
+	TerminalMode();
+	virtual ~TerminalMode();
 
 	virtual bool handle_event(SDL_Event const &, glm::uvec2 const &window_size) override;
 	virtual void update(float elapsed) override;

@@ -160,7 +160,7 @@ GAME_NAMES =
 	Text
 	DrawSprites
 	MenuMode
-	StoryMode
+	TerminalMode
 	Sprite
 	data_path
 	main
