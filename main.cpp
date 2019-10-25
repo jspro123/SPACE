@@ -2,7 +2,9 @@
 #include "Mode.hpp"
 
 //Starting mode:
-#include "TerminalMode.hpp"
+#include "StoryMode.hpp"
+//Starting mode:
+#include "demo_menu.hpp"
 
 //Deal with calling resource loading functions:
 #include "Load.hpp"
@@ -99,7 +101,7 @@ int main(int argc, char **argv) {
 	call_load_functions();
 
 	//------------ create game mode + make current --------------
-	Mode::set_current(std::make_shared< TerminalMode >());
+	Mode::set_current(demo_menu);
 
 	//------------ main loop ------------
 

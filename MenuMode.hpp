@@ -50,9 +50,15 @@ struct MenuMode : Mode {
 	};
 	std::vector< Item > items;
 
+	//call to arrange items in a centered list:
+	void layout_items(float gap = 0.0f);
+
 	//if set, used to highlight the current selection:
 	Sprite const *left_select = nullptr;
 	Sprite const *right_select = nullptr;
+
+	glm::vec2 left_select_offset = glm::vec2(0.0f);
+	glm::vec2 right_select_offset = glm::vec2(0.0f);
 
 	glm::u8vec4 left_select_tint = glm::u8vec4(0xff);
 	glm::u8vec4 right_select_tint = glm::u8vec4(0xff);
@@ -67,8 +73,8 @@ struct MenuMode : Mode {
 	uint32_t selected = -1;
 
 	//area to display; by default, menu lays items out in the [-1,1]^2 box:
-	glm::uvec2 view_min = glm::vec2(-1.0f, -1.0f);
-	glm::uvec2 view_max = glm::vec2( 1.0f,  1.0f);
+	glm::vec2 view_min = glm::vec2(-1.0f, -1.0f);
+	glm::vec2 view_max = glm::vec2( 1.0f,  1.0f);
 
 	//if not nullptr, background's functions are called as follows:
 	// background->handle_event() is called at the end of handle_event() [if this doesn't handle the event]

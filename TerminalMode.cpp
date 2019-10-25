@@ -1,16 +1,17 @@
 #include "TerminalMode.hpp"
-
+// #include "StoryMode.hpp"
 #include "Sprite.hpp"
 #include "DrawSprites.hpp"
 #include "Load.hpp"
 #include "data_path.hpp"
 #include "gl_errors.hpp"
 #include "MenuMode.hpp"
+#include "StoryMode.hpp"
 #include "Sound.hpp"
 #include "Text.hpp"
 
-Sprite const* sprite_left_select = nullptr;
-Sprite const* sprite_right_select = nullptr;
+Sprite const* sprite_left_select_terminalmode = nullptr;
+Sprite const* sprite_right_select_terminalmode = nullptr;
 
 Sprite const* sprite_dunes_bg = nullptr;
 Sprite const* sprite_dunes_traveller = nullptr;
@@ -34,15 +35,15 @@ Load< SpriteAtlas > terminal(LoadTagDefault, []() -> SpriteAtlas const* {
 	return ret;
 	});
 
-Load< SpriteAtlas > sprites(LoadTagDefault, []() -> SpriteAtlas const* {
+Load< SpriteAtlas > sprites_terminal(LoadTagDefault, []() -> SpriteAtlas const* {
 
 	SpriteAtlas const* ret = new SpriteAtlas(data_path("the-planet"));
 
 	terminal_background = &ret->lookup("screen-background");
 	terminal_screen = &ret->lookup("screen");
 
-	sprite_left_select = &ret->lookup("text-select-left");
-	sprite_right_select = &ret->lookup("text-select-right");
+	sprite_left_select_terminalmode = &ret->lookup("text-select-left");
+	sprite_right_select_terminalmode = &ret->lookup("text-select-right");
 
 	sprite_dunes_bg = &ret->lookup("dunes-bg");
 	sprite_dunes_traveller = &ret->lookup("dunes-traveller");
@@ -59,7 +60,7 @@ Load< SpriteAtlas > sprites(LoadTagDefault, []() -> SpriteAtlas const* {
 	return ret;
 	});
 
-Load< Sound::Sample > music_cold_dunes(LoadTagDefault, []() -> Sound::Sample* {
+Load< Sound::Sample > music_cold_dunes_terminal(LoadTagDefault, []() -> Sound::Sample* {
 	return new Sound::Sample(data_path("cold-dunes.opus"));
 	});
 
@@ -67,10 +68,19 @@ TerminalMode::TerminalMode() {
 }
 
 TerminalMode::~TerminalMode() {
+	Sound::stop_all_samples();
 }
 
-bool TerminalMode::handle_event(SDL_Event const&, glm::uvec2 const& window_size) {
-	if (Mode::current.get() != this) return false;
+bool TerminalMode::handle_event(SDL_Event const &evt, glm::uvec2 const& window_size) {
+	// if (Mode::current.get() != this) return false;
+	std::cout<<"storymode\n";
+	// if (Mode::current.get() != this) return false;
+	std::cout<<evt.type<<" evt_type\n";
+	if (evt.type == SDL_KEYDOWN) {
+		if (evt.key.keysym.sym == SDLK_BACKSPACE) {
+			Mode::set_current(std::make_shared< StoryMode >());
+		}
+	}
 
 	return false;
 }
@@ -82,7 +92,7 @@ void TerminalMode::update(float elapsed) {
 	}
 
 	if (!background_music || background_music->stopped) {
-		background_music = Sound::play(*music_cold_dunes, 1.0f);
+		background_music = Sound::play(*music_cold_dunes_terminal, 1.0f);
 	}
 }
 
@@ -96,7 +106,7 @@ void TerminalMode::enter_scene() {
 		Sprite const* chr;
 		float combined_width = 0.0;
 		for (size_t pos = 0; pos < sentence.size(); pos++) {
-			chr = &sprites->lookup(sentence.substr(pos, 1));
+			chr = &sprites_terminal->lookup(sentence.substr(pos, 1));
 			combined_width += (chr->max_px.x - chr->min_px.x) * FONT_SIZE;
 		}
 
@@ -123,9 +133,9 @@ void TerminalMode::enter_scene() {
 	add_text(&test2);
 
 	std::shared_ptr< MenuMode > menu = std::make_shared< MenuMode >(items);
-	menu->atlas = sprites;
-	menu->left_select = sprite_left_select;
-	menu->right_select = sprite_right_select;
+	menu->atlas = sprites_terminal;
+	menu->left_select = sprite_left_select_terminalmode;
+	menu->right_select = sprite_right_select_terminalmode;
 	menu->view_min = view_min;
 	menu->view_max = view_max;
 	menu->background = shared_from_this();
@@ -144,7 +154,7 @@ void TerminalMode::draw(glm::uvec2 const& drawable_size) {
 	glDisable(GL_DEPTH_TEST);
 
 	{ //use a DrawSprites to do the drawing:
-		DrawSprites draw(*sprites, view_min, view_max, drawable_size, DrawSprites::AlignPixelPerfect);
+		DrawSprites draw(*sprites_terminal, view_min, view_max, drawable_size, DrawSprites::AlignPixelPerfect);
 		glm::vec2 ul = glm::vec2(view_min.x, view_max.y);
 		draw.draw(*terminal_background, ul);
 		draw.draw(*terminal_screen, ul);

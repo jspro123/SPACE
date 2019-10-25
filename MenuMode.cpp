@@ -77,7 +77,7 @@ bool MenuMode::handle_event(SDL_Event const &evt, glm::uvec2 const &window_size)
 					break;
 				}
 			}
-			return true;
+			// return true;
 		} else if (evt.key.keysym.sym == SDLK_DOWN) {
 			//note: skips non-selectable items:
 			for (uint32_t i = selected + 1; i < items.size(); ++i) {
@@ -87,7 +87,7 @@ bool MenuMode::handle_event(SDL_Event const &evt, glm::uvec2 const &window_size)
 					break;
 				}
 			}
-			return true;
+			// return true;
 		} else if (evt.key.keysym.sym == SDLK_RETURN) {
 
 			int i = still_printing();
@@ -99,7 +99,7 @@ bool MenuMode::handle_event(SDL_Event const &evt, glm::uvec2 const &window_size)
 			if (i == -1 && selected < items.size() && items[selected].on_select) {
 				Sound::play(*sound_clonk);
 				items[selected].on_select(items[selected]);
-				return true;
+				// return true;
 			}
 		}
 	}
@@ -224,4 +224,25 @@ void MenuMode::draw(glm::uvec2 const &drawable_size) {
 
 
 	GL_ERRORS(); //PARANOIA: print errors just in case we did something wrong.
+}
+
+void MenuMode::layout_items(float gap) {
+	DrawSprites temp(*atlas, view_min, view_max, view_max - view_min, DrawSprites::AlignPixelPerfect); //<-- doesn't actually draw
+	float y = (float) view_max.y;
+	for (auto &item : items) {
+		glm::vec2 min, max;
+		if (item.sprite) {
+			min = item.scale * (item.sprite->min_px - item.sprite->anchor_px);
+			max = item.scale * (item.sprite->max_px - item.sprite->anchor_px);
+		} else {
+			temp.get_text_extents(item.name, glm::vec2(0.0f), item.scale, &min, &max);
+		}
+		item.at.y = y - max.y;
+		item.at.x = 0.5f * (view_max.x + view_min.x) - 0.5f * (max.x + min.x);
+		y = y - (max.y - min.y) - gap;
+	}
+	float ofs = -0.5f * y;
+	for (auto &item : items) {
+		item.at.y += ofs;
+	}
 }
