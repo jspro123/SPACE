@@ -6,6 +6,8 @@
 
 #include "Mode.hpp"
 #include "Sound.hpp"
+#include <queue>
+#include "Text.hpp"
 
 struct TerminalMode : Mode {
 	TerminalMode();
@@ -42,7 +44,9 @@ struct TerminalMode : Mode {
 	glm::vec2 view_min = glm::vec2(0,0);
 	glm::vec2 view_max = glm::vec2(1920, 1080);
 	glm::vec2 screen_left = glm::vec2(330, 220);
-	glm::vec2 screen_right = glm::vec2(1630, 200);
+	glm::vec2 screen_right = glm::vec2(1630, 900);
+
+	std::queue<std::pair<Sentence, int>> terminal_display;
 
 	//------ background music -------
 	std::shared_ptr< Sound::PlayingSample > background_music;

@@ -188,8 +188,9 @@ void DrawSprites::draw(Sprite const &sprite, glm::vec2 const &center, float scal
 
 }
 
-void DrawSprites::draw_text(std::string const& name, glm::vec2 const& anchor, float scale,
-	glm::u8vec4 const& color, int& current_chr, std::unordered_map <size_t, int>& fit_list) {
+void DrawSprites::draw_text(std::string const& name, glm::vec2 const& anchor, float scale, glm::u8vec4 const& color, 
+	int& current_chr, std::unordered_map <size_t, int>& fit_list, float start_at, float wrap_at) {
+
 	glm::vec2 moving_anchor = anchor;
 	size_t boundary = 0; //The last character that should be drawn
 	int update_flag = 1;
@@ -198,7 +199,7 @@ void DrawSprites::draw_text(std::string const& name, glm::vec2 const& anchor, fl
 	std::unordered_map <size_t, int>::iterator lookup;
 
 	//Determines if a word will fit on the current line
-	auto will_fit = [&moving_anchor, &name, &word_end, &fit_list](size_t current_pos, SpriteAtlas const& atlas, glm::vec2 view_max) {
+	auto will_fit = [&moving_anchor, &name, &word_end, &fit_list, &wrap_at](size_t current_pos, SpriteAtlas const& atlas, glm::vec2 view_max) {
 
 		float combined_width = 0.0f;
 		size_t inital_pos = current_pos;
@@ -217,7 +218,7 @@ void DrawSprites::draw_text(std::string const& name, glm::vec2 const& anchor, fl
 			current_pos += 1;
 		}
 		word_end = current_pos;
-		if (view_max.x - moving_anchor.x - 25 >= combined_width) {
+		if (wrap_at - moving_anchor.x - 25 >= combined_width) {
 			fit_list[inital_pos] = (int)word_end;
 			return true;
 		}
@@ -244,7 +245,7 @@ void DrawSprites::draw_text(std::string const& name, glm::vec2 const& anchor, fl
 			lookup = fit_list.find(pos);
 			if (lookup == fit_list.end()) { //Haven't checked this word yet
 				if (!will_fit(pos, atlas, view_max)) {
-					moving_anchor.x = INDENT;
+					moving_anchor.x = start_at;
 					moving_anchor.y -= LINE_SKIP * FONT_SIZE;
 					moving_anchor.y -= 4;
 				}
@@ -252,7 +253,7 @@ void DrawSprites::draw_text(std::string const& name, glm::vec2 const& anchor, fl
 			else {
 				if (lookup->second < 0) { //Doesn't fit
 					word_end = (size_t)(lookup->second * -1);
-					moving_anchor.x = INDENT;
+					moving_anchor.x = start_at;
 					moving_anchor.y -= LINE_SKIP * FONT_SIZE;
 					moving_anchor.y -= 4;
 				}

@@ -8,7 +8,6 @@
 #include "MenuMode.hpp"
 #include "StoryMode.hpp"
 #include "Sound.hpp"
-#include "Text.hpp"
 
 Sprite const* sprite_left_select_terminalmode = nullptr;
 Sprite const* sprite_right_select_terminalmode = nullptr;
@@ -102,6 +101,10 @@ void TerminalMode::enter_scene() {
 	glm::vec2 at = screen_left; 
 	at.y = view_max.y - screen_left.y;
 
+	auto generate_display = [this]() {
+
+	};
+
 	auto get_number_sentences = [](std::string const& sentence) {
 		Sprite const* chr;
 		float combined_width = 0.0;
@@ -119,6 +122,8 @@ void TerminalMode::enter_scene() {
 			FONT_SIZE,
 			0,
 			sentence->wait_to_print,
+			screen_left.x,
+			screen_right.x,
 			glm::vec4(0xff, 0xff, 0xff, 0xff),
 			nullptr,
 			at);
@@ -127,7 +132,7 @@ void TerminalMode::enter_scene() {
 		at.y -= LINE_SKIP * FONT_SIZE;
 	};
 
-	Sentence const test = Sentence("Something remains to accomplish. I won't leave", 1.0f);
+	Sentence const test = Sentence("This is a long long long long long long long long long long long long long long long long long long long long sentence", 1.0f);
 	Sentence const test2 = Sentence("Something remains to accomplish. I won't leave", 1.0f);
 	add_text(&test);
 	add_text(&test2);
