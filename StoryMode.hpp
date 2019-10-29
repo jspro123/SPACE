@@ -30,7 +30,7 @@ struct StoryMode : Mode {
 	} Type;
 	bool have_GPU = false;
 	bool have_CPU = false;
-	bool have_PL = false;
+	bool have_key = true;
 	bool have_PC = false;
 	bool build_res = false;
 	bool correct = false;
@@ -53,5 +53,6 @@ struct StoryMode : Mode {
 	glm::vec2 view_max = glm::vec2(1920, 1080);
 	int ast_x = 0;
 	int ast_y = 0;
+	std::vector<std::string> inventory;
 	std::shared_ptr< Sound::PlayingSample > background_music;
 };

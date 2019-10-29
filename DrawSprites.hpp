@@ -35,6 +35,9 @@ struct DrawSprites {
 	void draw_text(std::string const& name, glm::vec2 const& anchor, float scale, glm::u8vec4 const& color, 
 		int& current_chr, std::unordered_map <size_t, int>& fit_list, float start_at, float wrap_at);
 
+	//Add text to draw:
+	void draw_text_short(std::string const &name, glm::vec2 const &anchor, float scale = 1.0f, glm::u8vec4 const &tint = glm::u8vec4(0xff, 0xff, 0xff, 0xff), glm::vec2 *anchor_out = nullptr);
+
 	//Measure text:
 	void get_text_extents(std::string const &name, glm::vec2 const &anchor, float scale, glm::vec2 *min, glm::vec2 *max);
 
