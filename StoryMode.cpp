@@ -117,7 +117,7 @@ bool StoryMode::handle_event(SDL_Event const &evt, glm::uvec2 const &window_size
 			dir = 4;
 			move_remained = 100;
 		} else if (evt.key.keysym.sym == SDLK_i) {
-			inventory.emplace_back("A key");
+			inventory.update_inventory();
 		}
 	}
 	return false;
@@ -211,7 +211,7 @@ void StoryMode::draw(glm::uvec2 const &drawable_size) {
 				if (abs(col_key.x - ul.x) < 40 && abs(col_key.y - ul.y) < 20) {
 					Sound::play(*music_correct, 1.0f);
 					have_key = false;
-					inventory.emplace_back("A new item is added to your inventory!");
+					inventory.interactables.push_back(key);
 				}
 			}
 		}
@@ -228,10 +228,12 @@ void StoryMode::draw(glm::uvec2 const &drawable_size) {
 			// draw_text.draw_text_short(help_text, glm::vec2(x, 2.0f), 1.5f, glm::u8vec4(0xff,0xff,0xff,0xff));
 			// draw_text.draw_text_short(help_text, glm::vec2(x, 22.0f), 1.5f, glm::u8vec4(0xff,0xff,0xff,0xff));
 			// draw_text.draw_text_short(help_text, glm::vec2(x, 15.0f), 2.0f, glm::u8vec4(0xff,0xff,0xff,0xff));
-		int dis = std::min(5, (int)inventory.size()) * 25;
-		for (int i = std::max(0, (int)inventory.size() - 5); i < inventory.size(); i++) {
+		int dis = std::min(5, (int)inventory.to_output.size()) * 25;
+
+		inventory.update_inventory();
+		for (int i = 0; i < inventory.to_output.size(); i++) {
 			dis -= 25;
-			draw_text.draw_text_short(inventory[i], glm::vec2(x, 2.0f + dis), 1.5f, glm::u8vec4(0xff,0xff,0xff,0xff));
+			draw_text.draw_text_short(inventory.to_output[i], glm::vec2(x, 2.0f + dis), 1.5f, glm::u8vec4(0xff,0xff,0xff,0xff));
 			// draw_text.draw_text_short(inventory[i], glm::vec2(x, 12.0f), 3.0f, glm::u8vec4(0xff,0xff,0xff,0xff));
 			// draw_text.draw_text_short(inventory[i], glm::vec2(x, 15.0f), 3.0f, glm::u8vec4(0xff,0xff,0xff,0xff));
 		}

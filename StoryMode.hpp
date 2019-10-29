@@ -6,6 +6,7 @@
 
 #include "Mode.hpp"
 #include "Sound.hpp"
+#include "Interactable.hpp"
 
 struct StoryMode : Mode {
 	StoryMode();
@@ -15,6 +16,8 @@ struct StoryMode : Mode {
 	virtual void update(float elapsed) override;
 	virtual void draw(glm::uvec2 const &drawable_size) override;
 
+	Inventory inventory;
+	Interactable key = Interactable("A key", nullptr, true);
 	//called to create menu for current scene:
 	void enter_scene();
 
@@ -53,6 +56,5 @@ struct StoryMode : Mode {
 	glm::vec2 view_max = glm::vec2(1920, 1080);
 	int ast_x = 0;
 	int ast_y = 0;
-	std::vector<std::string> inventory;
 	std::shared_ptr< Sound::PlayingSample > background_music;
 };

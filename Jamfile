@@ -160,10 +160,11 @@ GAME_NAMES =
 	load_opus
 	Text
 	DrawSprites
+	Sprite
+	Interactable
 	MenuMode
 	StoryMode
 	TerminalMode
-	Sprite
 	data_path
 	main
 	load_save_png
