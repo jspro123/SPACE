@@ -26,6 +26,14 @@ subprocess.run([
 	"--gimp", gimp
 ], check=True)
 
+subprocess.run([
+	"python",
+	"extract-sprites.py",
+	"demo_screen.list",
+	"space",
+	"--gimp", gimp
+], check=True)
+
 pngs = []
 for root, dirs, files in os.walk("space"):
 	for f in files:

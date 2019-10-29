@@ -16,8 +16,14 @@ struct StoryMode : Mode {
 	virtual void update(float elapsed) override;
 	virtual void draw(glm::uvec2 const &drawable_size) override;
 
+
+	bool inventory_visible = false;
 	Inventory inventory;
 	Interactable key = Interactable("A key", nullptr, true);
+
+	glm::vec2 textbox_left = glm::vec2(150, 800);
+	glm::vec2 textbox_right = glm::vec2(1770, 1048);
+
 	//called to create menu for current scene:
 	void enter_scene();
 

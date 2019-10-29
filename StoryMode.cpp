@@ -9,6 +9,10 @@
 #include "Sound.hpp"
 #include "stdlib.h"
 
+
+Sprite const* demo_background = nullptr;
+Sprite const* demo_text_area = nullptr;
+
 Sprite const *sprite_left_select = nullptr;
 Sprite const *sprite_main_bg = nullptr;
 Sprite const *sprite_store_bg = nullptr;
@@ -65,6 +69,9 @@ Load< SpriteAtlas > sprites(LoadTagDefault, []() -> SpriteAtlas const * {
 	warn_text = &ret->lookup("warn-text");
 	success_text = &ret->lookup("success-text");
 
+	demo_background = &ret->lookup("demo_screen_background");
+	demo_text_area = &ret->lookup("textbox_area");
+
 	return ret;
 });
 
@@ -117,6 +124,7 @@ bool StoryMode::handle_event(SDL_Event const &evt, glm::uvec2 const &window_size
 			dir = 4;
 			move_remained = 100;
 		} else if (evt.key.keysym.sym == SDLK_i) {
+			inventory_visible = !inventory_visible;
 			inventory.update_inventory();
 		}
 	}
@@ -173,49 +181,42 @@ void StoryMode::draw(glm::uvec2 const &drawable_size) {
 	{ //use a DrawSprites to do the drawing:
 		DrawSprites draw(*sprites, view_min, view_max, drawable_size, DrawSprites::AlignPixelPerfect);
 		glm::vec2 ul = glm::vec2(view_min.x, view_max.y);
-		
-		if (location == Room) {
-			draw.draw(*sprite_main_bg, ul);
-			if (have_CPU) {
-				draw.draw(*sprite_cpu_bg, ul);
-			}
-			if (have_GPU) {
-				draw.draw(*sprite_gpu_bg, ul);
-			}
-			if (build_res) {
-				draw.draw(*sprite_pc_bg, ul);
-			}
+
+
+
+		draw.draw(*demo_background, ul);
+		if (inventory_visible) {
+			draw.draw(*demo_text_area, ul);
 		}
-		else if (location == Store) {
-			draw.draw(*sprite_black_bg, ul);
-			if (move_remained > 0 && dir != 0) {
-				if (dir == 1) {
-					ast_y++;
-				} else if (dir == 2) {
-					ast_y--;
-				} else if (dir == 3) {
-					ast_x--;
-				} else if (dir == 4) {
-					ast_x++;
-				}
-				move_remained--;
-			} else {
-				dir = 0;
-				move_remained = 100;
+
+		if (move_remained > 0 && dir != 0) {
+			if (dir == 1) {
+				ast_y++;
+			} else if (dir == 2) {
+				ast_y--;
+			} else if (dir == 3) {
+				ast_x--;
+			} else if (dir == 4) {
+				ast_x++;
 			}
-			ul = glm::vec2(view_min.x + ast_x, view_max.y + ast_y);
-			draw.draw(*sprite_astronaut_bg, ul);
-			if (have_key) {
-				glm::vec2 col_key = glm::vec2(view_min.x + 500, view_max.y + 200);
-				draw.draw(*sprite_key_bg, col_key);
-				if (abs(col_key.x - ul.x) < 40 && abs(col_key.y - ul.y) < 20) {
-					Sound::play(*music_correct, 1.0f);
-					have_key = false;
-					inventory.interactables.push_back(key);
-				}
+			move_remained--;
+		} else {
+			dir = 0;
+			move_remained = 100;
+		}
+		ul = glm::vec2(view_min.x + ast_x, view_max.y + ast_y);
+		draw.draw(*sprite_astronaut_bg, ul);
+		if (have_key) {
+			glm::vec2 col_key = glm::vec2(view_min.x + 500, view_max.y + 200);
+			draw.draw(*sprite_key_bg, col_key);
+			if (abs(col_key.x - ul.x) < 40 && abs(col_key.y - ul.y) < 20) {
+				Sound::play(*music_correct, 1.0f);
+				have_key = false;
+				inventory.interactables.push_back(key);
 			}
 		}
 	}
+
 	{ // draw text
 		DrawSprites draw_text(*sprites_text, view_min, view_max, drawable_size, DrawSprites::AlignPixelPerfect);
 		glm::vec2 ul = glm::vec2(view_min.x, view_max.y);
@@ -223,19 +224,25 @@ void StoryMode::draw(glm::uvec2 const &drawable_size) {
 		glm::vec2 min, max;
 		std::string help_text = "A new item is added to your inventory!";
 		draw_text.get_text_extents(help_text, glm::vec2(0.0f, 0.0f), 1.0f, &min, &max);
-		float x = std::round(160.0f - (0.5f * (max.x + min.x)));
 		// draw_text.draw_text_short(help_text, glm::vec2(x, 1.0f), 5.0f, glm::u8vec4(0x00,0x00,0x00,0xff));
 			// draw_text.draw_text_short(help_text, glm::vec2(x, 2.0f), 1.5f, glm::u8vec4(0xff,0xff,0xff,0xff));
 			// draw_text.draw_text_short(help_text, glm::vec2(x, 22.0f), 1.5f, glm::u8vec4(0xff,0xff,0xff,0xff));
 			// draw_text.draw_text_short(help_text, glm::vec2(x, 15.0f), 2.0f, glm::u8vec4(0xff,0xff,0xff,0xff));
-		int dis = std::min(5, (int)inventory.to_output.size()) * 25;
 
-		inventory.update_inventory();
-		for (int i = 0; i < inventory.to_output.size(); i++) {
-			dis -= 25;
-			draw_text.draw_text_short(inventory.to_output[i], glm::vec2(x, 2.0f + dis), 1.5f, glm::u8vec4(0xff,0xff,0xff,0xff));
-			// draw_text.draw_text_short(inventory[i], glm::vec2(x, 12.0f), 3.0f, glm::u8vec4(0xff,0xff,0xff,0xff));
-			// draw_text.draw_text_short(inventory[i], glm::vec2(x, 15.0f), 3.0f, glm::u8vec4(0xff,0xff,0xff,0xff));
+
+		glm::vec2 at = textbox_left;
+		at.x += 20;
+		at.y = view_max.y - textbox_left.y - 25;
+
+
+		if (inventory_visible) {
+			inventory.update_inventory();
+			for (int i = 0; i < inventory.to_output.size(); i++) {
+				draw_text.draw_text_short(inventory.to_output[i], at, 1.5f, glm::u8vec4(0xff, 0xff, 0xff, 0xff));
+				at.y -= 25;
+				// draw_text.draw_text_short(inventory[i], glm::vec2(x, 12.0f), 3.0f, glm::u8vec4(0xff,0xff,0xff,0xff));
+				// draw_text.draw_text_short(inventory[i], glm::vec2(x, 15.0f), 3.0f, glm::u8vec4(0xff,0xff,0xff,0xff));
+			}
 		}
 	}
 	GL_ERRORS(); //did the DrawSprites do something wrong?
