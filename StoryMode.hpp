@@ -19,8 +19,10 @@ struct StoryMode : Mode {
 
 	bool inventory_visible = false;
 	Inventory inventory;
-	Interactable key = Interactable("A key", nullptr, true);
+	Interactable key = Interactable("A key", nullptr, true, "This is an important item.");
 
+	std::vector<std::string> message_box;
+	int message_box_visible = 0;
 	glm::vec2 textbox_left = glm::vec2(150, 800);
 	glm::vec2 textbox_right = glm::vec2(1770, 1048);
 

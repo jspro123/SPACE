@@ -10,14 +10,17 @@ struct Interactable {
 	int current_description = 0;
 	bool carryable = false;
 	bool in_inventory = false; 
+
 	std::vector<std::string> interacts_with;
 	std::string default_message = "Failure.";
+	std::string description;
 
 
-	Interactable(std::string name_, Sprite const* associated_sprite_, bool carryable_) {
+	Interactable(std::string name_, Sprite const* associated_sprite_, bool carryable_, std::string description_) {
 		name = name_;
 		associated_sprite = associated_sprite_;
 		carryable = carryable_;
+		description = description_;
 	} 
 };
 

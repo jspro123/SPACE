@@ -101,9 +101,9 @@ void TerminalMode::enter_scene() {
 	glm::vec2 at = screen_left; 
 	at.y = view_max.y - screen_left.y;
 
-	auto generate_display = [this]() {
+	// auto generate_display = [this]() {
 
-	};
+	// };
 
 	auto get_number_sentences = [](std::string const& sentence) {
 		Sprite const* chr;

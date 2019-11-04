@@ -126,6 +126,8 @@ bool StoryMode::handle_event(SDL_Event const &evt, glm::uvec2 const &window_size
 		} else if (evt.key.keysym.sym == SDLK_i) {
 			inventory_visible = !inventory_visible;
 			inventory.update_inventory();
+		} else if (evt.key.keysym.sym == SDLK_m) {
+			message_box_visible = 200;
 		}
 	}
 	return false;
@@ -145,18 +147,6 @@ void StoryMode::enter_scene() {
 	//just entered this scene, adjust flags and build menu as appropriate:
 	std::vector< MenuMode::Item > items;
 	glm::vec2 at(3.0f, view_max.y - 13.0f);
-	auto add_text = [&items,&at](Sprite const *text) {
-		assert(text);
-		items.emplace_back("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
-		at.y -= text->max_px.y - text->min_px.y;
-		at.y -= 4.0f;
-	};
-	auto add_choice = [&items,&at](Sprite const *text, std::function< void(MenuMode::Item const &) > const &fn) {
-		assert(text);
-		items.emplace_back("bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb");
-		at.y -= text->max_px.y - text->min_px.y;
-		at.y -= 4.0f;
-	};
 
 	std::shared_ptr< MenuMode > menu = std::make_shared< MenuMode >(items);
 	menu->atlas = sprites;
@@ -185,7 +175,7 @@ void StoryMode::draw(glm::uvec2 const &drawable_size) {
 
 
 		draw.draw(*demo_background, ul);
-		if (inventory_visible) {
+		if (inventory_visible || message_box_visible > 0) {
 			draw.draw(*demo_text_area, ul);
 		}
 
@@ -204,7 +194,7 @@ void StoryMode::draw(glm::uvec2 const &drawable_size) {
 			dir = 0;
 			move_remained = 100;
 		}
-		ul = glm::vec2(view_min.x + ast_x, view_max.y + ast_y);
+		ul = glm::vec2(view_min.x + 5 * ast_x, view_max.y + 5 * ast_y);
 		draw.draw(*sprite_astronaut_bg, ul);
 		if (have_key) {
 			glm::vec2 col_key = glm::vec2(view_min.x + 500, view_max.y + 200);
@@ -213,35 +203,40 @@ void StoryMode::draw(glm::uvec2 const &drawable_size) {
 				Sound::play(*music_correct, 1.0f);
 				have_key = false;
 				inventory.interactables.push_back(key);
+				message_box.emplace_back("A new item is added to your inventory!");
+				message_box_visible = 200;
 			}
 		}
+		
 	}
 
 	{ // draw text
 		DrawSprites draw_text(*sprites_text, view_min, view_max, drawable_size, DrawSprites::AlignPixelPerfect);
-		glm::vec2 ul = glm::vec2(view_min.x, view_max.y);
+		// glm::vec2 ul = glm::vec2(view_min.x, view_max.y);
 
 		glm::vec2 min, max;
-		std::string help_text = "A new item is added to your inventory!";
-		draw_text.get_text_extents(help_text, glm::vec2(0.0f, 0.0f), 1.0f, &min, &max);
-		// draw_text.draw_text_short(help_text, glm::vec2(x, 1.0f), 5.0f, glm::u8vec4(0x00,0x00,0x00,0xff));
-			// draw_text.draw_text_short(help_text, glm::vec2(x, 2.0f), 1.5f, glm::u8vec4(0xff,0xff,0xff,0xff));
-			// draw_text.draw_text_short(help_text, glm::vec2(x, 22.0f), 1.5f, glm::u8vec4(0xff,0xff,0xff,0xff));
-			// draw_text.draw_text_short(help_text, glm::vec2(x, 15.0f), 2.0f, glm::u8vec4(0xff,0xff,0xff,0xff));
-
 
 		glm::vec2 at = textbox_left;
 		at.x += 20;
-		at.y = view_max.y - textbox_left.y - 25;
+		at.y = view_max.y - textbox_left.y - 50;
 
 
-		if (inventory_visible) {
+		if (message_box_visible > 0){
+			message_box_visible --;
+			for (int i = 0; i < message_box.size(); i++) {
+				draw_text.draw_text_short(message_box[i], at, 3.0f, glm::u8vec4(0xff, 0xff, 0xff, 0xff));
+				at.y -= 35;
+			}
+		} else if (inventory_visible) {
 			inventory.update_inventory();
 			for (int i = 0; i < inventory.to_output.size(); i++) {
-				draw_text.draw_text_short(inventory.to_output[i], at, 1.5f, glm::u8vec4(0xff, 0xff, 0xff, 0xff));
-				at.y -= 25;
-				// draw_text.draw_text_short(inventory[i], glm::vec2(x, 12.0f), 3.0f, glm::u8vec4(0xff,0xff,0xff,0xff));
-				// draw_text.draw_text_short(inventory[i], glm::vec2(x, 15.0f), 3.0f, glm::u8vec4(0xff,0xff,0xff,0xff));
+				draw_text.get_text_extents(inventory.to_output[i], at, 1.0f, &min, &max);
+				draw_text.draw_text_short(inventory.to_output[i], at, 3.0f, glm::u8vec4(0xff, 0xff, 0xff, 0xff));
+				if (inventory.interactables.size() > 0) {
+					at.x += min.x;
+					draw_text.draw_text_short(": " + inventory.interactables[i].description, at, 3.0f, glm::u8vec4(0xff, 0xff, 0xff, 0xff));
+				}
+				at.y -= 35;
 			}
 		}
 	}
