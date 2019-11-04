@@ -1,28 +1,12 @@
-space.xcf?main 0 0 1920 1080 0 0 main-bg
-space.xcf?cpu 630 500 730 600 0 0 cpu-bg
-space.xcf?gpu 890 490 1030 590 0 0 gpu-bg
-space.xcf?power 1190 500 1310 580 0 0 power-bg
-space.xcf?pc 840 435 1090 620 0 0 pc-bg
-space.xcf?mall 460 415 1450 1080 0 0 mall-bg
-space.xcf?bg 0 0 1920 1080 0 0 base-bg
-space.xcf?black 160 0 1760 1080 0 0 black-bg
+space.xcf?astronaut 900 465 1030 720 0 0 astronaut_bg
+space.xcf?key 900 520 1030 650 0 0 key_bg
+space.xcf?bg 0 0 1920 1200 0 0 demo_screen_background
+space.xcf?message 900 500 980 600 0 0 msg_bg
 
-space.xcf?astronaut 900 415 1030 670 0 0 astronaut-bg
-space.xcf?key 900 470 1030 600 0 0 key-bg
 
-space.xcf?text 0 0 +1075 +35 0 +0 room-text
-space.xcf?text 20 310 +320 +35 30 +0 return-room-text
-space.xcf?text 0 195 60 225 0 +0 exit-text
-space.xcf?text 0 275 30 320 0 +0 text-select-left
-
-space.xcf?text 325 45 615 80 335 +0 go-gpu-text
-space.xcf?text 625 45 915 80 635 +0 go-cpu-text
-space.xcf?text 910 45 1330 80 920 +0 go-power-text
-
-space.xcf?text 20 80 240 115 +10 +0 buy-gpu-text
-space.xcf?text 260 80 480 115 +10 +0 buy-cpu-text
-space.xcf?text 500 80 870 115 +10 +0 buy-power-text
-space.xcf?text 20 120 500 155 +5 +0 build-text
-
-space.xcf?text 15 155 695 190 +0 +0 warn-text
-space.xcf?text 15 190 910 225 +0 +0 success-text
+space.xcf?light_upper_glass 0 0 1920 1200 0 0 light_upper_glass
+space.xcf?light_body1 0 0 1920 1200 0 0 light_body1
+space.xcf?light_body2 0 0 1920 1200 0 0 light_body2
+space.xcf?light_cabin 0 0 1920 1200 0 0 light_cabin
+space.xcf?dark_cabin 0 0 1920 1200 0 0 dark_cabin
+space.xcf?dark_glass 0 0 1920 1200 0 0 dark_glass
