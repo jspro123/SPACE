@@ -16,13 +16,13 @@ Sprite const *sprite_left_select = nullptr;
 
 Sprite const *sprite_astronaut_bg = nullptr;
 Sprite const *sprite_key_bg = nullptr;
-Sprite const *sprite_msg_bg = nullptr;
 Sprite const *sprite_light_upper_glass = nullptr;
 Sprite const *sprite_light_body1 = nullptr;
 Sprite const *sprite_light_body2 = nullptr;
 Sprite const *sprite_light_cabin = nullptr;
 Sprite const *sprite_dark_cabin = nullptr;
 Sprite const *sprite_dark_glass = nullptr;
+Sprite const *sprite_msg_bg = nullptr;
 
 Load< SpriteAtlas > sprites(LoadTagDefault, []() -> SpriteAtlas const * {
 	SpriteAtlas const *ret = new SpriteAtlas(data_path("space"));
@@ -31,7 +31,7 @@ Load< SpriteAtlas > sprites(LoadTagDefault, []() -> SpriteAtlas const * {
 
 	sprite_astronaut_bg = &ret->lookup("astronaut_bg");
 	sprite_key_bg = &ret->lookup("key_bg");
-	sprite_msg_bg = &ret->lookup("msg_bg");
+	sprite_msg_bg = const_cast<Sprite*> (&ret->lookup("msg_bg"));
 
 	demo_background = &ret->lookup("demo_screen_background");
 	demo_text_area = &ret->lookup("textbox_area");
@@ -99,20 +99,18 @@ bool StoryMode::handle_event(SDL_Event const &evt, glm::uvec2 const &window_size
 	};
 
 	// if (Mode::current.get() != this) return false;
-	bool left_click = false;
-	bool right_click = false;
+	bool left_click = false; bool right_click = false;
 	if (evt.type == SDL_KEYDOWN) {
-		if (message_box_visible) {
-			message_box.erase(message_box.begin());
-			if (message_box.size() == 0) {
-				message_box_visible = false;
-			}
-		} else if (evt.key.keysym.sym == SDLK_i) {
+		if (evt.key.keysym.sym == SDLK_i) {
 			inventory_visible = !inventory_visible;
 			inventory.update_inventory();
 		}
 	} else if (evt.type == SDL_MOUSEMOTION) {
 
+		//This maps the mouse coordinates to the corresponding coordinates on Yixin's art.
+		//I think it makes more sense than what we had before, with all the negative numbers
+
+		raw_mouse_pos = glm::vec2(evt.motion.x, evt.motion.y);
 		float aspect = (float) (window_size.x) / window_size.y;
 		float view_aspect = view_max.x / view_max.y;
 		float offset = 0.0f;
@@ -121,35 +119,36 @@ bool StoryMode::handle_event(SDL_Event const &evt, glm::uvec2 const &window_size
 			float good_x = window_size.y * view_aspect; //The window size of x that corrects the aspect ratio
 			offset = (window_size.x - good_x);
 			bar_length = offset / 2; 
-			mouse_pos.x = clamp((evt.motion.x - bar_length) * (view_max.x / (window_size.x - offset)), 0, view_max.x);
+			//I clamp to "out of bound" coordinates in case any of the interactables start at (0, y) or something.
+			mouse_pos.x = clamp((evt.motion.x - bar_length) * (view_max.x / (window_size.x - offset)), -1, view_max.x + 1);
 			mouse_pos.y = evt.motion.y * (view_max.y / window_size.y);
 		} else if (aspect < view_aspect) { //Too much vertical screen ==> Black bars on top and bottom
 			float good_y = window_size.x / view_aspect; //The window size of x that corrects the aspect ratio
 			offset =  abs((good_y - window_size.y));
 			bar_length = offset / 2; //How much black shit is on both sides of the screen
 			mouse_pos.x = evt.motion.x * (view_max.x / window_size.x);
-			mouse_pos.y = clamp((evt.motion.y - bar_length) * (view_max.y / (window_size.y - offset)), 0, view_max.y);
+			mouse_pos.y = clamp((evt.motion.y - bar_length) * (view_max.y / (window_size.y - offset)), -1, view_max.y + 1);
 		} else {
 			mouse_pos.x = evt.motion.x * (view_max.x / window_size.x);
 			mouse_pos.y = evt.motion.y * (view_max.y / window_size.y);
 		}
 
-		//This maps the mouse coordinates to the corresponding coordinates on Yixin's art.
-		//I think it makes more sense than what we had before, with all the negative numbers
 	} else if (evt.type == SDL_MOUSEBUTTONDOWN) {
+		if (evt.button.button == SDL_BUTTON_RIGHT) {
+			right_click = true;
+		}
+		else if (evt.button.button == SDL_BUTTON_LEFT) {
+			left_click = true;
+		}
+		if (message_box_visible || inventory_visible) { left_click = false; right_click = false; }
 		if (message_box_visible) {
 			message_box.erase(message_box.begin());
 			if (message_box.size() == 0) {
 				message_box_visible = false;
 			}
 		}
-	} else if (evt.type == SDL_MOUSEBUTTONUP) {
-		if (evt.button.button == SDL_BUTTON_RIGHT) {
-			right_click = true;
-		} else if (evt.button.button == SDL_BUTTON_LEFT) {
-			left_click = true;
-		}
 	}
+
 	check_mouse(left_click, right_click);
 	return false;
 }
@@ -188,7 +187,7 @@ void StoryMode::check_mouse(bool left_click, bool right_click) {
 					switch (cryo_interactables[i].id) {
 
 						case lightSwitch:
-							light_switch.light_on ^= 1;
+							cryo_room.light_on ^= 1;
 							break;
 
 						case toolbox:
@@ -204,7 +203,6 @@ void StoryMode::check_mouse(bool left_click, bool right_click) {
 							break;
 
 						case brokenGlass:
-							std::cout << "Here" << std::endl;
 							inventory.interactables.push_back(Broken_Glass);
 							message_box.emplace_back("Lemme stash this shit real quick...");
 							cryo_interactables.erase(cryo_interactables.begin() + i);
@@ -254,7 +252,7 @@ void StoryMode::draw(glm::uvec2 const &drawable_size) {
 		glm::vec2 ul = glm::vec2(view_min.x, view_max.y);
 
 		draw.draw(*demo_background, ul);
-		if (light_switch.light_on) {
+		if (cryo_room.light_on) {
 			draw.draw(*sprite_light_cabin, ul);
 			draw.draw(*sprite_light_body1, ul);
 			draw.draw(*sprite_light_body2, ul);
@@ -267,22 +265,6 @@ void StoryMode::draw(glm::uvec2 const &drawable_size) {
 			draw.draw(*demo_text_area, ul);
 		}
 
-		if (move_remained > 0 && dir != 0) {
-			if (dir == 1) {
-				ast_y++;
-			} else if (dir == 2) {
-				ast_y--;
-			} else if (dir == 3) {
-				ast_x--;
-			} else if (dir == 4) {
-				ast_x++;
-			}
-			move_remained--;
-		} else {
-			dir = 0;
-			move_remained = 100;
-		}
-		ul = glm::vec2(view_min.x + 5 * ast_x, view_max.y + 5 * ast_y);
 		// draw.draw(*sprite_astronaut_bg, ul);
 		// if (have_key) {
 		// 	glm::vec2 col_key = glm::vec2(view_min.x + 500, view_max.y + 200);
@@ -297,8 +279,10 @@ void StoryMode::draw(glm::uvec2 const &drawable_size) {
 		// }
 
 		if (hint_visible) {
-			glm::vec2 draw_mouse = glm::vec2(mouse_pos.x, mouse_pos.y);
-			draw.draw(*sprite_msg_bg, draw_mouse);
+			float good_x = mouse_pos.x - (view_max.x / 2);
+			float good_y = ((view_max.y / 2) - mouse_pos.y) + view_max.y;
+			draw.draw(*sprite_msg_bg, glm::vec2(good_x, good_y));
+			draw.draw(*sprite_msg_bg, glm::vec2(good_x, good_y));
 		}
 		
 	}

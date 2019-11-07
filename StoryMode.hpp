@@ -12,10 +12,7 @@ struct StoryMode : Mode {
 	void check_mouse(bool left_click, bool right_click);
 	bool in_box(glm::vec2 pos_cur, glm::vec2 pos_min, glm::vec2 pos_max);
 
-
-	bool inventory_visible = false;
 	Inventory inventory;
-
 	Interactable Broken_Glass = Interactable(brokenGlass, "A piece of sharp glass", true, "It's sharp.");
 	Interactable Light_switch = Interactable(lightSwitch, "Light switch", false, "Turns on the light");
 	Interactable Tool_box = Interactable(toolbox, "Toolbox", false, "Stores things.");
@@ -24,15 +21,14 @@ struct StoryMode : Mode {
 	Interactable Cabin_door = Interactable(cryoDoor, "A door.", false, "This leads to the hallway.");
 
 	std::vector<Interactable> cryo_interactables;
-
-
 	std::vector<std::string> message_box;
-	bool message_box_visible = false;
+
 	glm::vec2 textbox_left = glm::vec2(150, 800);
 	glm::vec2 textbox_right = glm::vec2(1770, 1048);
-
+	glm::vec2 raw_mouse_pos = glm::vec2(0, 0);
 	glm::vec2 mouse_pos = glm::vec2(0, 0);
 	glm::vec2 msg_pos = glm::vec2(0, 0);
+
 	//called to create menu for current scene:
 	void enter_scene();
 
@@ -44,46 +40,16 @@ struct StoryMode : Mode {
 	// Cabin Interactables
 	// light
 	struct {
-		glm::vec2 pos_min = glm::vec2(680, 1100);
-		glm::vec2 pos_max = glm::vec2(750, 1220);
 		bool light_on = false;
-	} light_switch;
+		bool tool_open = false;
+	} cryo_room;
 	
-	struct {
-		glm::vec2 pos_min = glm::vec2(-960, 1080);
-		glm::vec2 pos_max = glm::vec2(-760, 1400);
-		bool open = false;
-	} tool_box;
-		
-	struct {
-		glm::vec2 pos_min = glm::vec2(-660, 800);
-		glm::vec2 pos_max = glm::vec2(-330, 1320);
-	} commander_body;
-
-	struct {
-		glm::vec2 pos_min = glm::vec2(-200, 1250);
-		glm::vec2 pos_max = glm::vec2(80, 1550);
-	} light_body_cabin;
-
-	struct {
-		glm::vec2 pos_min = glm::vec2(-280, 850);
-		glm::vec2 pos_max = glm::vec2(-190, 1000);
-	} pickable_glass;
-
-	struct {
-		glm::vec2 pos_min = glm::vec2(800, 800);
-		glm::vec2 pos_max = glm::vec2(950, 1500);
-	} cabin_door;
-
-	//dark
-
-	int move_remained = 0;
-	int dir = 0; // 1 - up, 2 - down, 3 - left, 4 - right
 	glm::vec2 view_min = glm::vec2(0,0);
 	glm::vec2 view_max = glm::vec2(1920, 1200);
-	int ast_x = 0;
-	int ast_y = 0;
+	bool message_box_visible = false;
 	bool menu_visible = false;
 	bool hint_visible = false;
+	bool inventory_visible = false;
+
 	std::shared_ptr< Sound::PlayingSample > background_music;
 };
