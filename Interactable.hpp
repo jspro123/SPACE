@@ -2,10 +2,15 @@
 #include <vector>
 #include "Sprite.hpp"
 
+
+enum itemID {lightSwitch, toolbox, brokenGlass, commanderBody, genericBody, cryoDoor};
+
 struct Interactable {
 
-	std::string name; //Unique, please
-	Sprite const* associated_sprite; //Contains position info
+	itemID id;
+	glm::vec2 position_min;
+	glm::vec2 position_max;
+	std::string name; 
 	std::vector<std::string> descriptions;
 	int current_description = 0;
 	bool carryable = false;
@@ -16,9 +21,9 @@ struct Interactable {
 	std::string description;
 
 
-	Interactable(std::string name_, Sprite const* associated_sprite_, bool carryable_, std::string description_) {
+	Interactable(itemID id_, std::string name_, bool carryable_, std::string description_) {
+		id = id_;
 		name = name_;
-		associated_sprite = associated_sprite_;
 		carryable = carryable_;
 		description = description_;
 	} 

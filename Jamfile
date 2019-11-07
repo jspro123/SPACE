@@ -154,6 +154,7 @@ if $(OS) = NT { #Windows
 
 #Store the names of all the .cpp files to build into a variable:
 GAME_NAMES =
+	Interactable
 	demo_menu
 	Sound
 	load_wav
@@ -161,7 +162,6 @@ GAME_NAMES =
 	Text
 	DrawSprites
 	Sprite
-	Interactable
 	MenuMode
 	StoryMode
 	TerminalMode

@@ -9,7 +9,6 @@
 #include "Sound.hpp"
 #include "stdlib.h"
 
-
 Sprite const* demo_background = nullptr;
 Sprite const* demo_text_area = nullptr;
 
@@ -65,6 +64,26 @@ Load< Sound::Sample > music_correct(LoadTagDefault, []() -> Sound::Sample *{
 
 
 StoryMode::StoryMode() {
+
+	Light_switch.position_min = glm::vec2(1655, 585);
+	Light_switch.position_max = glm::vec2(1690, 700);
+	Tool_box.position_min = glm::vec2(0, 440);
+	Tool_box.position_max = glm::vec2(200, 645);
+	Broken_Glass.position_min = glm::vec2(700, 820);
+	Broken_Glass.position_max = glm::vec2(760, 940);
+	Commander_body.position_min = glm::vec2(310, 480);
+	Commander_body.position_max = glm::vec2(630, 850);
+	Generic_body.position_min = glm::vec2(850, 300);
+	Generic_body.position_max = glm::vec2(1030, 560);
+	Cabin_door.position_min = glm::vec2(1700, 300);
+	Cabin_door.position_max = glm::vec2(1900, 1140);
+
+	cryo_interactables.push_back(Light_switch);
+	cryo_interactables.push_back(Tool_box);
+	cryo_interactables.push_back(Broken_Glass);
+	cryo_interactables.push_back(Commander_body);
+	cryo_interactables.push_back(Generic_body);
+	cryo_interactables.push_back(Cabin_door);
 }
 
 StoryMode::~StoryMode() {
@@ -72,37 +91,58 @@ StoryMode::~StoryMode() {
 }
 
 bool StoryMode::handle_event(SDL_Event const &evt, glm::uvec2 const &window_size) {
+
+	auto clamp = [](float v, float x, float y) {
+		if (v < x) return x;
+		if (v > y) return y;
+		return v;
+	};
+
 	// if (Mode::current.get() != this) return false;
 	bool left_click = false;
 	bool right_click = false;
 	if (evt.type == SDL_KEYDOWN) {
-		// if (dir != 0) return true;;
-		// if (evt.key.keysym.sym == SDLK_UP) {
-		// 	dir = 1;
-		// 	move_remained = 100;
-		// 	// return true;
-		// } else if (evt.key.keysym.sym == SDLK_DOWN) {
-		// 	dir = 2;
-		// 	move_remained = 100;
-		// 	// return true;
-		// } else if (evt.key.keysym.sym == SDLK_RETURN) {
-		// 	Mode::set_current(std::make_shared< TerminalMode >());
-		// } else if (evt.key.keysym.sym == SDLK_LEFT) {
-		// 	dir = 3;
-		// 	move_remained = 100;
-		// } else 
-		if (evt.key.keysym.sym == SDLK_RIGHT) {
-			dir = 4;
-			move_remained = 100;
-			light_switch.light_on ^= 1;
+		if (message_box_visible) {
+			message_box.erase(message_box.begin());
+			if (message_box.size() == 0) {
+				message_box_visible = false;
+			}
 		} else if (evt.key.keysym.sym == SDLK_i) {
 			inventory_visible = !inventory_visible;
 			inventory.update_inventory();
-		} else if (evt.key.keysym.sym == SDLK_m) {
-			message_box_visible = 200;
 		}
 	} else if (evt.type == SDL_MOUSEMOTION) {
-		mouse_pos = glm::vec2(evt.motion.x * 2 - view_max.x / 2, view_max.y * 1.5 - evt.motion.y * 2);
+
+		float aspect = (float) (window_size.x) / window_size.y;
+		float view_aspect = view_max.x / view_max.y;
+		float offset = 0.0f;
+		float bar_length = 0.0f;
+		if (aspect > view_aspect) { //Too much horizontal space ==> Black bars on left and right
+			float good_x = window_size.y * view_aspect; //The window size of x that corrects the aspect ratio
+			offset = (window_size.x - good_x);
+			bar_length = offset / 2; 
+			mouse_pos.x = clamp((evt.motion.x - bar_length) * (view_max.x / (window_size.x - offset)), 0, view_max.x);
+			mouse_pos.y = evt.motion.y * (view_max.y / window_size.y);
+		} else if (aspect < view_aspect) { //Too much vertical screen ==> Black bars on top and bottom
+			float good_y = window_size.x / view_aspect; //The window size of x that corrects the aspect ratio
+			offset =  abs((good_y - window_size.y));
+			bar_length = offset / 2; //How much black shit is on both sides of the screen
+			mouse_pos.x = evt.motion.x * (view_max.x / window_size.x);
+			mouse_pos.y = clamp((evt.motion.y - bar_length) * (view_max.y / (window_size.y - offset)), 0, view_max.y);
+		} else {
+			mouse_pos.x = evt.motion.x * (view_max.x / window_size.x);
+			mouse_pos.y = evt.motion.y * (view_max.y / window_size.y);
+		}
+
+		//This maps the mouse coordinates to the corresponding coordinates on Yixin's art.
+		//I think it makes more sense than what we had before, with all the negative numbers
+	} else if (evt.type == SDL_MOUSEBUTTONDOWN) {
+		if (message_box_visible) {
+			message_box.erase(message_box.begin());
+			if (message_box.size() == 0) {
+				message_box_visible = false;
+			}
+		}
 	} else if (evt.type == SDL_MOUSEBUTTONUP) {
 		if (evt.button.button == SDL_BUTTON_RIGHT) {
 			right_click = true;
@@ -133,69 +173,55 @@ bool StoryMode::in_box(glm::vec2 pos_cur, glm::vec2 pos_min, glm::vec2 pos_max) 
 }
 
 void StoryMode::check_mouse(bool left_click, bool right_click) {
-	std::cout<<"check\n";			
-	std::cout<<mouse_pos.x<<" "<<mouse_pos.y<<"\n";
-	std::cout<<left_click<<" "<<right_click<<"\n";
+	//std::cout << "check\n";
+	//std::cout << mouse_pos.x << " " << mouse_pos.y << "\n";
+	//std::cout << left_click << " " << right_click << "\n";
+	bool on_something = false;
 	if (location == Cabin) {
-		if (light_switch.light_on) {
-			// set light interactables
-			if (in_box(mouse_pos, light_switch.pos_min, light_switch.pos_max)) {
+
+		for (int i = 0; i < cryo_interactables.size(); i++) {
+			if (in_box(mouse_pos, cryo_interactables[i].position_min, cryo_interactables[i].position_max)) {
+				on_something = true;
 				hint_visible = true;
 				if (left_click) {
-					light_switch.light_on ^= 1;
-				}
-			} else if (in_box(mouse_pos, tool_box.pos_min, tool_box.pos_max)) {
-				hint_visible = true;
-				if (left_click) {
-					if (have_key) {
-						message_box.emplace_back("The tool box is unlocked now!");
-					} else {
-						message_box.emplace_back("The tool box is locked!");
-						// get a hammer and some other things
+					//No need to write brek; ID's are unique
+					switch (cryo_interactables[i].id) {
+
+						case lightSwitch:
+							light_switch.light_on ^= 1;
+							break;
+
+						case toolbox:
+							message_box.emplace_back(Tool_box.description);
+							break;
+
+						case commanderBody:
+							message_box.emplace_back(Commander_body.description);
+							break;
+
+						case genericBody:
+							message_box.emplace_back(Generic_body.description);
+							break;
+
+						case brokenGlass:
+							std::cout << "Here" << std::endl;
+							inventory.interactables.push_back(Broken_Glass);
+							message_box.emplace_back("Lemme stash this shit real quick...");
+							cryo_interactables.erase(cryo_interactables.begin() + i);
+							break;
+
+						case cryoDoor:
+							std::cout << "Do something" << std::endl;
+							break;
+							//Go to hallway
 					}
-					message_box_visible = 200;
-				}
-			} else if (in_box(mouse_pos, commander_body.pos_min, commander_body.pos_max)) {
-				hint_visible = true;
-				if (left_click) {
-					message_box.emplace_back("A dead body...");
-					message_box_visible = 200;
-				}
-			} else if (in_box(mouse_pos, light_body_cabin.pos_min, light_body_cabin.pos_max)) {
-				hint_visible = true;
-				if (left_click) {
-					message_box.emplace_back("A dead body...");
-					message_box_visible = 200;
-				}
-			} else if (in_box(mouse_pos, pickable_glass.pos_min, pickable_glass.pos_max)) {
-				hint_visible = true;
-				if (left_click) {
-					if (have_glass == false) {
-						have_glass = true;
-						inventory.interactables.push_back(broken_glass);
-						message_box.emplace_back("A new item is added to your inventory!");
-						message_box_visible = 200;
-					}
-				}
-			} else if (in_box(mouse_pos, cabin_door.pos_min, cabin_door.pos_max)) {
-				hint_visible = true;
-				if (left_click) {
-					// go to the hall way
-				}
-			} else {
-				hint_visible = false;
-			}
-		} else {
-			if (in_box(mouse_pos, light_switch.pos_min, light_switch.pos_max)) {
-				hint_visible = true;
-				if (left_click) {
-					light_switch.light_on ^= 1;
-				}
-			} else {
-				hint_visible = false;
+				} 
 			}
 		}
 	}
+
+	if(message_box.size() != 0) message_box_visible = true;
+	if (!on_something) hint_visible = false;
 }
 
 void StoryMode::enter_scene() {
@@ -227,8 +253,6 @@ void StoryMode::draw(glm::uvec2 const &drawable_size) {
 		DrawSprites draw(*sprites, view_min, view_max, drawable_size, DrawSprites::AlignPixelPerfect);
 		glm::vec2 ul = glm::vec2(view_min.x, view_max.y);
 
-
-
 		draw.draw(*demo_background, ul);
 		if (light_switch.light_on) {
 			draw.draw(*sprite_light_cabin, ul);
@@ -239,7 +263,7 @@ void StoryMode::draw(glm::uvec2 const &drawable_size) {
 			draw.draw(*sprite_dark_cabin, ul);
 			draw.draw(*sprite_dark_glass, ul);
 		}
-		if (inventory_visible || message_box_visible > 0) {
+		if (inventory_visible || message_box_visible) {
 			draw.draw(*demo_text_area, ul);
 		}
 
@@ -273,9 +297,8 @@ void StoryMode::draw(glm::uvec2 const &drawable_size) {
 		// }
 
 		if (hint_visible) {
-			msg_pos.x = mouse_pos.x + 60;
-			msg_pos.y = mouse_pos.y;
-			draw.draw(*sprite_msg_bg, msg_pos);
+			glm::vec2 draw_mouse = glm::vec2(mouse_pos.x, mouse_pos.y);
+			draw.draw(*sprite_msg_bg, draw_mouse);
 		}
 		
 	}
@@ -291,12 +314,9 @@ void StoryMode::draw(glm::uvec2 const &drawable_size) {
 		at.y = view_max.y - textbox_left.y - 50;
 
 
-		if (message_box_visible > 0){
-			message_box_visible --;
-			for (int i = (int) message_box.size() - 1; i < message_box.size(); i++) {
-				draw_text.draw_text_short(message_box[i], at, 3.0f, glm::u8vec4(0xff, 0xff, 0xff, 0xff));
-				at.y -= 35;
-			}
+		if (message_box_visible){
+			draw_text.draw_text_short(message_box[0], at, 3.0f, glm::u8vec4(0xff, 0xff, 0xff, 0xff));
+			at.y -= 35;
 		} else if (inventory_visible) {
 			inventory.update_inventory();
 			for (int i = 0; i < inventory.to_output.size(); i++) {

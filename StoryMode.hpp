@@ -1,9 +1,3 @@
-
-/*
- * StoryMode implements a story about The Planet of Choices.
- *
- */
-
 #include "Mode.hpp"
 #include "Sound.hpp"
 #include "Interactable.hpp"
@@ -18,14 +12,22 @@ struct StoryMode : Mode {
 	void check_mouse(bool left_click, bool right_click);
 	bool in_box(glm::vec2 pos_cur, glm::vec2 pos_min, glm::vec2 pos_max);
 
+
 	bool inventory_visible = false;
 	Inventory inventory;
-	Interactable key = Interactable("A key", nullptr, true, "This is an important item.");
-	Interactable broken_glass = Interactable("a piece of sharp glass", nullptr, true, 
-		"Maybe you can do something with this.");
+
+	Interactable Broken_Glass = Interactable(brokenGlass, "A piece of sharp glass", true, "It's sharp.");
+	Interactable Light_switch = Interactable(lightSwitch, "Light switch", false, "Turns on the light");
+	Interactable Tool_box = Interactable(toolbox, "Toolbox", false, "Stores things.");
+	Interactable Commander_body = Interactable(commanderBody, "The Commander", false, "Commander...");
+	Interactable Generic_body = Interactable(genericBody, "A crew member", false, "Dead...");
+	Interactable Cabin_door = Interactable(cryoDoor, "A door.", false, "This leads to the hallway.");
+
+	std::vector<Interactable> cryo_interactables;
+
 
 	std::vector<std::string> message_box;
-	int message_box_visible = 0;
+	bool message_box_visible = false;
 	glm::vec2 textbox_left = glm::vec2(150, 800);
 	glm::vec2 textbox_right = glm::vec2(1770, 1048);
 
@@ -75,13 +77,6 @@ struct StoryMode : Mode {
 
 	//dark
 
-
-	bool have_key = false;
-	bool have_glass = false;
-	struct {
-		bool first_visit = true;
-		bool wont_leave = false;
-	} dunes;
 	int move_remained = 0;
 	int dir = 0; // 1 - up, 2 - down, 3 - left, 4 - right
 	glm::vec2 view_min = glm::vec2(0,0);
