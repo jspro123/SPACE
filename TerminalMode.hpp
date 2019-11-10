@@ -24,7 +24,7 @@ struct TerminalMode : Mode {
 
 	/* ================== LOG TEXT 1 ================== */
 
-	std::string s_log1_2 = "Recording this log before I enter my cryo - pod. Launch went smooth as butter. "
+	std::string s_log1_2 = "Recording this log before I enter my pod. Launch went smooth as butter. "
 		"We've checked and double-checked and triple-checked that the ship's trajectory is right; "
 		"if we're off by even one degree we'll probably never wake up.";
 
@@ -32,7 +32,7 @@ struct TerminalMode : Mode {
 		"I told them I won't go, they tried to arrest me. Fuck that. How does a guy tell his family "
 		"that he'll be gone for six years straight?";
 
-	std::string s_log1_4 = "Commander's telling me it's time to go. . . Mary, I'm sorry.";
+	std::string s_log1_4 = "Commander's telling me it's time to go. . . Mary, I'm so sorry.";
 
 	/* ================== LOG TEXT 2 ================== */
 
@@ -62,7 +62,7 @@ struct TerminalMode : Mode {
 		"effect of the cryo, the commander says. ";
 
 	std::string s_log4_3 = "Doesn't matter, with this thing, we'll be able to work twice as fast. "
-		"Mary, I'll be coming home soon. . .soonish. ";
+		"Mary, I'll be coming home soon. . . soonish. ";
 
 	/* ================== LOG TEXT 5 ================== */
 
@@ -94,11 +94,10 @@ struct TerminalMode : Mode {
 
 	/* ================== BOOTING ================== */
 
-	Sentence const lines = Sentence("------------------------------------", 1.0f, 1);
+	Sentence const lines = Sentence("------------------------------------", 0.5, 1);
 	Sentence const boot1 = Sentence("BOOTING TERMINAL", 1.0f, 1);
 	Sentence const boot2 = Sentence(" ", 1.0f, 1);
 	Sentence const boot3 = Sentence("TERMINAL. . . FUNCTIONAL", 1.0f, 1);
-	//What else to add?
 	Sentence const boot4 = Sentence("COMMUNICATIONS. . . FUNCTIONAL", 1.0f, 1);
 	Sentence const boot5 = Sentence("COMMUNICATIONS. . . FUNCTIONAL", 1.0f, 2);
 	Sentence const boot6 = Sentence("COMMUNICATIONS. . . FUNCTIONAL", 1.0f, 3);
@@ -106,61 +105,61 @@ struct TerminalMode : Mode {
 
 	/* ================== TERMINAL MENU ================== */
 
-	Sentence const menu1 = Sentence("RUN SHIP DIAGNOSTIC ", 1.0f, 1);
-	Sentence const menu2 = Sentence("DISENGAGE ALL LOCKS ", 1.0f, 1);
-	Sentence const menu3 = Sentence("MISSION LOGS ", 1.0f, 1);
-	Sentence const menu4 = Sentence("ACTIVATE ENGINES ", 1.0f, 1);
-	Sentence const menu5 = Sentence("EXIT TERMINAL ", 1.0f, 1);
+	Sentence const menu1 = Sentence("RUN SHIP DIAGNOSTIC ", 0.25f, 1);
+	Sentence const menu2 = Sentence("DISENGAGE ALL LOCKS ", 0.25f, 1);
+	Sentence const menu3 = Sentence("MISSION LOGS ", 0.25f, 1);
+	Sentence const menu4 = Sentence("ACTIVATE ENGINES ", 0.25f, 1);
+	Sentence const menu5 = Sentence("EXIT TERMINAL ", 0.25f, 1);
 
 	/* ================== MISSION LOGS ================== */
 
-	Sentence const back = Sentence("BACK", 1.0f, 1);
-	Sentence const log1_1 = Sentence("02/03/2034", 1.0f, 1);
-	Sentence const log1_2 = Sentence(s_log1_2, 1.0f, 1);
-	Sentence const log1_3 = Sentence(s_log1_3, 1.0f, 1);
-	Sentence const log1_4 = Sentence(s_log1_4, 1.0f, 1);
+	Sentence const back = Sentence("BACK", 0.75f, 1);
+	Sentence const log1_1 = Sentence("02/03/2034", 0.1f, 1);
+	Sentence const log1_2 = Sentence(s_log1_2, 0.75f, 1);
+	Sentence const log1_3 = Sentence(s_log1_3, 0.75f, 1);
+	Sentence const log1_4 = Sentence(s_log1_4, 0.75f, 1);
 
-	Sentence const log2_1 = Sentence("01/18/2037", 1.0f, 1);
-	Sentence const log2_2 = Sentence(s_log2_2, 1.0f, 1);
-	Sentence const log2_3 = Sentence(s_log2_3, 1.0f, 1);
+	Sentence const log2_1 = Sentence("01/18/2037", 0.1f, 1);
+	Sentence const log2_2 = Sentence(s_log2_2, 0.75f, 1);
+	Sentence const log2_3 = Sentence(s_log2_3, 0.75f, 1);
 
-	Sentence const log3_1 = Sentence("01/25/2037", 1.0f, 1);
-	Sentence const log3_2 = Sentence(s_log3_2, 1.0f, 1);
-	Sentence const log3_3 = Sentence(s_log3_3, 1.0f, 1);
-	Sentence const log3_4 = Sentence(s_log3_4, 1.0f, 1);
+	Sentence const log3_1 = Sentence("01/25/2037", 0.1f, 1);
+	Sentence const log3_2 = Sentence(s_log3_2, 0.75f, 1);
+	Sentence const log3_3 = Sentence(s_log3_3, 0.75f, 1);
+	Sentence const log3_4 = Sentence(s_log3_4, 0.75f, 1);
 
-	Sentence const log4_1 = Sentence("01/28/2037", 1.0f, 1);
-	Sentence const log4_2 = Sentence(s_log4_2, 1.0f, 1);
-	Sentence const log4_3 = Sentence(s_log4_3, 1.0f, 1);
+	Sentence const log4_1 = Sentence("01/28/2037", 0.1f, 1);
+	Sentence const log4_2 = Sentence(s_log4_2, 0.75f, 1);
+	Sentence const log4_3 = Sentence(s_log4_3, 0.75f, 1);
 
-	Sentence const log5_1 = Sentence("02/06/2037", 1.0f, 1);
-	Sentence const log5_2 = Sentence(s_log5_2, 1.0f, 1);
-	Sentence const log5_3 = Sentence(s_log5_3, 1.0f, 1);
-	Sentence const log5_4 = Sentence(s_log5_4, 1.0f, 1);
+	Sentence const log5_1 = Sentence("02/06/2037", 0.1f, 1);
+	Sentence const log5_2 = Sentence(s_log5_2, 0.75f, 1);
+	Sentence const log5_3 = Sentence(s_log5_3, 0.75f, 1);
+	Sentence const log5_4 = Sentence(s_log5_4, 0.75f, 1);
 
-	Sentence const log6_1 = Sentence("02/08/2037", 1.0f, 1);
-	Sentence const log6_2 = Sentence(s_log6_2, 1.0f, 1);
-	Sentence const log6_3 = Sentence(s_log6_3, 1.0f, 1);
+	Sentence const log6_1 = Sentence("02/08/2037", 0.1f, 1);
+	Sentence const log6_2 = Sentence(s_log6_2, 0.75f, 1);
+	Sentence const log6_3 = Sentence(s_log6_3, 0.75f, 1);
 
-	Sentence const log7_1 = Sentence("02/09/2037", 1.0f, 1);
-	Sentence const log7_2 = Sentence(s_log7_2, 1.0f, 1);
+	Sentence const log7_1 = Sentence("02/09/2037", 0.1f, 1);
+	Sentence const log7_2 = Sentence(s_log7_2, 0.75f, 1);
 
 	/* ================== RUN SHIP DIAGNOSTIC  ================== */
 
-	Sentence const diag1 = Sentence("AIR LEAK IN HALLWAY 2", 1.0f, 1);
-	Sentence const diag2 = Sentence("ENGINE 2 DESTROYED", 1.0f, 1);
-	Sentence const diag3 = Sentence("ENGINE 3 DESTROYED", 1.0f, 1);
-	Sentence const diag4 = Sentence("COMMUNICATIONS CHIP DESTROYED", 1.0f, 1);
+	Sentence const diag1 = Sentence("AIR LEAK IN HALLWAY 2", 0.5, 1);
+	Sentence const diag2 = Sentence("ENGINE 2 DESTROYED", 0.5, 1);
+	Sentence const diag3 = Sentence("ENGINE 3 DESTROYED", 0.5, 1);
+	Sentence const diag4 = Sentence("COMMUNICATIONS CHIP FUNCTIONAL", 0.5, 1);
 
 	/* ================== DISENGAGE LOCKS ================== */
 
-	Sentence const diseng1 = Sentence("DISENGAGING LOCKS. . . ", 1.0f, 1);
-	Sentence const diseng2 = Sentence("FAILURE. DUE TO AIR LEAK, COMMANDER BIOMETRICS REQUIRED", 1.0f, 1);
+	Sentence const diseng1 = Sentence("DISENGAGING LOCKS. . . ", 0.5, 1);
+	Sentence const diseng2 = Sentence("FAILURE. DUE TO AIR LEAK, COMMANDER BIOMETRICS REQUIRED", 0.5, 1);
 
 	/* ================== ACTIVATE ENGINES ================== */
 
-	Sentence const eng1 = Sentence("FAILURE. MAJORITY OF ENGINES DAMAGED", 1.0f, 1);
-	Sentence const eng2 = Sentence("PROBABILITY OF SUCCESFUL ACTIVATION: 0", 1.0f, 1);
+	Sentence const eng1 = Sentence("FAILURE. MAJORITY OF ENGINES DAMAGED", 0.5, 1);
+	Sentence const eng2 = Sentence("PROBABILITY OF SUCCESFUL ACTIVATION: 0", 0.5, 1);
 
 	enum t_state {DIAG, LOG, EXIT, DISENG, ENG, MENU, LOG1, LOG2, LOG3, LOG4, LOG5, LOG6, LOG7} terminal = MENU;
 	bool displayed_boot = false;

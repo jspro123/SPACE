@@ -98,7 +98,7 @@ void TerminalMode::enter_scene() {
 	glm::vec2 at = screen_left; 
 	at.y = view_max.y - screen_left.y;
 
-	auto get_number_sentences = [](std::string const& sentence) {
+	auto get_number_sentences = [this](std::string const& sentence) {
 		Sprite const* chr;
 		float combined_width = 0.0;
 		for (size_t pos = 0; pos < sentence.size(); pos++) {
@@ -106,7 +106,7 @@ void TerminalMode::enter_scene() {
 			combined_width += (chr->max_px.x - chr->min_px.x) * FONT_SIZE;
 		}
 
-		return ceil(combined_width / 1000.0f);
+		return ceil(combined_width / (screen_right.x - screen_left.x));
 	};
 
 	auto add_text = [this, &items, &at, &get_number_sentences](Sentence const* sentence) {
