@@ -200,7 +200,7 @@ void MenuMode::draw(glm::uvec2 const &drawable_size) {
 			float left, right;
 			if (!item.sprite) {
 				//draw item.name as text:
-				draw_sprites.draw_text(item.name, item.at, item.scale, color, item.current_chr, item.fit_list, item.start_at, item.wrap_at);
+				draw_sprites.draw_text(item.name, item.at, item.scale, color, item.current_chr, item.drawing_speed, item.fit_list, item.start_at, item.wrap_at);
 				glm::vec2 min, max;
 				draw_sprites.get_text_extents(item.name, item.at, item.scale, &min, &max);
 				left = min.x;

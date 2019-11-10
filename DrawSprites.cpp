@@ -188,8 +188,8 @@ void DrawSprites::draw(Sprite const &sprite, glm::vec2 const &center, float scal
 
 }
 
-void DrawSprites::draw_text(std::string const& name, glm::vec2 const& anchor, float scale, glm::u8vec4 const& color, 
-	int& current_chr, std::unordered_map <size_t, int>& fit_list, float start_at, float wrap_at) {
+void DrawSprites::draw_text(std::string const& name, glm::vec2 const& anchor, float scale, glm::u8vec4 const& color,
+	int& current_chr, int drawing_speed, std::unordered_map <size_t, int>& fit_list, float start_at, float wrap_at) {
 
 	glm::vec2 moving_anchor = anchor;
 	size_t boundary = 0; //The last character that should be drawn
@@ -231,13 +231,13 @@ void DrawSprites::draw_text(std::string const& name, glm::vec2 const& anchor, fl
 		boundary = name.size();
 		update_flag = 0;
 	}
-	else if (current_chr + DRAWING_SPEED >= name.size()) {
+	else if (current_chr + drawing_speed >= name.size()) {
 		current_chr = -1;
 		boundary = name.size();
 		update_flag = 0;
 	}
 	else {
-		boundary = current_chr + DRAWING_SPEED;
+		boundary = current_chr + drawing_speed;
 	}
 
 	for (pos = 0; pos < boundary; pos++) {
@@ -266,7 +266,7 @@ void DrawSprites::draw_text(std::string const& name, glm::vec2 const& anchor, fl
 		draw(chr, moving_anchor, scale, color);
 		moving_anchor.x += (chr.max_px.x - chr.min_px.x) * scale;
 		if (update_flag == 1) {
-			current_chr += DRAWING_SPEED;
+			current_chr += drawing_speed;
 			update_flag = 0;
 		}
 	}

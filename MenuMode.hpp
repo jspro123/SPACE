@@ -24,24 +24,26 @@ struct MenuMode : Mode {
 	//Each menu item is an "Item":
 	struct Item {
 		Item(
-			std::string const &name_,
-			Sprite const *sprite_ = nullptr,
+			std::string const& name_,
+			Sprite const* sprite_ = nullptr,
 			float scale_ = 1.0f,
 			int current_chr_ = 0,
 			float wait_to_print_ = 1.0f,
+			int drawing_speed_ = 1,
 			float start_at_ = 200,
 			float wrap_at_ = 1000, 
 			glm::u8vec4 const &tint_ = glm::u8vec4(0xff),
 			std::function< void(Item const &) > const &on_select_ = nullptr,
 			glm::vec2 const &at_ = glm::vec2(0.0f)
-			) : name(name_), sprite(sprite_), scale(scale_), current_chr(current_chr_), wait_to_print(wait_to_print_),
-				start_at(start_at_), wrap_at(wrap_at_), tint(tint_), selected_tint(tint_), on_select(on_select_), at(at_) {
+			) : name(name_), sprite(sprite_), scale(scale_), current_chr(current_chr_), wait_to_print(wait_to_print_), 
+			drawing_speed(drawing_speed_), start_at(start_at_), wrap_at(wrap_at_), tint(tint_), selected_tint(tint_), on_select(on_select_), at(at_) {
 		}
 		std::string name;
 		Sprite const *sprite; //sprite drawn for item
 		float scale; //scale for sprite
 		int current_chr = 0;; //Used when drawing slowly. -1 if done
 		float wait_to_print = 0.0f; //Number of seconds to wait before printing
+		int drawing_speed = 1;
 		float start_at; //Which coord to start at
 		float wrap_at; //Which coord to wrap at. 
 		glm::u8vec4 tint; //tint for sprite (unselected)

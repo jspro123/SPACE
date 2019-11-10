@@ -72,9 +72,6 @@ TerminalMode::~TerminalMode() {
 
 bool TerminalMode::handle_event(SDL_Event const &evt, glm::uvec2 const& window_size) {
 	// if (Mode::current.get() != this) return false;
-	std::cout<<"storymode\n";
-	// if (Mode::current.get() != this) return false;
-	std::cout<<evt.type<<" evt_type\n";
 	if (evt.type == SDL_KEYDOWN) {
 		if (evt.key.keysym.sym == SDLK_BACKSPACE) {
 			Mode::set_current(std::make_shared< StoryMode >());
@@ -101,10 +98,6 @@ void TerminalMode::enter_scene() {
 	glm::vec2 at = screen_left; 
 	at.y = view_max.y - screen_left.y;
 
-	// auto generate_display = [this]() {
-
-	// };
-
 	auto get_number_sentences = [](std::string const& sentence) {
 		Sprite const* chr;
 		float combined_width = 0.0;
@@ -122,6 +115,7 @@ void TerminalMode::enter_scene() {
 			FONT_SIZE,
 			0,
 			sentence->wait_to_print,
+			sentence->drawing_speed,
 			screen_left.x,
 			screen_right.x,
 			glm::vec4(0xff, 0xff, 0xff, 0xff),
@@ -132,10 +126,181 @@ void TerminalMode::enter_scene() {
 		at.y -= LINE_SKIP * FONT_SIZE;
 	};
 
-	Sentence const test = Sentence("This is a long long long long long long long long long long long long long long long long long long long long sentence", 1.0f);
-	Sentence const test2 = Sentence("Something remains to accomplish. I won't leave", 1.0f);
-	add_text(&test);
-	add_text(&test2);
+	auto add_choice = [this, &items, &at, &get_number_sentences](Sentence const* sentence, std::function< void(MenuMode::Item const&) > const& fn) {
+		items.emplace_back(sentence->text,
+			nullptr,
+			FONT_SIZE,
+			0,
+			sentence->wait_to_print,
+			sentence->drawing_speed,
+			screen_left.x,
+			screen_right.x,
+			glm::vec4(0xff, 0xff, 0xff, 0xff),
+			fn,
+			at);
+		at.x = screen_left.x;
+		at.y -= LINE_SKIP * get_number_sentences(sentence->text) * FONT_SIZE;
+		at.y -= LINE_SKIP * FONT_SIZE;
+	};
+
+	auto skip_lines = [&at]() {
+		at.y -= LINE_SKIP * FONT_SIZE;
+	};
+
+	auto create_menu = [this, &add_choice]() {
+		add_choice(&menu1, [this](MenuMode::Item const&) {
+			terminal = DIAG;
+			Mode::current = shared_from_this();
+		});
+
+		add_choice(&menu2, [this](MenuMode::Item const&) {
+			terminal = DISENG;
+			Mode::current = shared_from_this();
+		});
+
+		add_choice(&menu3, [this](MenuMode::Item const&) {
+			terminal = LOG;
+			Mode::current = shared_from_this();
+		});
+
+		add_choice(&menu4, [this](MenuMode::Item const&) {
+			terminal = ENG;
+			Mode::current = shared_from_this();
+		});
+
+		add_choice(&menu5, [this](MenuMode::Item const&) {
+			terminal = EXIT;
+			Mode::current = shared_from_this();
+		});
+	};
+
+	displayed_boot = true;
+	if (!displayed_boot) {
+		//Do something
+		return;
+	}
+
+	if (terminal == MENU) {
+		create_menu();
+	} else if (terminal == DIAG) {
+		add_text(&diag1);
+		add_text(&diag2);
+		add_text(&diag3);
+		add_text(&diag4);
+		add_text(&lines);
+		create_menu();
+	} else if (terminal == ENG) {
+		add_text(&eng1);
+		add_text(&eng2);
+		add_text(&lines);
+		create_menu();
+	} else if (terminal == LOG) {
+		add_choice(&log1_1, [this](MenuMode::Item const&) {
+			terminal = LOG1;
+			Mode::current = shared_from_this();
+			});
+		add_choice(&log2_1, [this](MenuMode::Item const&) {
+			terminal = LOG2;
+			Mode::current = shared_from_this();
+			});
+		add_choice(&log3_1, [this](MenuMode::Item const&) {
+			terminal = LOG3;
+			Mode::current = shared_from_this();
+			});
+		add_choice(&log4_1, [this](MenuMode::Item const&) {
+			terminal = LOG4;
+			Mode::current = shared_from_this();
+			});
+		add_choice(&log5_1, [this](MenuMode::Item const&) {
+			terminal = LOG5;
+			Mode::current = shared_from_this();
+			});
+		add_choice(&log6_1, [this](MenuMode::Item const&) {
+			terminal = LOG6;
+			Mode::current = shared_from_this();
+			});
+		add_choice(&log7_1, [this](MenuMode::Item const&) {
+			terminal = LOG7;
+			Mode::current = shared_from_this();
+			});
+		add_choice(&back, [this](MenuMode::Item const&) {
+			terminal = MENU;
+			Mode::current = shared_from_this();
+			});
+	} else if (terminal == EXIT) {
+		//Return to control room
+		create_menu();
+	} else if (terminal == DISENG) {
+		add_text(&diseng1);
+		add_text(&diseng2);
+		add_text(&lines);
+		create_menu();
+	} else if (terminal == LOG1) {
+		add_text(&log1_1);
+		add_text(&lines);
+		add_text(&log1_2);
+		add_text(&log1_3);
+		add_text(&log1_4);
+		add_choice(&back, [this](MenuMode::Item const&) {
+			terminal = LOG;
+			Mode::current = shared_from_this();
+			});
+	} else if (terminal == LOG2) {
+		add_text(&log2_1);
+		add_text(&lines);
+		add_text(&log2_2);
+		add_text(&log2_3);
+		add_choice(&back, [this](MenuMode::Item const&) {
+			terminal = LOG;
+			Mode::current = shared_from_this();
+			});
+	} else if (terminal == LOG3) {
+		add_text(&log3_1);
+		add_text(&lines);
+		add_text(&log3_2);
+		add_text(&log3_3);
+		add_text(&log3_4);
+		add_choice(&back, [this](MenuMode::Item const&) {
+			terminal = LOG;
+			Mode::current = shared_from_this();
+			});
+	} else if (terminal == LOG4) {
+		add_text(&log4_1);
+		add_text(&lines);
+		add_text(&log4_2);
+		add_text(&log4_3);
+		add_choice(&back, [this](MenuMode::Item const&) {
+			terminal = LOG;
+			Mode::current = shared_from_this();
+			});
+	} else if (terminal == LOG5) {
+		add_text(&log5_1);
+		add_text(&lines);
+		add_text(&log5_2);
+		add_text(&log5_3);
+		add_text(&log5_4);
+		add_choice(&back, [this](MenuMode::Item const&) {
+			terminal = LOG;
+			Mode::current = shared_from_this();
+			});
+	} else if (terminal == LOG6) {
+		add_text(&log6_1);
+		add_text(&lines);
+		add_text(&log6_2);
+		add_text(&log6_3);
+		add_choice(&back, [this](MenuMode::Item const&) {
+			terminal = LOG;
+			Mode::current = shared_from_this();
+			});
+	} else if (terminal == LOG7) {
+		add_text(&log7_1);
+		add_text(&lines);
+		add_text(&log7_2);
+		add_choice(&back, [this](MenuMode::Item const&) {
+			terminal = LOG;
+			Mode::current = shared_from_this();
+			});
+	}
 
 	std::shared_ptr< MenuMode > menu = std::make_shared< MenuMode >(items);
 	menu->atlas = sprites_terminal;

@@ -9,10 +9,12 @@
 struct Sentence {
 	std::string text;
 	float wait_to_print = 1.0f;
+	int drawing_speed = 1;
 
-	Sentence(std::string const text_, float wait_to_print_ = 1.0f) {
+	Sentence(std::string const text_, float wait_to_print_ = 1.0f, int drawing_speed_ = 1.0f) {
 		text = text_;
 		wait_to_print = wait_to_print_;
+		drawing_speed = drawing_speed_;
 	}
 };
 
