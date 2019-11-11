@@ -1,0 +1,4 @@
+control.xcf?Background 0 0 1920 1200 0 0 control_background
+control.xcf?Layer1 0 0 1920 1200 0 0 control_foreground
+control.xcf?Crowbar 1200 590 1360 730 0 0 control_crowbar
+control.xcf?Blood 1380 430 1650 750 0 0 control_blood

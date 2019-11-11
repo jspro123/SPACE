@@ -5,7 +5,8 @@
 
 
 enum itemID {lightSwitch, toolbox, brokenGlass, commanderBody, genericBody, cryoToHallway, playerPod, emptyPod, shipRail,
-			DoorOneToCryo, DoorTwoToControl, DoorThreeToHallwayTwo, DoorThreePanel};
+			DoorOneToCryo, DoorTwoToControl, DoorThreeToHallwayTwo, DoorThreePanel, controlToHallway, controlScreen, 
+			controlBody, controlTerminal, controlControls, crowbar, controlLight};
 enum locationID {Cabin, Hallway1, Control, Hallway2};
 
 struct Interactable {

@@ -28,6 +28,10 @@ Sprite const* hallwayone_door_1 = nullptr;
 Sprite const* hallwayone_door_2 = nullptr;
 Sprite const* hallwayone_door_3 = nullptr;
 Sprite const* hallwayone_door_3_panel = nullptr;
+Sprite const* control_bg = nullptr;
+Sprite const* control_fg = nullptr;
+Sprite const* control_crowbar = nullptr;
+Sprite const* control_blood = nullptr;
 
 Load< SpriteAtlas > sprites(LoadTagDefault, []() -> SpriteAtlas const * {
 	SpriteAtlas const *ret = new SpriteAtlas(data_path("space"));
@@ -51,6 +55,10 @@ Load< SpriteAtlas > sprites(LoadTagDefault, []() -> SpriteAtlas const * {
 	hallwayone_door_2 = &ret->lookup("hallway_control");
 	hallwayone_door_3 = &ret->lookup("hallway_hallway");
 	hallwayone_door_3_panel = &ret->lookup("hallway_panel");
+	control_bg = &ret->lookup("control_background");
+	control_fg = &ret->lookup("control_foreground");
+	control_crowbar = &ret->lookup("control_crowbar");
+	control_blood = &ret->lookup("control_blood");
 	return ret;
 });
 
@@ -280,6 +288,11 @@ void StoryMode::draw(glm::uvec2 const &drawable_size) {
 			draw.draw(*hallwayone_door_2, ul);
 			draw.draw(*hallwayone_door_3, ul);
 			draw.draw(*hallwayone_door_3_panel, ul);
+		} else if (location == Control) {
+			draw.draw(*control_bg, ul);
+			draw.draw(*control_fg, ul);
+			draw.draw(*control_crowbar, ul); //Only if haven't picked up yet
+			draw.draw(*control_blood, ul);
 		}
 		if (inventory_visible || message_box_visible) {
 			draw.draw(*demo_text_area, ul);
