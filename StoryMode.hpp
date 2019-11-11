@@ -1,6 +1,7 @@
 #include "Mode.hpp"
 #include "Sound.hpp"
-#include "Interactable.hpp"
+#include "CabinRoom.hpp"
+#include "HallwayOne.hpp"
 
 struct StoryMode : Mode {
 	StoryMode();
@@ -12,15 +13,12 @@ struct StoryMode : Mode {
 	void check_mouse(bool left_click, bool right_click);
 	bool in_box(glm::vec2 pos_cur, glm::vec2 pos_min, glm::vec2 pos_max);
 
+	locationID location = Cabin;
 	Inventory inventory;
-	Interactable Broken_Glass = Interactable(brokenGlass, "A piece of sharp glass", true, "It's sharp.");
-	Interactable Light_switch = Interactable(lightSwitch, "Light switch", false, "Turns on the light");
-	Interactable Tool_box = Interactable(toolbox, "Toolbox", false, "Stores things.");
-	Interactable Commander_body = Interactable(commanderBody, "The Commander", false, "Commander...");
-	Interactable Generic_body = Interactable(genericBody, "A crew member", false, "Dead...");
-	Interactable Cabin_door = Interactable(cryoDoor, "A door.", false, "This leads to the hallway.");
+	//See descriptions in the story section
+	CabinRoom cabin_room = CabinRoom();
+	HallwayOne hallwayone = HallwayOne();
 
-	std::vector<Interactable> cryo_interactables;
 	std::vector<std::string> message_box;
 
 	glm::vec2 textbox_left = glm::vec2(150, 800);
@@ -34,18 +32,12 @@ struct StoryMode : Mode {
 
 	//called to create menu for current scene:
 	void enter_scene();
+	void check_story();
 
 	//------ story state -------
-	enum {
-		Cabin
-	} location = Cabin;
 
 	// Cabin Interactables
 	// light
-	struct {
-		bool light_on = false;
-		bool tool_open = false;
-	} cryo_room;
 	
 	glm::vec2 view_min = glm::vec2(0,0);
 	glm::vec2 view_max = glm::vec2(1920, 1200);
@@ -54,5 +46,8 @@ struct StoryMode : Mode {
 	bool hint_visible = false;
 	bool inventory_visible = false;
 
+	float shake_constant = 0.1f;
+	bool shake_left = false;
+	float shake_time = shake_constant;
 	std::shared_ptr< Sound::PlayingSample > background_music;
 };

@@ -156,6 +156,8 @@ if $(OS) = NT { #Windows
 GAME_NAMES =
 	Interactable
 	demo_menu
+	CabinRoom
+	HallwayOne
 	Sound
 	load_wav
 	load_opus

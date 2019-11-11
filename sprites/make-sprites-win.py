@@ -5,7 +5,6 @@
 name = "the-planet"
 name2 = "screen"
 name3 = "trade-font"
-name4 = "hallway"
 gimp = "C:\\Program Files\\GIMP 2\\bin\\gimp-console-2.10.exe"
 
 import subprocess
@@ -45,13 +44,6 @@ subprocess.run([
 	"--gimp", gimp
 ], check=True)
 
-subprocess.run([
-	"python",
-	"extract-sprites.py",
-	name4 + ".list",
-	name,
-	"--gimp", gimp
-], check=True)
 
 pngs = []
 for root, dirs, files in os.walk(name):

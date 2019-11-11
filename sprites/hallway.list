@@ -1,5 +1,5 @@
-hallway.xcf?Background 0 0 1920 1200 0 0 hallway-background
-hallway.xcf?Door1 228 292 506 1065 0 0 hallway-cryo
-hallway.xcf?Door2 865 289 1142 1062 0 0 hallway-control
-hallway.xcf?Door3 1497 287 1773 1060 0 0 hallway-hallway
-hallway.xcf?ControlPanel 1800 560 1907 655 0 0 hallway-panel
+hallway.xcf?Background 0 0 1920 1200 0 0 hallway_background
+hallway.xcf?Door1 228 292 506 1065 0 0 hallway_cryo
+hallway.xcf?Door2 865 289 1142 1062 0 0 hallway_control
+hallway.xcf?Door3 1497 287 1773 1060 0 0 hallway_hallway
+hallway.xcf?ControlPanel 1800 560 1907 655 0 0 hallway_panel

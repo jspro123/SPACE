@@ -23,6 +23,11 @@ Sprite const *sprite_light_cabin = nullptr;
 Sprite const *sprite_dark_cabin = nullptr;
 Sprite const *sprite_dark_glass = nullptr;
 Sprite const *sprite_msg_bg = nullptr;
+Sprite const* hallwayone_bg = nullptr;
+Sprite const* hallwayone_door_1 = nullptr;
+Sprite const* hallwayone_door_2 = nullptr;
+Sprite const* hallwayone_door_3 = nullptr;
+Sprite const* hallwayone_door_3_panel = nullptr;
 
 Load< SpriteAtlas > sprites(LoadTagDefault, []() -> SpriteAtlas const * {
 	SpriteAtlas const *ret = new SpriteAtlas(data_path("space"));
@@ -41,6 +46,11 @@ Load< SpriteAtlas > sprites(LoadTagDefault, []() -> SpriteAtlas const * {
 	sprite_light_cabin = &ret->lookup("light_cabin");
 	sprite_dark_cabin = &ret->lookup("dark_cabin");
 	sprite_dark_glass = &ret->lookup("dark_glass");
+	hallwayone_bg = &ret->lookup("hallway_background");
+	hallwayone_door_1 = &ret->lookup("hallway_cryo");
+	hallwayone_door_2 = &ret->lookup("hallway_control");
+	hallwayone_door_3 = &ret->lookup("hallway_hallway");
+	hallwayone_door_3_panel = &ret->lookup("hallway_panel");
 	return ret;
 });
 
@@ -65,25 +75,6 @@ Load< Sound::Sample > music_correct(LoadTagDefault, []() -> Sound::Sample *{
 
 StoryMode::StoryMode() {
 
-	Light_switch.position_min = glm::vec2(1655, 585);
-	Light_switch.position_max = glm::vec2(1690, 700);
-	Tool_box.position_min = glm::vec2(0, 440);
-	Tool_box.position_max = glm::vec2(200, 645);
-	Broken_Glass.position_min = glm::vec2(700, 820);
-	Broken_Glass.position_max = glm::vec2(760, 940);
-	Commander_body.position_min = glm::vec2(310, 480);
-	Commander_body.position_max = glm::vec2(630, 850);
-	Generic_body.position_min = glm::vec2(850, 300);
-	Generic_body.position_max = glm::vec2(1030, 560);
-	Cabin_door.position_min = glm::vec2(1700, 300);
-	Cabin_door.position_max = glm::vec2(1900, 1140);
-
-	cryo_interactables.push_back(Light_switch);
-	cryo_interactables.push_back(Tool_box);
-	cryo_interactables.push_back(Broken_Glass);
-	cryo_interactables.push_back(Commander_body);
-	cryo_interactables.push_back(Generic_body);
-	cryo_interactables.push_back(Cabin_door);
 }
 
 StoryMode::~StoryMode() {
@@ -154,13 +145,16 @@ bool StoryMode::handle_event(SDL_Event const &evt, glm::uvec2 const &window_size
 }
 
 void StoryMode::update(float elapsed) {
-	// if (Mode::current.get() == this) {
-	// 	//there is no menu displayed! Make one:
-	// 	enter_scene();
-	// }
-	// if (!background_music || background_music->stopped) {
-		// background_music = Sound::play(*music_cold_dunes, 1.0f);
-	// }
+
+
+	shake_time -= elapsed;
+
+	if (shake_time < 0) {
+		shake_time = shake_constant;
+		shake_left = !shake_left;
+	}
+	check_story();
+
 }
 
 bool StoryMode::in_box(glm::vec2 pos_cur, glm::vec2 pos_min, glm::vec2 pos_max) {
@@ -175,61 +169,70 @@ void StoryMode::check_mouse(bool left_click, bool right_click) {
 	//std::cout << "check\n";
 	//std::cout << mouse_pos.x << " " << mouse_pos.y << "\n";
 	//std::cout << left_click << " " << right_click << "\n";
+
+	auto prepare_message_box = [this](std::vector<std::string> to_add) {
+		for (int i = 0; i < to_add.size(); i++) {
+			message_box.push_back(to_add[i]);
+		}
+	};
+
 	bool on_something = false;
 	if (location == Cabin) {
 
-		for (int i = 0; i < cryo_interactables.size(); i++) {
-			glm::vec2 tar_min = cryo_interactables[i].position_min;
-			glm::vec2 tar_max = cryo_interactables[i].position_max;
-			if (cryo_interactables[i].id == brokenGlass || cryo_interactables[i].id == genericBody || cryo_interactables[i].id == commanderBody) {
+		for (int i = 0; i < cabin_room.cryo_interactables.size(); i++) {
+			Interactable current = cabin_room.cryo_interactables[i];
+			glm::vec2 tar_min = current.position_min;
+			glm::vec2 tar_max = current.position_max;
+			if (current.id == brokenGlass || current.id == genericBody || current.id == commanderBody) {
 				tar_min -= floating_animation;
 				tar_max -= floating_animation;
 			}
 			if (in_box(mouse_pos, tar_min, tar_max)) {
 				on_something = true;
 				hint_visible = true;
-				if (left_click) {
-					//No need to write brek; ID's are unique
-					switch (cryo_interactables[i].id) {
+				cabin_room.check_interactions(message_box, left_click, right_click, current.id, inventory, location);
+			}
+		}
 
-						case lightSwitch:
-							cryo_room.light_on ^= 1;
-							break;
-
-						case toolbox:
-							message_box.emplace_back(Tool_box.description);
-							break;
-
-						case commanderBody:
-							message_box.emplace_back(Commander_body.description);
-							break;
-
-						case genericBody:
-							message_box.emplace_back(Generic_body.description);
-							break;
-
-						case brokenGlass:
-							inventory.interactables.push_back(Broken_Glass);
-							message_box.emplace_back("Lemme stash this shit real quick...");
-							cryo_interactables.erase(cryo_interactables.begin() + i);
-							break;
-
-						case cryoDoor:
-							std::cout << "Do something" << std::endl;
-							break;
-							//Go to hallway
-					}
-				} 
+	} else if (location == Hallway1) {
+		for (int i = 0; i < hallwayone.hallwayone_interactables.size(); i++) {
+			Interactable current = hallwayone.hallwayone_interactables[i];
+			glm::vec2 tar_min = current.position_min;
+			glm::vec2 tar_max = current.position_max;
+			if (in_box(mouse_pos, tar_min, tar_max)) {
+				on_something = true;
+				hint_visible = true;
+				hallwayone.check_interactions(message_box, left_click, right_click, current.id, inventory, location);
 			}
 		}
 	}
 
 	if(message_box.size() != 0) message_box_visible = true;
-	if (!on_something) hint_visible = false;
+	if (!on_something || message_box_visible || inventory_visible) hint_visible = false;
+}
+
+
+void StoryMode::check_story() {
+
+	switch (location) {
+		
+		case Cabin:
+			cabin_room.check_story(message_box);
+			break;
+
+		case Hallway1:
+			hallwayone.check_story(message_box);
+			break;
+	
+	}
+
+	if (message_box.size() != 0) message_box_visible = true;
+
 }
 
 void StoryMode::enter_scene() {
 	//just entered this scene, adjust flags and build menu as appropriate:
+	/*
 	std::vector< MenuMode::Item > items;
 	glm::vec2 at(3.0f, view_max.y - 13.0f);
 
@@ -240,9 +243,11 @@ void StoryMode::enter_scene() {
 	menu->view_max = view_max;
 	menu->background = shared_from_this();
 	Mode::current = menu;
+	*/
 }
 
 void StoryMode::draw(glm::uvec2 const &drawable_size) {
+
 	//clear the color buffer:
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
@@ -258,14 +263,23 @@ void StoryMode::draw(glm::uvec2 const &drawable_size) {
 		glm::vec2 ul = glm::vec2(view_min.x, view_max.y);
 
 		draw.draw(*demo_background, ul);
-		if (cryo_room.light_on) {
-			draw.draw(*sprite_light_cabin, ul);
-			draw.draw(*sprite_light_body1, ul + floating_animation);
-			draw.draw(*sprite_light_body2, ul + floating_animation);
-			draw.draw(*sprite_light_upper_glass, ul + floating_animation);
-		} else {
-			draw.draw(*sprite_dark_cabin, ul);
-			draw.draw(*sprite_dark_glass, ul);
+		if (location == Cabin) {
+			if (cabin_room.cabin_state.light_on) {
+				draw.draw(*sprite_light_cabin, ul);
+				draw.draw(*sprite_light_body1, ul + floating_animation);
+				draw.draw(*sprite_light_body2, ul + floating_animation);
+				draw.draw(*sprite_light_upper_glass, ul + floating_animation);
+			}
+			else {
+				draw.draw(*sprite_dark_cabin, ul);
+				draw.draw(*sprite_dark_glass, ul);
+			}
+		} else if (location == Hallway1) {
+			draw.draw(*hallwayone_bg, ul);
+			draw.draw(*hallwayone_door_1, ul);
+			draw.draw(*hallwayone_door_2, ul);
+			draw.draw(*hallwayone_door_3, ul);
+			draw.draw(*hallwayone_door_3_panel, ul);
 		}
 		if (inventory_visible || message_box_visible) {
 			draw.draw(*demo_text_area, ul);
@@ -307,8 +321,8 @@ void StoryMode::draw(glm::uvec2 const &drawable_size) {
 		floating_interval --;
 
 		if (hint_visible) {
-			float good_x = mouse_pos.x - (view_max.x / 2);
-			float good_y = ((view_max.y / 2) - mouse_pos.y) + view_max.y;
+			float good_x = (mouse_pos.x + 25) - (view_max.x / 2);
+			float good_y = ((view_max.y / 2) - mouse_pos.y) + view_max.y - 25;
 			draw.draw(*sprite_msg_bg, glm::vec2(good_x, good_y));
 			draw.draw(*sprite_msg_bg, glm::vec2(good_x, good_y));
 		}
@@ -325,10 +339,12 @@ void StoryMode::draw(glm::uvec2 const &drawable_size) {
 		at.x += 20;
 		at.y = view_max.y - textbox_left.y - 50;
 
-
 		if (message_box_visible){
-			draw_text.draw_text_short(message_box[0], at, 3.0f, glm::u8vec4(0xff, 0xff, 0xff, 0xff));
-			at.y -= 35;
+			//Hacky way of using the auto-wrap code without creating a Sentence object
+			//for each message I want to print
+			int current_chr = -1; 
+			std::unordered_map <size_t, int> fit_list;
+			draw_text.draw_text(message_box[0], at, FONT_SIZE, glm::u8vec4(0xff, 0xff, 0xff, 0xff), current_chr, 1, fit_list, textbox_left.x + 20, textbox_right.x - 20);
 		} else if (inventory_visible) {
 			inventory.update_inventory();
 			for (int i = 0; i < inventory.to_output.size(); i++) {

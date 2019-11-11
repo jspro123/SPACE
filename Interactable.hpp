@@ -1,9 +1,12 @@
+#pragma once
 #include <string>
 #include <vector>
 #include "Sprite.hpp"
 
 
-enum itemID {lightSwitch, toolbox, brokenGlass, commanderBody, genericBody, cryoDoor};
+enum itemID {lightSwitch, toolbox, brokenGlass, commanderBody, genericBody, cryoToHallway, playerPod, emptyPod, shipRail,
+			DoorOneToCryo, DoorTwoToControl, DoorThreeToHallwayTwo, DoorThreePanel};
+enum locationID {Cabin, Hallway1, Control, Hallway2};
 
 struct Interactable {
 
@@ -11,14 +14,12 @@ struct Interactable {
 	glm::vec2 position_min;
 	glm::vec2 position_max;
 	std::string name; 
-	std::vector<std::string> descriptions;
-	int current_description = 0;
 	bool carryable = false;
 	bool in_inventory = false; 
 
 	std::vector<std::string> interacts_with;
 	std::string default_message = "Failure.";
-	std::string description;
+	std::string description; //Inventory
 
 
 	Interactable(itemID id_, std::string name_, bool carryable_, std::string description_) {
