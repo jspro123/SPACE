@@ -179,7 +179,13 @@ void StoryMode::check_mouse(bool left_click, bool right_click) {
 	if (location == Cabin) {
 
 		for (int i = 0; i < cryo_interactables.size(); i++) {
-			if (in_box(mouse_pos, cryo_interactables[i].position_min, cryo_interactables[i].position_max)) {
+			glm::vec2 tar_min = cryo_interactables[i].position_min;
+			glm::vec2 tar_max = cryo_interactables[i].position_max;
+			if (cryo_interactables[i].id == brokenGlass || cryo_interactables[i].id == genericBody || cryo_interactables[i].id == commanderBody) {
+				tar_min -= floating_animation;
+				tar_max -= floating_animation;
+			}
+			if (in_box(mouse_pos, tar_min, tar_max)) {
 				on_something = true;
 				hint_visible = true;
 				if (left_click) {
@@ -254,9 +260,9 @@ void StoryMode::draw(glm::uvec2 const &drawable_size) {
 		draw.draw(*demo_background, ul);
 		if (cryo_room.light_on) {
 			draw.draw(*sprite_light_cabin, ul);
-			draw.draw(*sprite_light_body1, ul);
-			draw.draw(*sprite_light_body2, ul);
-			draw.draw(*sprite_light_upper_glass, ul);
+			draw.draw(*sprite_light_body1, ul + floating_animation);
+			draw.draw(*sprite_light_body2, ul + floating_animation);
+			draw.draw(*sprite_light_upper_glass, ul + floating_animation);
 		} else {
 			draw.draw(*sprite_dark_cabin, ul);
 			draw.draw(*sprite_dark_glass, ul);
@@ -277,6 +283,28 @@ void StoryMode::draw(glm::uvec2 const &drawable_size) {
 		// 		message_box_visible = 200;
 		// 	}
 		// }
+
+
+		// animation
+		if (floating_interval == 0) {
+			if (floating_dir == false) {
+				if (floating_animation.y > -10) {
+					floating_animation.y --;
+				} else {
+					floating_dir = true;
+				}
+			} else {
+				if (floating_animation.y < 10) {
+					floating_animation.y ++;
+				} else {
+					floating_dir = false;
+				}
+			}
+			floating_interval = 10;
+			// call check mouse even if we don't move mouse
+			check_mouse(false, false);
+		}
+		floating_interval --;
 
 		if (hint_visible) {
 			float good_x = mouse_pos.x - (view_max.x / 2);

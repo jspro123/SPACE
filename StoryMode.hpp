@@ -28,6 +28,9 @@ struct StoryMode : Mode {
 	glm::vec2 raw_mouse_pos = glm::vec2(0, 0);
 	glm::vec2 mouse_pos = glm::vec2(0, 0);
 	glm::vec2 msg_pos = glm::vec2(0, 0);
+	glm::vec2 floating_animation = glm::vec2(0, -1);
+	int floating_interval = 10;
+	bool floating_dir = false; //false - up, true - down
 
 	//called to create menu for current scene:
 	void enter_scene();
