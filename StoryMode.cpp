@@ -100,6 +100,7 @@ bool StoryMode::handle_event(SDL_Event const &evt, glm::uvec2 const &window_size
 	bool left_click = false; bool right_click = false;
 	if (evt.type == SDL_KEYDOWN) {
 		if (evt.key.keysym.sym == SDLK_i) {
+			if (inventory_visible) inventory_status = ShowItem;
 			inventory_visible = !inventory_visible;
 			inventory.update_inventory();
 		} else {
@@ -168,7 +169,7 @@ bool StoryMode::handle_event(SDL_Event const &evt, glm::uvec2 const &window_size
 		else if (evt.button.button == SDL_BUTTON_LEFT) {
 			left_click = true;
 		}
-		if (message_box_visible || inventory_visible) { left_click = false; right_click = false; }
+		if (message_box_visible || (inventory_visible && inventory_status != UseItem)) { left_click = false; right_click = false; }
 		if (message_box_visible) {
 			message_box.erase(message_box.begin());
 			if (message_box.size() == 0) {
@@ -179,6 +180,49 @@ bool StoryMode::handle_event(SDL_Event const &evt, glm::uvec2 const &window_size
 
 	check_mouse(left_click, right_click);
 	return false;
+}
+
+
+void StoryMode::check_usage(itemID use, itemID on, bool click) {
+	if (!click) return;
+
+	if (use == brokenGlass && on == commanderBody && !control_room.control_state.accessed_terminal) {
+		message_box.push_back("Why the fuck would I do that? ");
+	}
+	else if (use == brokenGlass && on == commanderBody && control_room.control_state.accessed_terminal) {
+		message_box.push_back(". . . I'm sorry, commander. ");
+		//Cutting up noises
+		inventory.interactables.push_back(cabin_room.Commander_finger);
+		cabin_room.cabin_state.took_finger = true;
+	}
+	else if (use == brokenGlass && on == commanderBody && cabin_room.cabin_state.took_finger) {
+		message_box.push_back("No. . . I'm not doing that again. ");
+		//Cutting up noises
+	}
+	else if (use == commanderFinger && on == controlTerminal) {
+		control_room.control_state.commander_bio = true;
+		message_box.push_back("Okay, I should be able to unlock the door now. ");
+	} 
+	else if (use == brokenGlass && on == controlBody && !control_room.control_state.accessed_terminal) {
+		message_box.push_back("No. . . it isn't right. Even after what he did. ");
+	}
+	else if (use == brokenGlass && on == controlBody && control_room.control_state.accessed_terminal) {
+		message_box.push_back(". . . ");
+		//Cutting up noises
+		inventory.interactables.push_back(control_room.Killer_finger);
+		control_room.control_state.took_finger = true;
+	}
+	else if (use == brokenGlass && on == controlBody && control_room.control_state.took_finger) {
+		message_box.push_back("No. . . I'm not doing that again. ");
+		//Cutting up noises
+	}
+	else if (use == crowbar && on == toolbox) {
+		message_box.push_back("This should work. . . but not right now! ");
+		//For the sequel
+	}
+	else {
+		message_box.push_back("That didn't work. ");
+	}
 }
 
 void StoryMode::update(float elapsed) {
@@ -227,7 +271,11 @@ void StoryMode::check_mouse(bool left_click, bool right_click) {
 			if (in_box(mouse_pos, tar_min, tar_max)) {
 				on_something = true;
 				hint_visible = true;
-				cabin_room.check_interactions(message_box, left_click, right_click, current.id, inventory, location);
+				if (inventory_status == UseItem) {
+					check_usage(inventory.interactables[item_selected_ID].id, current.id, left_click || right_click);
+				} else {
+					cabin_room.check_interactions(message_box, left_click, right_click, current.id, inventory, location);
+				}
 			}
 		}
 
@@ -239,7 +287,12 @@ void StoryMode::check_mouse(bool left_click, bool right_click) {
 			if (in_box(mouse_pos, tar_min, tar_max)) {
 				on_something = true;
 				hint_visible = true;
-				hallwayone.check_interactions(message_box, left_click, right_click, current.id, inventory, location);
+				if (inventory_status == UseItem) {
+					check_usage(inventory.interactables[item_selected_ID].id, current.id, left_click || right_click);
+				}
+				else {
+					hallwayone.check_interactions(message_box, left_click, right_click, current.id, inventory, location);
+				}
 			}
 		}
 	} else if (location == Control) {
@@ -251,7 +304,12 @@ void StoryMode::check_mouse(bool left_click, bool right_click) {
 			if (in_box(mouse_pos, tar_min, tar_max)) {
 				on_something = true;
 				hint_visible = true;
-				activate_terminal = control_room.check_interactions(message_box, left_click, right_click, current.id, inventory, location);
+				if (inventory_status == UseItem) {
+					check_usage(inventory.interactables[item_selected_ID].id, current.id, left_click || right_click);
+				}
+				else {
+					activate_terminal = control_room.check_interactions(message_box, left_click, right_click, current.id, inventory, location);
+				}
 				if (activate_terminal) {
 					std::shared_ptr< TerminalMode > terminal = std::make_shared< TerminalMode >();
 					terminal->shared_from = shared_from_this();
@@ -342,7 +400,9 @@ void StoryMode::draw(glm::uvec2 const &drawable_size) {
 		} else if (location == Control) {
 			draw.draw(*control_bg, ul);
 			draw.draw(*control_fg, ul);
-			draw.draw(*control_crowbar, ul); //Only if haven't picked up yet
+			if (!control_room.control_state.picked_up_crowbar) {
+				draw.draw(*control_crowbar, ul); //Only if haven't picked up yet
+			}
 			draw.draw(*control_blood, ul);
 		}
 		if (inventory_visible || message_box_visible) {

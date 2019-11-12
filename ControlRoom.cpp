@@ -57,7 +57,7 @@ ControlRoom::ControlRoom() {
 	Body_descr1.push_back(Body_descr1_3);
 	Body_descr2.push_back(Body_descr2_1);
 	Body_use_descr1.push_back(Body_use_descr1_1);
-
+	Body_use_descr2.push_back(Body_use_descr2_1);
 
 	control_interactables.push_back(Light);
 	control_interactables.push_back(Crowbar);
@@ -157,12 +157,21 @@ bool ControlRoom::check_interactions(std::vector<std::string>& message_box, bool
 
 			case controlTerminal:
 				if (control_state.used_key_card) {
+					control_state.accessed_terminal = true;
 					return true;
+				} else {
+					prepare_message_box(Terminal_use_descr1);
 				}
 				break;
 
 			case controlBody:
-				prepare_message_box(Body_use_descr1);
+				if (control_state.interact_body_descr == 1) {
+					prepare_message_box(Body_use_descr1);
+					inventory.interactables.push_back(Key_card);
+				} else {
+					prepare_message_box(Body_use_descr2);
+				}
+
 				break;
 
 			case controlControls:

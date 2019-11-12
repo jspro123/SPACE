@@ -33,6 +33,7 @@ struct StoryMode : Mode {
 	bool floating_dir = false; //false - up, true - down
 
 	//called to create menu for current scene:
+	void check_usage(itemID use, itemID on, bool click);
 	void enter_scene();
 	void check_story();
 

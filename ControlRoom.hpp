@@ -13,6 +13,8 @@ struct ControlRoom {
 	Interactable Terminal = Interactable(controlTerminal, "A terminal", false, " . ");
 	Interactable Body = Interactable(controlBody, "A body", false, " . ");
 	Interactable Controls = Interactable(controlControls, "Controls", false, " . ");
+	Interactable Killer_finger = Interactable(commanderFinger, "A finger. ", true, "It looks a bit off.");
+	Interactable Key_card = Interactable(keyCard, "A key-card. ", true, "I can use this to access the terminal.");
 
 	std::vector<Interactable> control_interactables;
 
@@ -27,17 +29,19 @@ struct ControlRoom {
 	struct {
 
 		bool intro_text = false;
-		bool used_key_card = true;
+		bool used_key_card = false;
 		bool commander_bio = false;
 		bool diary_bio = false;
 		bool picked_up_crowbar = false;
+		bool accessed_terminal = false;
+		bool took_finger = false;
 
 		int crowbar_descr = 1;
 		int screen_descr = 1;
 		int controls_descr = 1;
 		int terminal_descr = 1;
 		int body_descr = 1;
-
+		int interact_body_descr = 1;
 
 	} control_state;
 	
@@ -73,7 +77,7 @@ struct ControlRoom {
 	std::string Screen_descr1_1 = "The navigation screen. It's covered in blood. "; 
 	std::string Screen_descr1_2 = ". . .  ";
 	std::string Screen_descr1_3 = "Looks like some debris smashed into the left side of the ship. Made his head smash against the screen. ";
-	std::string Screen_descr1_4 = ". . . where were you taking us, I wonder. ";
+	std::string Screen_descr1_4 = ". . . where were you going? ";
 	std::string Screen_descr2_1 = "The navigation screen. It's covered in blood. ";
 	std::string Screen_use_descr1_1 = "It's just a screen. Not sure how I'd use it. ";
 
@@ -97,10 +101,11 @@ struct ControlRoom {
 	std::vector<std::string> Body_descr1;
 	std::vector<std::string> Body_descr2;
 	std::vector<std::string> Body_use_descr1;
-	std::string Body_descr1_1 = "Why didn't you kill me?";
+	std::vector<std::string> Body_use_descr2;
+	std::string Body_descr1_1 = "(spits)";
 	std::string Body_descr1_2 = ". . . ";
-	std::string Body_descr1_3 = "(spits)";
+	std::string Body_descr1_3 = "Why didn't you kill me?";
 	std::string Body_descr2_1 = ". . . ";
-	std::string Body_use_descr1_1 = "No. ";
-
+	std::string Body_use_descr1_1 = "He's holding something. . . looks like a terminal key-card. I should take it with me. ";
+	std::string Body_use_descr2_1 = ". . . nothing else here. ";
 };

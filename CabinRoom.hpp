@@ -17,6 +17,8 @@ struct CabinRoom {
 	Interactable Protag_pod = Interactable(playerPod, "My pod", false, "I woke up here.");
 	Interactable Empty_pod = Interactable(emptyPod, "Not my pod", false, "I woke up here.");
 	Interactable Ship_rail = Interactable(shipRail, "A rail. ", false, "We use these to get around.");
+	Interactable Commander_finger = Interactable(commanderFinger, "The Commander's finger. ", true, "It's dripping.");
+
 	std::vector<Interactable> cryo_interactables;
 
 	//called to create menu for current scene:
@@ -35,6 +37,7 @@ struct CabinRoom {
 		bool light_on_text = false;
 		bool tool_open = false;
 		bool tool_open_text = false;
+		bool took_finger = false;
 
 		int broken_glass_descr = 1;
 		int commander_descr = 1;

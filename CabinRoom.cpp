@@ -48,7 +48,6 @@ CabinRoom::CabinRoom() {
 	cryo_interactables.push_back(Cabin_door);
 	cryo_interactables.push_back(Protag_pod);
 
-
 	Broken_glass_descr1.push_back(Broken_glass_descr1_1);
 	Broken_glass_descr1.push_back(Broken_glass_descr1_2);
 	Broken_glass_descr1.push_back(Broken_glass_descr1_3);
