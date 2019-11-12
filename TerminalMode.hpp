@@ -114,6 +114,7 @@ struct TerminalMode : Mode {
 	/* ================== MISSION LOGS ================== */
 
 	Sentence const back = Sentence("BACK", 0.75f, 1);
+	Sentence const log_access = Sentence("FAILURE. AUTHOR BIOMETRICS REQUIRED.", 0.75, 1);
 	Sentence const log1_1 = Sentence("02/03/2034", 0.1f, 1);
 	Sentence const log1_2 = Sentence(s_log1_2, 0.75f, 1);
 	Sentence const log1_3 = Sentence(s_log1_3, 0.75f, 1);
@@ -163,6 +164,8 @@ struct TerminalMode : Mode {
 
 	enum t_state {DIAG, LOG, EXIT, DISENG, ENG, MENU, LOG1, LOG2, LOG3, LOG4, LOG5, LOG6, LOG7} terminal = MENU;
 	bool displayed_boot = false;
+	bool log_permission = false;
+	bool door_permission = false;
 
 	glm::vec2 view_min = glm::vec2(0,0);
 	glm::vec2 view_max = glm::vec2(1920, 1080);
@@ -170,6 +173,7 @@ struct TerminalMode : Mode {
 	glm::vec2 screen_right = glm::vec2(1730, 960);
 
 	std::queue<std::pair<Sentence, int>> terminal_display;
+	std::shared_ptr< Mode > shared_from;
 
 	//------ background music -------
 	std::shared_ptr< Sound::PlayingSample > background_music;

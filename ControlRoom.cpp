@@ -24,10 +24,52 @@ ControlRoom::ControlRoom() {
 	Controls.position_min = glm::vec2(435, 795);
 	Controls.position_max = glm::vec2(920, 900);
 
+	Light_descr1.push_back(Light_descr1_1);
+	Light_use_descr1.push_back(Light_use_descr1_1);
+
+	Crowbar_descr1.push_back(Crowbar_descr1_1);
+	Crowbar_descr1.push_back(Crowbar_descr1_2);
+	Crowbar_descr2.push_back(Crowbar_descr2_1);
+	Crowbar_use_descr1.push_back(Crowbar_use_descr1_1);
+
+	Door_descr1.push_back(Door_descr1_1);
+
+	Screen_descr1.push_back(Screen_descr1_1);
+	Screen_descr1.push_back(Screen_descr1_2);
+	Screen_descr1.push_back(Screen_descr1_3);
+	Screen_descr1.push_back(Screen_descr1_4);
+	Screen_descr2.push_back(Screen_descr2_1);
+	Screen_use_descr1.push_back(Screen_use_descr1_1);
+
+	Controls_descr1.push_back(Controls_descr1_1);
+	Controls_descr1.push_back(Controls_descr1_2);
+	Controls_descr1.push_back(Controls_descr1_3);
+	Controls_descr2.push_back(Controls_descr2_1);
+	Controls_use_descr1.push_back(Controls_use_descr1_1);
+
+	Terminal_descr1.push_back(Terminal_descr1_1);
+	Terminal_descr1.push_back(Terminal_descr1_2);
+	Terminal_descr2.push_back(Terminal_descr2_1);
+	Terminal_use_descr1.push_back(Terminal_use_descr1_1);
+
+	Body_descr1.push_back(Body_descr1_1);
+	Body_descr1.push_back(Body_descr1_2);
+	Body_descr1.push_back(Body_descr1_3);
+	Body_descr2.push_back(Body_descr2_1);
+	Body_use_descr1.push_back(Body_use_descr1_1);
+
+
+	control_interactables.push_back(Light);
+	control_interactables.push_back(Crowbar);
+	control_interactables.push_back(Door);
+	control_interactables.push_back(Screen);
+	control_interactables.push_back(Controls);
+	control_interactables.push_back(Body);
+	control_interactables.push_back(Terminal);
 }
 
 
-void ControlRoom::check_interactions(std::vector<std::string>& message_box, bool left_click, bool right_click,
+bool ControlRoom::check_interactions(std::vector<std::string>& message_box, bool left_click, bool right_click,
 	itemID item, Inventory& inventory, locationID& location) {
 
 	auto prepare_message_box = [this, &message_box](std::vector<std::string> to_add) {
@@ -46,150 +88,98 @@ void ControlRoom::check_interactions(std::vector<std::string>& message_box, bool
 	if (left_click) {
 
 		switch (item) {
-			case lightSwitch:
-				if (!cabin_state.light_on) { message_box.push_back(cryo_dark_lights); }
-				else if (cabin_state.light_switch_descr == 1) { prepare_message_box(Light_switch_descr1); }
+			case controlLight:
+				prepare_message_box(Light_descr1);
 				break;
 
-			case toolbox:
-				if (!cabin_state.light_on) { message_box.push_back(cryo_dark_object); }
-				else if (cabin_state.tool_box_descr == 1) {
-					prepare_message_box(Tool_box_descr1);
-					cabin_state.tool_box_descr += 1;
-				}
-				else { prepare_message_box(Tool_box_descr2); }
+			case crowbar:
+				if (control_state.crowbar_descr == 1) {
+					prepare_message_box(Crowbar_descr1);
+					control_state.crowbar_descr += 1;
+				} else { prepare_message_box(Crowbar_descr2); }
 				break;
 
-			case commanderBody:
-				if (!cabin_state.light_on) { message_box.push_back(cryo_dark_float); }
-				else if (cabin_state.commander_descr == 1) { prepare_message_box(Commander_body_descr1); }
+			case controlToHallway:
+				prepare_message_box(Door_descr1); 
 				break;
 
-			case genericBody:
-				if (!cabin_state.light_on) {}
-				else if (cabin_state.commander_descr == 1) { prepare_message_box(Generic_body_descr1); }
+			case controlScreen:
+				if (control_state.screen_descr == 1) {
+					prepare_message_box(Screen_descr1);
+					control_state.screen_descr += 1;
+				} else { prepare_message_box(Screen_descr2); }
 				break;
 
-			case brokenGlass:
-				if (!cabin_state.light_on) { message_box.push_back(cryo_dark_float); }
-				else if (cabin_state.broken_glass_descr == 1) {
-					prepare_message_box(Broken_glass_descr1);
-					cabin_state.broken_glass_descr += 1;
-				}
-				else { prepare_message_box(Broken_glass_descr2); }
+			case controlTerminal:
+				if (control_state.terminal_descr == 1) {
+					prepare_message_box(Terminal_descr1);
+					control_state.terminal_descr += 1;
+				} else { prepare_message_box(Terminal_descr2); }
 				break;
 
-			case cryoToHallway:
-				if (!cabin_state.light_on) { message_box.push_back(cryo_dark_leave); }
-				else if (cabin_state.cabin_door_descr == 1) { prepare_message_box(Cabin_door_descr1); }
+			case controlBody:
+				if (control_state.body_descr == 1) {
+					prepare_message_box(Body_descr1);
+					control_state.body_descr += 1;
+				} else { prepare_message_box(Body_descr2); }
 				break;
 
-			case playerPod:
-				if (!cabin_state.light_on) { message_box.push_back(cryo_dark_self); }
-				else if (cabin_state.protag_pod_descr == 1) { prepare_message_box(Protag_pod_descr1); }
-				break;
-
-			case emptyPod:
-				if (!cabin_state.light_on) {}
-				else if (cabin_state.empty_pod_descr == 1) {
-					prepare_message_box(Empty_pod_descr1);
-					cabin_state.empty_pod_descr += 1;
-				}
-				else { prepare_message_box(Empty_pod_descr2); }
-				break;
-
-			case shipRail:
-				if (!cabin_state.light_on) {}
-				else if (cabin_state.ship_rail_descr == 1) { prepare_message_box(Ship_rail_descr1); }
+			case controlControls:
+				if (control_state.controls_descr == 1) {
+					prepare_message_box(Controls_descr1);
+					control_state.controls_descr += 1;
+				} else { prepare_message_box(Controls_descr2); }
 				break;
 		}
 
 	} else if (right_click) {
 
 		switch (item) {
-			case lightSwitch:
-				if (!cabin_state.light_on) { cabin_state.light_on = true; }
-				else { prepare_message_box(Light_switch_use_descr1); }
+			case controlLight:
+				prepare_message_box(Light_use_descr1);
 				break;
 
-			case toolbox:
-				if (!cabin_state.light_on) { message_box.push_back(cryo_dark_use_fail); }
-				else { prepare_message_box(Tool_box_use_descr1); }
+			case crowbar:
+				if (!control_state.picked_up_crowbar) {
+					control_state.picked_up_crowbar = true;
+					prepare_message_box(Crowbar_use_descr1);
+					inventory.interactables.push_back(Crowbar);
+				}
 				break;
 
-			case commanderBody:
-				if (!cabin_state.light_on) { message_box.push_back(cryo_dark_use_fail); }
-				else { prepare_message_box(Commander_body_use_descr1); }
+			case controlToHallway:
+				location = Hallway1;
 				break;
 
-			case genericBody:
-				if (!cabin_state.light_on) {}
-				else { prepare_message_box(Generic_body_use_descr1); }
+			case controlScreen:
+				prepare_message_box(Screen_use_descr1);
 				break;
 
-			case brokenGlass:
-				if (!cabin_state.light_on) { message_box.push_back(cryo_dark_use_fail); }
-				else if (!in_inventory()) {
-					inventory.interactables.push_back(Broken_Glass);
-					prepare_message_box(Broken_glass_use_descr1);
-				} else { prepare_message_box(Broken_glass_use_descr2); }
+			case controlTerminal:
+				if (control_state.used_key_card) {
+					return true;
+				}
 				break;
 
-			case cryoToHallway:
-				if (!cabin_state.light_on) { message_box.push_back(cryo_dark_leave); }
-				else { location = Hallway1; }
+			case controlBody:
+				prepare_message_box(Body_use_descr1);
 				break;
 
-			case playerPod:
-				if (!cabin_state.light_on) { message_box.push_back(cryo_dark_use_self); }
-				else { prepare_message_box(Protag_pod_use_descr1); }
-				break;
-
-			case emptyPod:
-				if (!cabin_state.light_on) {}
-				else { prepare_message_box(Empty_pod_use_descr1); }
-				break;
-
-			case shipRail:
-				if (!cabin_state.light_on) {}
-				else{ prepare_message_box(Ship_rail_use_descr1); }
+			case controlControls:
+				prepare_message_box(Controls_use_descr1);
 				break;
 		}
 	}
+
+	return false;
 }
 
 void ControlRoom::check_story(std::vector<std::string>& message_box) {
 
-	if (!cabin_state.intro_text) {
-
-		//Sounds and shit later
-		message_box.push_back(cryo_dark_intro1);
-		message_box.push_back(cryo_dark_intro2);
-		message_box.push_back(cryo_dark_intro3);
-		//More sounds and shit
-		message_box.push_back(cryo_dark_intro4);
-		message_box.push_back(cryo_dark_intro5);
-		message_box.push_back(cryo_dark_intro6);
-		message_box.push_back(cryo_dark_intro7);
-		message_box.push_back(cryo_dark_intro8);
-		message_box.push_back(cryo_dark_intro9);
-		cabin_state.intro_text = true;
-
+	if (!control_state.intro_text) {
+		message_box.push_back(control_intro1);
+		message_box.push_back(control_intro2);
+		control_state.intro_text = true;
 	}
-	else if (cabin_state.light_on && !cabin_state.light_on_text) {
 
-		cryo_interactables.push_back(Empty_pod);
-		cryo_interactables.push_back(Ship_rail);
-		cryo_interactables.push_back(Generic_body);
-		cryo_interactables.push_back(Generic_body2);
-
-		//Scene goes to black
-		message_box.push_back(cryo_light_intro1);
-		//Scene cuts in; corpses and shit
-		message_box.push_back(cryo_light_intro2);
-		message_box.push_back(cryo_light_intro3);
-		message_box.push_back(cryo_light_intro4);
-		cabin_state.light_on_text = true;
-
-	}
 }

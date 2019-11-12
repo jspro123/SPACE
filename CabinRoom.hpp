@@ -147,7 +147,7 @@ struct CabinRoom {
 	std::string Empty_pod_descr1_3 = "Who was sleeping here?";
 	std::string Empty_pod_descr1_4 = ". . . ";
 	std::string Empty_pod_descr1_5 = ". . . the only person not in this room. ";
-	std::string Empty_pod_descr2_1 = "How could you. . .";
+	std::string Empty_pod_descr2_1 = "Why. . .";
 	std::string Empty_pod_use_descr1_1 = "Now's not the time.";
 
 	std::vector<std::string> Ship_rail_descr1;

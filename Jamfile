@@ -158,6 +158,7 @@ GAME_NAMES =
 	demo_menu
 	CabinRoom
 	HallwayOne
+	ControlRoom
 	Sound
 	load_wav
 	load_opus

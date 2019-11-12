@@ -12,18 +12,6 @@
 Sprite const* sprite_left_select_terminalmode = nullptr;
 Sprite const* sprite_right_select_terminalmode = nullptr;
 
-Sprite const* sprite_dunes_bg = nullptr;
-Sprite const* sprite_dunes_traveller = nullptr;
-Sprite const* sprite_dunes_ship = nullptr;
-
-Sprite const* sprite_oasis_bg = nullptr;
-Sprite const* sprite_oasis_traveller = nullptr;
-Sprite const* sprite_oasis_missing = nullptr;
-
-Sprite const* sprite_hill_bg = nullptr;
-Sprite const* sprite_hill_traveller = nullptr;
-Sprite const* sprite_hill_missing = nullptr;
-
 Sprite const* terminal_background = nullptr;
 Sprite const* terminal_screen = nullptr;
 
@@ -43,18 +31,6 @@ Load< SpriteAtlas > sprites_terminal(LoadTagDefault, []() -> SpriteAtlas const* 
 
 	sprite_left_select_terminalmode = &ret->lookup("text-select-left");
 	sprite_right_select_terminalmode = &ret->lookup("text-select-right");
-
-	sprite_dunes_bg = &ret->lookup("dunes-bg");
-	sprite_dunes_traveller = &ret->lookup("dunes-traveller");
-	sprite_dunes_ship = &ret->lookup("dunes-ship");
-
-	sprite_oasis_bg = &ret->lookup("oasis-bg");
-	sprite_oasis_traveller = &ret->lookup("oasis-traveller");
-	sprite_oasis_missing = &ret->lookup("oasis-missing");
-
-	sprite_hill_bg = &ret->lookup("hill-bg");
-	sprite_hill_traveller = &ret->lookup("hill-traveller");
-	sprite_hill_missing = &ret->lookup("hill-missing");
 
 	return ret;
 	});
@@ -170,7 +146,7 @@ void TerminalMode::enter_scene() {
 
 		add_choice(&menu5, [this](MenuMode::Item const&) {
 			terminal = EXIT;
-			Mode::current = shared_from_this();
+			Mode::current = shared_from;
 		});
 	};
 
@@ -195,46 +171,55 @@ void TerminalMode::enter_scene() {
 		add_text(&lines);
 		create_menu();
 	} else if (terminal == LOG) {
-		add_choice(&log1_1, [this](MenuMode::Item const&) {
-			terminal = LOG1;
-			Mode::current = shared_from_this();
-			});
-		add_choice(&log2_1, [this](MenuMode::Item const&) {
-			terminal = LOG2;
-			Mode::current = shared_from_this();
-			});
-		add_choice(&log3_1, [this](MenuMode::Item const&) {
-			terminal = LOG3;
-			Mode::current = shared_from_this();
-			});
-		add_choice(&log4_1, [this](MenuMode::Item const&) {
-			terminal = LOG4;
-			Mode::current = shared_from_this();
-			});
-		add_choice(&log5_1, [this](MenuMode::Item const&) {
-			terminal = LOG5;
-			Mode::current = shared_from_this();
-			});
-		add_choice(&log6_1, [this](MenuMode::Item const&) {
-			terminal = LOG6;
-			Mode::current = shared_from_this();
-			});
-		add_choice(&log7_1, [this](MenuMode::Item const&) {
-			terminal = LOG7;
-			Mode::current = shared_from_this();
-			});
-		add_choice(&back, [this](MenuMode::Item const&) {
-			terminal = MENU;
-			Mode::current = shared_from_this();
-			});
+		if (log_permission) {
+			add_choice(&log1_1, [this](MenuMode::Item const&) {
+				terminal = LOG1;
+				Mode::current = shared_from_this();
+				});
+			add_choice(&log2_1, [this](MenuMode::Item const&) {
+				terminal = LOG2;
+				Mode::current = shared_from_this();
+				});
+			add_choice(&log3_1, [this](MenuMode::Item const&) {
+				terminal = LOG3;
+				Mode::current = shared_from_this();
+				});
+			add_choice(&log4_1, [this](MenuMode::Item const&) {
+				terminal = LOG4;
+				Mode::current = shared_from_this();
+				});
+			add_choice(&log5_1, [this](MenuMode::Item const&) {
+				terminal = LOG5;
+				Mode::current = shared_from_this();
+				});
+			add_choice(&log6_1, [this](MenuMode::Item const&) {
+				terminal = LOG6;
+				Mode::current = shared_from_this();
+				});
+			add_choice(&log7_1, [this](MenuMode::Item const&) {
+				terminal = LOG7;
+				Mode::current = shared_from_this();
+				});
+			add_choice(&back, [this](MenuMode::Item const&) {
+				terminal = MENU;
+				Mode::current = shared_from_this();
+				});
+		} else {
+			add_text(&log_access);
+			add_text(&lines);
+			create_menu();
+		}
 	} else if (terminal == EXIT) {
-		//Return to control room
-		create_menu();
+		//
 	} else if (terminal == DISENG) {
-		add_text(&diseng1);
-		add_text(&diseng2);
-		add_text(&lines);
-		create_menu();
+		if (!door_permission) {
+			add_text(&diseng1);
+			add_text(&diseng2);
+			add_text(&lines);
+			create_menu();
+		} else {
+		
+		}
 	} else if (terminal == LOG1) {
 		add_text(&log1_1);
 		add_text(&lines);

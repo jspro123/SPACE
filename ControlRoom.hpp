@@ -16,7 +16,7 @@ struct ControlRoom {
 
 	std::vector<Interactable> control_interactables;
 
-	void check_interactions(std::vector<std::string>& message_box, bool left_click, bool right_click, itemID item,
+	bool check_interactions(std::vector<std::string>& message_box, bool left_click, bool right_click, itemID item,
 		Inventory& inventory, locationID& location);
 	void check_story(std::vector<std::string>& message_box);
 
@@ -27,26 +27,80 @@ struct ControlRoom {
 	struct {
 
 		bool intro_text = false;
-		bool light_on = false;
-		bool light_on_text = false;
-		bool tool_open = false;
-		bool tool_open_text = false;
+		bool used_key_card = true;
+		bool commander_bio = false;
+		bool diary_bio = false;
+		bool picked_up_crowbar = false;
 
-		int broken_glass_descr = 1;
-		int commander_descr = 1;
+		int crowbar_descr = 1;
+		int screen_descr = 1;
+		int controls_descr = 1;
+		int terminal_descr = 1;
 		int body_descr = 1;
-		int light_switch_descr = 1;
-		int tool_box_descr = 1;
-		int cabin_door_descr = 1;
-		int protag_pod_descr = 1;
-		int empty_pod_descr = 1;
-		int ship_rail_descr = 1;
+
 
 	} control_state;
 	
 
 	/* ============= STORY TEXT ============= */
 
+	/* ============= CONTROL - INTRO ============= */
 
+	std::string control_intro1 = ". . . ";
+	std::string control_intro2 = "Just me left. . . ";
+
+	/* ============= CONTROL ROOM =============*/
+
+	std::vector<std::string> Light_descr1;
+	std::vector<std::string> Light_use_descr1;
+	std::string Light_descr1_1 = "Just a light switch.";
+	std::string Light_use_descr1_1 = "I'd rather not. . . ";
+
+	std::vector<std::string> Crowbar_descr1;
+	std::vector<std::string> Crowbar_descr2;
+	std::vector<std::string> Crowbar_use_descr1;
+	std::string Crowbar_descr1_1 = "A crowbar. It's covered in blood. ";
+	std::string Crowbar_descr1_2 = "So this is what killed. . .";
+	std::string Crowbar_descr2_1 = "A crowbar. It's covered in blood. ";
+	std::string Crowbar_use_descr1_1 = ". . . I should take this with me.";
+
+	std::vector<std::string> Door_descr1;
+	std::string Door_descr1_1 = "This leads back to the hallway.";
+
+	std::vector<std::string> Screen_descr1;
+	std::vector<std::string> Screen_descr2;
+	std::vector<std::string> Screen_use_descr1;
+	std::string Screen_descr1_1 = "The navigation screen. It's covered in blood. "; 
+	std::string Screen_descr1_2 = ". . .  ";
+	std::string Screen_descr1_3 = "Looks like some debris smashed into the left side of the ship. Made his head smash against the screen. ";
+	std::string Screen_descr1_4 = ". . . where were you taking us, I wonder. ";
+	std::string Screen_descr2_1 = "The navigation screen. It's covered in blood. ";
+	std::string Screen_use_descr1_1 = "It's just a screen. Not sure how I'd use it. ";
+
+	std::vector<std::string> Controls_descr1;
+	std::vector<std::string> Controls_descr2;
+	std::vector<std::string> Controls_use_descr1;
+	std::string Controls_descr1_1 = "The ship's controls. The auto-pilot is off. ";
+	std::string Controls_descr1_2 = "Let me see. . . at our current heading, we were going to reach. . . ";
+	std::string Controls_descr1_3 = "What? He tried taking us back? ";
+	std::string Controls_descr2_1 = "The ship's controls. The auto-pilot is off. ";
+	std::string Controls_use_descr1_1 = "With the condition the ship is in, I don't think that'll do anything good. ";
+
+	std::vector<std::string> Terminal_descr1;
+	std::vector<std::string> Terminal_descr2;
+	std::vector<std::string> Terminal_use_descr1;
+	std::string Terminal_descr1_1 = "The ship's computer terminal. Looks like it's still working. ";
+	std::string Terminal_descr1_2 = ". . . 2039. So it's been two years since we started heading back. ";
+	std::string Terminal_descr2_1 = "The ship's computer terminal. Looks like it's still working. ";
+	std::string Terminal_use_descr1_1 = "You need a key-card to access the terminal, and I don't have one. ";
+
+	std::vector<std::string> Body_descr1;
+	std::vector<std::string> Body_descr2;
+	std::vector<std::string> Body_use_descr1;
+	std::string Body_descr1_1 = "Why didn't you kill me?";
+	std::string Body_descr1_2 = ". . . ";
+	std::string Body_descr1_3 = "(spits)";
+	std::string Body_descr2_1 = ". . . ";
+	std::string Body_use_descr1_1 = "No. ";
 
 };

@@ -2,6 +2,7 @@
 #include "Sound.hpp"
 #include "CabinRoom.hpp"
 #include "HallwayOne.hpp"
+#include "ControlRoom.hpp"
 
 struct StoryMode : Mode {
 	StoryMode();
@@ -18,6 +19,7 @@ struct StoryMode : Mode {
 	//See descriptions in the story section
 	CabinRoom cabin_room = CabinRoom();
 	HallwayOne hallwayone = HallwayOne();
+	ControlRoom control_room = ControlRoom();
 
 	std::vector<std::string> message_box;
 

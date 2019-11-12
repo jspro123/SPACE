@@ -1,6 +1,6 @@
 #include "StoryMode.hpp"
-#include "TerminalMode.hpp"
 #include "Sprite.hpp"
+#include "TerminalMode.hpp"
 #include "DrawSprites.hpp"
 #include "Load.hpp"
 #include "data_path.hpp"
@@ -213,6 +213,25 @@ void StoryMode::check_mouse(bool left_click, bool right_click) {
 				hallwayone.check_interactions(message_box, left_click, right_click, current.id, inventory, location);
 			}
 		}
+	} else if (location == Control) {
+		for (int i = 0; i < control_room.control_interactables.size(); i++) {
+			Interactable current = control_room.control_interactables[i];
+			glm::vec2 tar_min = current.position_min;
+			glm::vec2 tar_max = current.position_max;
+			bool activate_terminal = false;
+			if (in_box(mouse_pos, tar_min, tar_max)) {
+				on_something = true;
+				hint_visible = true;
+				activate_terminal = control_room.check_interactions(message_box, left_click, right_click, current.id, inventory, location);
+				if (activate_terminal) {
+					std::shared_ptr< TerminalMode > terminal = std::make_shared< TerminalMode >();
+					terminal->shared_from = shared_from_this();
+					terminal->log_permission = control_room.control_state.diary_bio;
+					terminal->door_permission = control_room.control_state.commander_bio;
+					Mode::set_current(terminal);
+				}
+			}
+		}
 	}
 
 	if(message_box.size() != 0) message_box_visible = true;
@@ -231,6 +250,9 @@ void StoryMode::check_story() {
 		case Hallway1:
 			hallwayone.check_story(message_box);
 			break;
+
+		case Control:
+			control_room.check_story(message_box);
 	
 	}
 
