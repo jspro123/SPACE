@@ -264,7 +264,7 @@ void StoryMode::check_mouse(bool left_click, bool right_click) {
 	}
 
 	if(message_box.size() != 0) message_box_visible = true;
-	if (!on_something || message_box_visible || inventory_visible) hint_visible = false;
+	if (!on_something || message_box_visible || (inventory_visible && inventory_status != UseItem)) hint_visible = false;
 }
 
 
