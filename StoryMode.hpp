@@ -45,6 +45,10 @@ struct StoryMode : Mode {
 	bool menu_visible = false;
 	bool hint_visible = false;
 	bool inventory_visible = false;
+	int item_selected_ID = -1;
+	int inventory_cur_page = 0;
+	enum inventoryStatus {ShowItem, ShowDetail, UseItem} inventory_status = ShowItem;
+	// std::set<std::pair(Interactable, Interactable)> item_interactions;
 
 	float shake_constant = 0.1f;
 	bool shake_left = false;

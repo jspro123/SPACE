@@ -82,7 +82,6 @@ Load< Sound::Sample > music_correct(LoadTagDefault, []() -> Sound::Sample *{
 
 
 StoryMode::StoryMode() {
-
 }
 
 StoryMode::~StoryMode() {
@@ -103,6 +102,36 @@ bool StoryMode::handle_event(SDL_Event const &evt, glm::uvec2 const &window_size
 		if (evt.key.keysym.sym == SDLK_i) {
 			inventory_visible = !inventory_visible;
 			inventory.update_inventory();
+		} else {
+			if (inventory_status == ShowItem && inventory.interactables.size() > 0) {
+				if (evt.key.keysym.sym == SDLK_1) {
+					item_selected_ID = 0;
+					inventory_status = ShowDetail;
+				} else if (evt.key.keysym.sym == SDLK_2) {
+					item_selected_ID = 1;
+					inventory_status = ShowDetail;
+				}  else if (evt.key.keysym.sym == SDLK_3) {
+					item_selected_ID = 2;
+					inventory_status = ShowDetail;
+				}  else if (evt.key.keysym.sym == SDLK_4) {
+					item_selected_ID = 3;
+					inventory_status = ShowDetail;
+				} 
+			} else if (inventory_status == ShowDetail) {
+				if (evt.key.keysym.sym == SDLK_1) {
+					inventory_status = UseItem;
+				} else if (evt.key.keysym.sym == SDLK_2) {
+					inventory_status = ShowItem;
+					item_selected_ID = -1;
+				}
+			} else if (inventory_status == UseItem) {
+				if (evt.key.keysym.sym == SDLK_1) {
+					inventory_status = ShowDetail;
+				} else if (evt.key.keysym.sym == SDLK_2) {
+					inventory_status = ShowItem;
+					item_selected_ID = -1;
+				}
+			}
 		}
 	} else if (evt.type == SDL_MOUSEMOTION) {
 
@@ -360,15 +389,59 @@ void StoryMode::draw(glm::uvec2 const &drawable_size) {
 			draw_text.draw_text(message_box[0], at, FONT_SIZE, glm::u8vec4(0xff, 0xff, 0xff, 0xff), current_chr, 1, fit_list, textbox_left.x + 20, textbox_right.x - 20);
 		} else if (inventory_visible) {
 			inventory.update_inventory();
-			for (int i = 0; i < inventory.to_output.size(); i++) {
-				draw_text.get_text_extents(inventory.to_output[i], at, 1.0f, &min, &max);
-				draw_text.draw_text_short(inventory.to_output[i], at, 3.0f, glm::u8vec4(0xff, 0xff, 0xff, 0xff));
-				// description
-				// if (inventory.interactables.size() > 0) {
-				// 	at.x += max.x;
-				// 	draw_text.draw_text_short(": " + inventory.interactables[i].description, at, 3.0f, glm::u8vec4(0xff, 0xff, 0xff, 0xff));
-				// }
-				at.y -= 35;
+			if (inventory_status == ShowItem) {
+				for (int i = 0; i < inventory.to_output.size(); i++) {
+					std::string tmp = "";
+					if (inventory.interactables.size() > 0) {
+						tmp.append("[");
+						tmp.append(std::to_string(i + 1));
+						tmp.append("] ");
+					}
+					tmp.append(inventory.to_output[i]);
+					draw_text.get_text_extents(tmp, at, 1.0f, &min, &max);
+					draw_text.draw_text_short(tmp, at, 3.0f, glm::u8vec4(0xff, 0xff, 0xff, 0xff));
+					at.y -= 45;
+				}
+			} else if (inventory_status == ShowDetail) {
+				if (item_selected_ID + inventory_cur_page * 4 >= inventory.interactables.size()) {
+					item_selected_ID = -1;
+					inventory_status = ShowItem;
+				} else {
+					Interactable cur_item = inventory.interactables[item_selected_ID];
+					std::string tmp = cur_item.name;
+					tmp.append(" : ");
+					tmp.append(cur_item.description);
+					draw_text.get_text_extents(tmp, at, 1.0f, &min, &max);
+					draw_text.draw_text_short(tmp, at, 3.0f, glm::u8vec4(0xff, 0xff, 0xff, 0xff));
+					at.y -= 45;
+					tmp = "[1] Use it";
+					draw_text.get_text_extents(tmp, at, 1.0f, &min, &max);
+					draw_text.draw_text_short(tmp, at, 3.0f, glm::u8vec4(0xff, 0xff, 0xff, 0xff));
+					at.y -= 45;
+					tmp = "[2] Back to the item list";
+					draw_text.get_text_extents(tmp, at, 1.0f, &min, &max);
+					draw_text.draw_text_short(tmp, at, 3.0f, glm::u8vec4(0xff, 0xff, 0xff, 0xff));
+					at.y -= 45;
+				}
+			} else if (inventory_status == UseItem) {
+				Interactable cur_item = inventory.interactables[item_selected_ID];
+				std::string tmp = cur_item.name;
+				tmp.append(" is selected.");
+				draw_text.get_text_extents(tmp, at, 1.0f, &min, &max);
+				draw_text.draw_text_short(tmp, at, 3.0f, glm::u8vec4(0xff, 0xff, 0xff, 0xff));
+				at.y -= 45;
+				tmp = "Try to do something...";
+				draw_text.get_text_extents(tmp, at, 1.0f, &min, &max);
+				draw_text.draw_text_short(tmp, at, 3.0f, glm::u8vec4(0xff, 0xff, 0xff, 0xff));
+				at.y -= 45;
+				tmp = "[1] Back to the selected item";
+				draw_text.get_text_extents(tmp, at, 1.0f, &min, &max);
+				draw_text.draw_text_short(tmp, at, 3.0f, glm::u8vec4(0xff, 0xff, 0xff, 0xff));
+				at.y -= 45;
+				tmp = "[2] Back to the item list";
+				draw_text.get_text_extents(tmp, at, 1.0f, &min, &max);
+				draw_text.draw_text_short(tmp, at, 3.0f, glm::u8vec4(0xff, 0xff, 0xff, 0xff));
+				at.y -= 45;
 			}
 		}
 	}
