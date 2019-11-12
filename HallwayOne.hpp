@@ -38,6 +38,7 @@ struct HallwayOne {
 
 	std::vector<std::string> Door_3_panel_descr1;
 	std::vector<std::string> Door_3_panel_descr2;
+	std::vector<std::string> Door_3_panel_descr3;
 	std::vector<std::string> Door_3_panel_use_descr1;
 	std::string Door_3_panel_descr1_1 = "The door's control panel. Let's take a look. ";
 	std::string Door_3_panel_descr1_2 = "Looks like the doors been manually locked at some point. I'll need to use the terminal in the control room to open it.";

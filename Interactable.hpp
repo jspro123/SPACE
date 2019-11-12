@@ -42,5 +42,7 @@ struct Inventory {
 	std::string default_message = "I'm not carrying anything on me right now.";
 	std::vector<std::string> to_output;
 
+	void erase_item(itemID id);
+	int return_index(itemID id);
 	void update_inventory();
 };

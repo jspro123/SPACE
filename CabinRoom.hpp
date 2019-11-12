@@ -5,7 +5,7 @@ struct CabinRoom {
 	CabinRoom();
 
 	//See descriptions in the story section
-	Interactable Broken_Glass = Interactable(brokenGlass, "A piece of sharp glass", true, "It's sharp.");
+	Interactable Broken_Glass = Interactable(brokenGlass, "A piece of glass. ", true, "It's sharp.");
 	Interactable Broken_Glass2 = Broken_Glass;
 	Interactable Broken_Glass3 = Broken_Glass;
 	Interactable Light_switch = Interactable(lightSwitch, "Light switch", false, "Turns on the light");
@@ -107,8 +107,8 @@ struct CabinRoom {
 	std::string Broken_glass_descr1_3 = ". . .";
 	std::string Broken_glass_descr1_4 = ". . . or a lot of time. ";
 	std::string Broken_glass_descr2_1 = "A shard from one of the pods screens. ";
-	std::string Broken_glass_use_descr1_1 = "I should take one, might come in handy.";
-	std::string Broken_glass_use_descr2_1 = "I already have one. I don't want to cut myself, so let's not push my luck. ";
+	std::string Broken_glass_use_descr1_1 = "I should take one, might be useful.";
+	std::string Broken_glass_use_descr2_1 = "I already have one, and I don't want to cut myself. ";
 
 	std::vector<std::string> Light_switch_descr1;
 	std::vector<std::string> Light_switch_use_descr1;

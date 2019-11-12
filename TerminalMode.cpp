@@ -40,6 +40,7 @@ Load< Sound::Sample > music_cold_dunes_terminal(LoadTagDefault, []() -> Sound::S
 	});
 
 TerminalMode::TerminalMode() {
+	door_open_here = door_open;
 }
 
 TerminalMode::~TerminalMode() {
@@ -218,7 +219,10 @@ void TerminalMode::enter_scene() {
 			add_text(&lines);
 			create_menu();
 		} else {
-		
+			add_text(&diseng1);
+			add_text(&lines);
+			create_menu();
+			door_open_here = true;
 		}
 	} else if (terminal == LOG1) {
 		add_text(&log1_1);

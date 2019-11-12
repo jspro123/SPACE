@@ -82,6 +82,7 @@ Load< Sound::Sample > music_correct(LoadTagDefault, []() -> Sound::Sample *{
 
 
 StoryMode::StoryMode() {
+
 }
 
 StoryMode::~StoryMode() {
@@ -184,6 +185,7 @@ bool StoryMode::handle_event(SDL_Event const &evt, glm::uvec2 const &window_size
 
 
 void StoryMode::check_usage(itemID use, itemID on, bool click) {
+
 	if (!click) return;
 
 	if (use == brokenGlass && on == commanderBody && !control_room.control_state.accessed_terminal) {
@@ -196,18 +198,30 @@ void StoryMode::check_usage(itemID use, itemID on, bool click) {
 		cabin_room.cabin_state.took_finger = true;
 	}
 	else if (use == brokenGlass && on == commanderBody && cabin_room.cabin_state.took_finger) {
-		message_box.push_back("No. . . I'm not doing that again. ");
+		message_box.push_back("I won't mutilate the Commander twice. ");
 		//Cutting up noises
 	}
-	else if (use == commanderFinger && on == controlTerminal) {
+	else if (use == commanderFinger && on == controlTerminal && !control_room.control_state.commander_bio) {
 		control_room.control_state.commander_bio = true;
 		message_box.push_back("Okay, I should be able to unlock the door now. ");
 	} 
+	else if (use == commanderFinger && control_room.control_state.commander_bio) {
+		message_box.push_back(". . . why am I still holding on to this?");
+		inventory.erase_item(commanderFinger);
+	}
+	else if (use == killerFinger && on == controlTerminal && !control_room.control_state.diary_bio) {
+		control_room.control_state.diary_bio = true;
+		message_box.push_back("There might be something important in there. I should take a look when I can. ");
+	}
+	else if (use == killerFinger && control_room.control_state.diary_bio) {
+		message_box.push_back(". . . why am I still holding on to this?");
+		inventory.erase_item(killerFinger);
+	}
 	else if (use == brokenGlass && on == controlBody && !control_room.control_state.accessed_terminal) {
-		message_box.push_back("No. . . it isn't right. Even after what he did. ");
+		message_box.push_back(". . . it isn't right. Even after what he did. ");
 	}
 	else if (use == brokenGlass && on == controlBody && control_room.control_state.accessed_terminal) {
-		message_box.push_back(". . . ");
+		message_box.push_back(". . . guess I have to do this. ");
 		//Cutting up noises
 		inventory.interactables.push_back(control_room.Killer_finger);
 		control_room.control_state.took_finger = true;
@@ -215,6 +229,15 @@ void StoryMode::check_usage(itemID use, itemID on, bool click) {
 	else if (use == brokenGlass && on == controlBody && control_room.control_state.took_finger) {
 		message_box.push_back("No. . . I'm not doing that again. ");
 		//Cutting up noises
+	}
+	else if (use == keyCard && on == controlTerminal && !control_room.control_state.used_key_card) {
+		control_room.control_state.used_key_card = true;
+		message_box.push_back("I've unlocked the terminal. I should be able to use it now. ");
+		//For the sequel
+	}
+	else if (use == keyCard && on == controlTerminal && control_room.control_state.used_key_card) {
+		message_box.push_back("Swiping again didn't do anaything. ");
+		//For the sequel
 	}
 	else if (use == crowbar && on == toolbox) {
 		message_box.push_back("This should work. . . but not right now! ");
@@ -316,6 +339,7 @@ void StoryMode::check_mouse(bool left_click, bool right_click) {
 					terminal->log_permission = control_room.control_state.diary_bio;
 					terminal->door_permission = control_room.control_state.commander_bio;
 					Mode::set_current(terminal);
+					std::cout << hallwayone.hallwayone_state.door_3_open << std::endl;
 				}
 			}
 		}
@@ -491,7 +515,6 @@ void StoryMode::draw(glm::uvec2 const &drawable_size) {
 				} else {
 					Interactable cur_item = inventory.interactables[item_selected_ID];
 					std::string tmp = cur_item.name;
-					tmp.append(" : ");
 					tmp.append(cur_item.description);
 					draw_text.get_text_extents(tmp, at, 1.0f, &min, &max);
 					draw_text.draw_text_short(tmp, at, 3.0f, glm::u8vec4(0xff, 0xff, 0xff, 0xff));

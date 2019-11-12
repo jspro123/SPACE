@@ -7,13 +7,13 @@ struct ControlRoom {
 	//See descriptions in the story section
 
 	Interactable Light = Interactable(controlLight, "A light switch", false, " . ");
-	Interactable Crowbar = Interactable(crowbar, "A crowbar", true, "Covered in blood. ");
+	Interactable Crowbar = Interactable(crowbar, "A crowbar. ", true, "It's covered in blood. ");
 	Interactable Door = Interactable(controlToHallway, "A door", false, " . ");
 	Interactable Screen = Interactable(controlScreen, "The screen.", false, " . ");
 	Interactable Terminal = Interactable(controlTerminal, "A terminal", false, " . ");
 	Interactable Body = Interactable(controlBody, "A body", false, " . ");
 	Interactable Controls = Interactable(controlControls, "Controls", false, " . ");
-	Interactable Killer_finger = Interactable(commanderFinger, "A finger. ", true, "It looks a bit off.");
+	Interactable Killer_finger = Interactable(killerFinger, "A finger. ", true, "It looks a bit off.");
 	Interactable Key_card = Interactable(keyCard, "A key-card. ", true, "I can use this to access the terminal.");
 
 	std::vector<Interactable> control_interactables;
@@ -96,7 +96,7 @@ struct ControlRoom {
 	std::string Terminal_descr1_1 = "The ship's computer terminal. Looks like it's still working. ";
 	std::string Terminal_descr1_2 = ". . . 2039. So it's been two years since we started heading back. ";
 	std::string Terminal_descr2_1 = "The ship's computer terminal. Looks like it's still working. ";
-	std::string Terminal_use_descr1_1 = "You need a key-card to access the terminal, and I don't have one. ";
+	std::string Terminal_use_descr1_1 = "You need to use a key-card to gain access. ";
 
 	std::vector<std::string> Body_descr1;
 	std::vector<std::string> Body_descr2;
@@ -106,6 +106,6 @@ struct ControlRoom {
 	std::string Body_descr1_2 = ". . . ";
 	std::string Body_descr1_3 = "Why didn't you kill me?";
 	std::string Body_descr2_1 = ". . . ";
-	std::string Body_use_descr1_1 = "He's holding something. . . looks like a terminal key-card. I should take it with me. ";
+	std::string Body_use_descr1_1 = "He's holding something. . . looks like the terminal key-card. I should take it with me. ";
 	std::string Body_use_descr2_1 = ". . . nothing else here. ";
 };
