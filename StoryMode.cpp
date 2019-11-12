@@ -24,10 +24,10 @@ Sprite const *sprite_dark_cabin = nullptr;
 Sprite const *sprite_dark_glass = nullptr;
 Sprite const *sprite_msg_bg = nullptr;
 Sprite const* hallwayone_bg = nullptr;
-Sprite const* hallwayone_door_1 = nullptr;
-Sprite const* hallwayone_door_2 = nullptr;
-Sprite const* hallwayone_door_3 = nullptr;
-Sprite const* hallwayone_door_3_panel = nullptr;
+Sprite const* hallwayone_door_green = nullptr;
+Sprite const* hallwayone_door_red = nullptr;
+// Sprite const* hallwayone_door_3 = nullptr;
+// Sprite const* hallwayone_door_3_panel = nullptr;
 Sprite const* control_bg = nullptr;
 Sprite const* control_fg = nullptr;
 Sprite const* control_crowbar = nullptr;
@@ -50,11 +50,11 @@ Load< SpriteAtlas > sprites(LoadTagDefault, []() -> SpriteAtlas const * {
 	sprite_light_cabin = &ret->lookup("light_cabin");
 	sprite_dark_cabin = &ret->lookup("dark_cabin");
 	sprite_dark_glass = &ret->lookup("dark_glass");
-	hallwayone_bg = &ret->lookup("hallway_background");
-	hallwayone_door_1 = &ret->lookup("hallway_cryo");
-	hallwayone_door_2 = &ret->lookup("hallway_control");
-	hallwayone_door_3 = &ret->lookup("hallway_hallway");
-	hallwayone_door_3_panel = &ret->lookup("hallway_panel");
+	// hallwayone_bg = &ret->lookup("hallway_background");
+	hallwayone_door_green = &ret->lookup("hallway_green");
+	hallwayone_door_red = &ret->lookup("hallway_red");
+	// hallwayone_door_3 = &ret->lookup("hallway_hallway");
+	// hallwayone_door_3_panel = &ret->lookup("hallway_panel");
 	control_bg = &ret->lookup("control_background");
 	control_fg = &ret->lookup("control_foreground");
 	control_crowbar = &ret->lookup("control_crowbar");
@@ -248,7 +248,7 @@ bool StoryMode::in_box(glm::vec2 pos_cur, glm::vec2 pos_min, glm::vec2 pos_max) 
 
 void StoryMode::check_mouse(bool left_click, bool right_click) {
 	//std::cout << "check\n";
-	//std::cout << mouse_pos.x << " " << mouse_pos.y << "\n";
+	// std::cout << mouse_pos.x << " " << mouse_pos.y << "\n";
 	//std::cout << left_click << " " << right_click << "\n";
 
 	auto prepare_message_box = [this](std::vector<std::string> to_add) {
@@ -392,11 +392,11 @@ void StoryMode::draw(glm::uvec2 const &drawable_size) {
 				draw.draw(*sprite_dark_glass, ul);
 			}
 		} else if (location == Hallway1) {
-			draw.draw(*hallwayone_bg, ul);
-			draw.draw(*hallwayone_door_1, ul);
-			draw.draw(*hallwayone_door_2, ul);
-			draw.draw(*hallwayone_door_3, ul);
-			draw.draw(*hallwayone_door_3_panel, ul);
+			// draw.draw(*hallwayone_bg, ul);
+			draw.draw(*hallwayone_door_red, ul);
+			// draw.draw(*hallwayone_door_2, ul);
+			// draw.draw(*hallwayone_door_3, ul);
+			// draw.draw(*hallwayone_door_3_panel, ul);
 		} else if (location == Control) {
 			draw.draw(*control_bg, ul);
 			draw.draw(*control_fg, ul);

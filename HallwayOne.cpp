@@ -3,17 +3,17 @@
 
 HallwayOne::HallwayOne() {
 
-	Door_1.position_min = glm::vec2(228, 292);
-	Door_1.position_max = glm::vec2(506, 1065);
+	Door_1.position_min = glm::vec2(40, 470);
+	Door_1.position_max = glm::vec2(310, 1000);
 	
-	Door_2.position_min = glm::vec2(865, 289);
-	Door_2.position_max = glm::vec2(1142, 1062);
+	Door_2.position_min = glm::vec2(800, 470);
+	Door_2.position_max = glm::vec2(1070, 1000);
 
-	Door_3.position_min = glm::vec2(1497, 287);
-	Door_3.position_max = glm::vec2(1773, 1060);
+	Door_3.position_min = glm::vec2(1565, 470);
+	Door_3.position_max = glm::vec2(1835, 1000);
 
-	Door_3_panel.position_min = glm::vec2(1800, 560);
-	Door_3_panel.position_max = glm::vec2(1907, 655);
+	Door_3_panel.position_min = glm::vec2(1845, 660);
+	Door_3_panel.position_max = glm::vec2(1890, 710);
 
 	Door_1_descr1.push_back(Door_1_descr1_1);
 
