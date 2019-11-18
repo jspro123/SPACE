@@ -7,14 +7,14 @@ struct ControlRoom {
 	//See descriptions in the story section
 
 	Interactable Light = Interactable(controlLight, "A light switch", false, " . ");
-	Interactable Crowbar = Interactable(crowbar, "A crowbar. ", true, "It's covered in blood. ");
+	Interactable Crowbar = Interactable(crowbar, "A crowbar", true, "It's covered in blood. ");
 	Interactable Door = Interactable(controlToHallway, "A door", false, " . ");
-	Interactable Screen = Interactable(controlScreen, "The screen.", false, " . ");
+	Interactable Screen = Interactable(controlScreen, "The screen", false, " . ");
 	Interactable Terminal = Interactable(controlTerminal, "A terminal", false, " . ");
 	Interactable Body = Interactable(controlBody, "A body", false, " . ");
 	Interactable Controls = Interactable(controlControls, "Controls", false, " . ");
-	Interactable Killer_finger = Interactable(killerFinger, "A finger. ", true, "It looks a bit off.");
-	Interactable Key_card = Interactable(keyCard, "A key-card. ", true, "I can use this to access the terminal.");
+	Interactable Killer_finger = Interactable(killerFinger, "A finger", true, "It looks a bit off.");
+	Interactable Key_card = Interactable(keyCard, "A key-card", true, "I can use this to access the terminal.");
 
 	std::vector<Interactable> control_interactables;
 

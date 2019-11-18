@@ -20,7 +20,7 @@ Load< SpriteAtlas > terminal(LoadTagDefault, []() -> SpriteAtlas const* {
 	terminal_background = &ret->lookup("screen-background");
 	terminal_screen = &ret->lookup("screen");
 	return ret;
-	});
+});
 
 Load< SpriteAtlas > sprites_terminal(LoadTagDefault, []() -> SpriteAtlas const* {
 
@@ -33,18 +33,18 @@ Load< SpriteAtlas > sprites_terminal(LoadTagDefault, []() -> SpriteAtlas const* 
 	sprite_right_select_terminalmode = &ret->lookup("text-select-right");
 
 	return ret;
-	});
+});
 
 Load< Sound::Sample > music_cold_dunes_terminal(LoadTagDefault, []() -> Sound::Sample* {
 	return new Sound::Sample(data_path("cold-dunes.opus"));
-	});
+});
 
 TerminalMode::TerminalMode() {
-	door_open_here = door_open;
+	// door_open_here = door_open;
 }
 
 TerminalMode::~TerminalMode() {
-	Sound::stop_all_samples();
+	// Sound::stop_all_samples();
 }
 
 bool TerminalMode::handle_event(SDL_Event const &evt, glm::uvec2 const& window_size) {
@@ -65,7 +65,7 @@ void TerminalMode::update(float elapsed) {
 	}
 
 	if (!background_music || background_music->stopped) {
-		background_music = Sound::play(*music_cold_dunes_terminal, 1.0f);
+		// background_music = Sound::play(*music_cold_dunes_terminal, 1.0f);
 	}
 }
 
@@ -222,7 +222,7 @@ void TerminalMode::enter_scene() {
 			add_text(&diseng1);
 			add_text(&lines);
 			create_menu();
-			door_open_here = true;
+			// door_open_here = true;
 		}
 	} else if (terminal == LOG1) {
 		add_text(&log1_1);

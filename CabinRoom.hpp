@@ -5,7 +5,7 @@ struct CabinRoom {
 	CabinRoom();
 
 	//See descriptions in the story section
-	Interactable Broken_Glass = Interactable(brokenGlass, "A piece of glass. ", true, "It's sharp.");
+	Interactable Broken_Glass = Interactable(brokenGlass, "A piece of glass", true, "It's sharp.");
 	Interactable Broken_Glass2 = Broken_Glass;
 	Interactable Broken_Glass3 = Broken_Glass;
 	Interactable Light_switch = Interactable(lightSwitch, "Light switch", false, "Turns on the light");
@@ -13,10 +13,10 @@ struct CabinRoom {
 	Interactable Commander_body = Interactable(commanderBody, "The Commander", false, "Commander...");
 	Interactable Generic_body = Interactable(genericBody, "A crew member", false, "Dead...");
 	Interactable Generic_body2 = Generic_body;
-	Interactable Cabin_door = Interactable(cryoToHallway, "A door.", false, "This leads to the hallway.");
+	Interactable Cabin_door = Interactable(cryoToHallway, "A door", false, "This leads to the hallway.");
 	Interactable Protag_pod = Interactable(playerPod, "My pod", false, "I woke up here.");
 	Interactable Empty_pod = Interactable(emptyPod, "Not my pod", false, "I woke up here.");
-	Interactable Ship_rail = Interactable(shipRail, "A rail. ", false, "We use these to get around.");
+	Interactable Ship_rail = Interactable(shipRail, "A rail", false, "We use these to get around.");
 	Interactable Commander_finger = Interactable(commanderFinger, "The Commander's finger. ", true, "It's dripping.");
 
 	std::vector<Interactable> cryo_interactables;
