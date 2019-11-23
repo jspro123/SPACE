@@ -33,6 +33,7 @@ Sprite const* control_bg = nullptr;
 Sprite const* control_fg = nullptr;
 Sprite const* control_crowbar = nullptr;
 Sprite const* control_blood = nullptr;
+Sprite const* all_black = nullptr;
 
 Load< SpriteAtlas > sprites(LoadTagDefault, []() -> SpriteAtlas const * {
 	SpriteAtlas const *ret = new SpriteAtlas(data_path("space"));
@@ -60,6 +61,7 @@ Load< SpriteAtlas > sprites(LoadTagDefault, []() -> SpriteAtlas const * {
 	control_fg = &ret->lookup("control_foreground");
 	control_crowbar = &ret->lookup("control_crowbar");
 	control_blood = &ret->lookup("control_blood");
+	all_black = &ret->lookup("black_screen");
 	return ret;
 });
 
