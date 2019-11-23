@@ -1,4 +1,5 @@
 #include "Interactable.hpp"
+#include "Sound.hpp"
 
 struct CabinRoom {
 
