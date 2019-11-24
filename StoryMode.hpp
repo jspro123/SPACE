@@ -12,8 +12,9 @@ struct StoryMode : Mode {
 	virtual void update(float elapsed) override;
 	virtual void draw(glm::uvec2 const &drawable_size) override;
 	void check_mouse(bool left_click, bool right_click);
-	void check_mouseWithItem(bool left_click, bool right_click);
+	bool check_mouseWithItem(bool left_click, bool right_click);
 	bool in_box(glm::vec2 pos_cur, glm::vec2 pos_min, glm::vec2 pos_max);
+	bool in_box_polygon(glm::vec2 pos_cur, glm::vec2 polygon[]);
 
 	locationID location = Cabin;
 	Inventory inventory;

@@ -33,3 +33,4 @@ Load< void > load_demo_menu(LoadTagDefault, [](){
 	demo_menu->right_select_offset = glm::vec2(0.0f + 3.0f, 0.0f);
 	demo_menu->select_bounce_amount = 5.0f;
 });
+

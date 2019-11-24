@@ -203,7 +203,7 @@ bool StoryMode::handle_event(SDL_Event const &evt, glm::uvec2 const &window_size
 			}
 		}
 		if (inventory_visible && inventory_status == ShowItem) {
-			check_mouseWithItem(left_click, right_click);
+			if (check_mouseWithItem(left_click, right_click)) return false;
 		}
 		if (message_box_visible || (inventory_visible && inventory_status != ShowDetail)) { left_click = false; right_click = false; }
 		if (message_box_visible) {
@@ -221,21 +221,22 @@ bool StoryMode::handle_event(SDL_Event const &evt, glm::uvec2 const &window_size
 	return false;
 }
 
-void StoryMode::check_mouseWithItem(bool left_click, bool right_click) {
+bool StoryMode::check_mouseWithItem(bool left_click, bool right_click) {
 	on_item = false;
 	if (inventory_status == ShowItem) {
 		for (int i = 0; i < 4 && i < (inventory.interactables.size() - inventory_cur_page * 4); i ++) {
 			if (in_box(mouse_pos, item_pos[i][0], item_pos[i][1])) {
+				hint_visible = true;
+				on_item = true;
 				if (left_click) {
 					item_selected_ID = inventory_cur_page * 4 + i;
 					inventory_status = ShowDetail;
 				}
-				hint_visible = true;
-				on_item = true;
-				break;
+				return true;
 			}
 		}
 	}
+	return false;
 }
 
 
@@ -327,7 +328,7 @@ bool StoryMode::in_box(glm::vec2 pos_cur, glm::vec2 pos_min, glm::vec2 pos_max) 
 void StoryMode::check_mouse(bool left_click, bool right_click) {
 	//std::cout << "check\n";
 	//std::cout << left_click << " " << right_click << "\n";
-	// std::cout << mouse_pos.x << " " << mouse_pos.y << "\n";
+	//std::cout << mouse_pos.x << " " << mouse_pos.y << "\n";
 
 	if (on_item)
 		return;
@@ -433,7 +434,7 @@ void StoryMode::enter_scene() {
 	//just entered this scene, adjust flags and build menu as appropriate:
 	/*
 	std::vector< MenuMode::Item > items;
-	glm::vec2 at(3.0f, view_max.y - 13.0f);
+	glm::vec2 at(new_f, view_max.y - 1new_f);
 
 	std::shared_ptr< MenuMode > menu = std::make_shared< MenuMode >(items);
 	menu->atlas = sprites;
@@ -460,13 +461,13 @@ void StoryMode::draw(glm::uvec2 const &drawable_size) {
 	{ //use a DrawSprites to do the drawing:
 		DrawSprites draw(*sprites, view_min, view_max, drawable_size, DrawSprites::AlignPixelPerfect);
 		glm::vec2 ul = glm::vec2(view_min.x, view_max.y);
-
+		
 		draw.draw(*demo_background, ul);
 		if (location == Cabin) {
 			if (cabin_room.cabin_state.light_on) {
 				draw.draw(*sprite_light_cabin, ul);
 				draw.draw(*sprite_light_body1, ul + floating_animation);
-				draw.draw(*sprite_light_body2, ul + floating_animation);
+				draw.draw(*sprite_light_body2, ul + floating_animation * glm::vec2(0.5, 0.5));
 				draw.draw(*sprite_light_upper_glass, ul + floating_animation);
 			}
 			else {
@@ -528,7 +529,8 @@ void StoryMode::draw(glm::uvec2 const &drawable_size) {
 		at.y = view_max.y - textbox_left.y - 50;
 
 		int dis_between_text_lines = 60;
-
+		float old_f = 3.0f;
+		float new_f = 3.0f;
 		if (message_box_visible){
 			//Hacky way of using the auto-wrap code without creating a Sentence object
 			//for each message I want to print
@@ -545,8 +547,8 @@ void StoryMode::draw(glm::uvec2 const &drawable_size) {
 					tmp.append(std::to_string(inventory_cur_page + 1));
 					tmp.append(" / ");
 					tmp.append(std::to_string(page_max));
-					draw_text.get_text_extents(tmp, page_at, 1.0f, &min, &max);
-					draw_text.draw_text_short(tmp, page_at, 3.0f, glm::u8vec4(0xff, 0xff, 0xff, 0xff));
+					draw_text.get_text_extents(tmp, page_at, old_f, &min, &max);
+					draw_text.draw_text_short(tmp, page_at, new_f, glm::u8vec4(0xff, 0xff, 0xff, 0xff));
 				}
 				
 				for (int i = inventory_cur_page * 4; i < std::min((int) inventory.to_output.size(), (int) inventory_cur_page * 4 + 4); i++) {
@@ -558,8 +560,8 @@ void StoryMode::draw(glm::uvec2 const &drawable_size) {
 					// 	tmp.append("] ");
 					// }
 					tmp.append(inventory.to_output[i]);
-					draw_text.get_text_extents(tmp, at, 1.0f, &min, &max);
-					draw_text.draw_text_short(tmp, at, 3.0f, glm::u8vec4(0xff, 0xff, 0xff, 0xff));
+					draw_text.get_text_extents(tmp, at, old_f, &min, &max);
+					draw_text.draw_text_short(tmp, at, new_f, glm::u8vec4(0xff, 0xff, 0xff, 0xff));
 					at.y -= dis_between_text_lines;
 				}
 			} else if (inventory_status == ShowDetail) {
@@ -571,36 +573,36 @@ void StoryMode::draw(glm::uvec2 const &drawable_size) {
 					std::string tmp = cur_item.name;
 					tmp.append(". ");
 					tmp.append(cur_item.description);
-					draw_text.get_text_extents(tmp, at, 1.0f, &min, &max);
-					draw_text.draw_text_short(tmp, at, 3.0f, glm::u8vec4(0xff, 0xff, 0xff, 0xff));
+					draw_text.get_text_extents(tmp, at, old_f, &min, &max);
+					draw_text.draw_text_short(tmp, at, new_f, glm::u8vec4(0xff, 0xff, 0xff, 0xff));
 					at.y -= dis_between_text_lines;
 					tmp = "[Left Click] Use it";
-					draw_text.get_text_extents(tmp, at, 1.0f, &min, &max);
-					draw_text.draw_text_short(tmp, at, 3.0f, glm::u8vec4(0xff, 0xff, 0xff, 0xff));
+					draw_text.get_text_extents(tmp, at, old_f, &min, &max);
+					draw_text.draw_text_short(tmp, at, new_f, glm::u8vec4(0xff, 0xff, 0xff, 0xff));
 					at.y -= dis_between_text_lines;
 					tmp = "[Right Click] Back to the item list";
-					draw_text.get_text_extents(tmp, at, 1.0f, &min, &max);
-					draw_text.draw_text_short(tmp, at, 3.0f, glm::u8vec4(0xff, 0xff, 0xff, 0xff));
+					draw_text.get_text_extents(tmp, at, old_f, &min, &max);
+					draw_text.draw_text_short(tmp, at, new_f, glm::u8vec4(0xff, 0xff, 0xff, 0xff));
 					at.y -= dis_between_text_lines;
 				}
 			} else if (inventory_status == UseItem) {
 				Interactable cur_item = inventory.interactables[item_selected_ID];
 				std::string tmp = cur_item.name;
 				tmp.append(" is selected.");
-				draw_text.get_text_extents(tmp, at, 1.0f, &min, &max);
-				draw_text.draw_text_short(tmp, at, 3.0f, glm::u8vec4(0xff, 0xff, 0xff, 0xff));
+				draw_text.get_text_extents(tmp, at, old_f, &min, &max);
+				draw_text.draw_text_short(tmp, at, new_f, glm::u8vec4(0xff, 0xff, 0xff, 0xff));
 				at.y -= dis_between_text_lines;
 				tmp = "Try to do something...";
-				draw_text.get_text_extents(tmp, at, 1.0f, &min, &max);
-				draw_text.draw_text_short(tmp, at, 3.0f, glm::u8vec4(0xff, 0xff, 0xff, 0xff));
+				draw_text.get_text_extents(tmp, at, old_f, &min, &max);
+				draw_text.draw_text_short(tmp, at, new_f, glm::u8vec4(0xff, 0xff, 0xff, 0xff));
 				at.y -= dis_between_text_lines;
 				tmp = "[Left Click] Use it on something";
-				draw_text.get_text_extents(tmp, at, 1.0f, &min, &max);
-				draw_text.draw_text_short(tmp, at, 3.0f, glm::u8vec4(0xff, 0xff, 0xff, 0xff));
+				draw_text.get_text_extents(tmp, at, old_f, &min, &max);
+				draw_text.draw_text_short(tmp, at, new_f, glm::u8vec4(0xff, 0xff, 0xff, 0xff));
 				at.y -= dis_between_text_lines;
 				tmp = "[Right Click] Back to the item list";
-				draw_text.get_text_extents(tmp, at, 1.0f, &min, &max);
-				draw_text.draw_text_short(tmp, at, 3.0f, glm::u8vec4(0xff, 0xff, 0xff, 0xff));
+				draw_text.get_text_extents(tmp, at, old_f, &min, &max);
+				draw_text.draw_text_short(tmp, at, new_f, glm::u8vec4(0xff, 0xff, 0xff, 0xff));
 				at.y -= dis_between_text_lines;
 			} else {
 				item_selected_ID = -1;
@@ -608,4 +610,35 @@ void StoryMode::draw(glm::uvec2 const &drawable_size) {
 		}
 	}
 	GL_ERRORS(); //did the DrawSprites do something wrong?
+}
+
+const double eps = 1e-6;
+const double PI = acos(-1);
+
+int dcmp(double x) {
+    if (fabs(x) < eps) return 0;
+    else
+        return x < 0 ? -1 : 1;
+}
+
+bool OnSegment(glm::vec2 P1, glm::vec2 P2, glm::vec2 Q) {
+	glm::vec2 r1 = P1 - Q;
+	glm::vec2 r2 = P2 - Q;
+	double r3 = r1.x * r2.y - r1.y * r2.x;
+	double r4 = r1.x * r2.x + r1.y + r2.y;
+    return dcmp(r3) == 0 && dcmp(r4) <= 0;
+}
+
+bool InPolygon(glm::vec2 P, glm::vec2 polygon[], int n) {
+    bool flag = false;
+    glm::vec2 P1, P2;
+    for(int i = 1, j = n; i <= n; j = i++)
+    {
+        P1 = polygon[i];
+        P2 = polygon[j];
+        if(OnSegment(P1, P2, P)) return true;
+        if((dcmp(P1.y - P.y) > 0 != dcmp(P2.y - P.y) > 0) && dcmp(P.x - (P.y - P1.y) * (P1.x - P2.x) / (P1.y - P2.y) - P1.x) < 0)
+            flag = !flag;
+    }
+    return flag;
 }

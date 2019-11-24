@@ -1,5 +1,6 @@
 #include "MenuMode.hpp"
 
+#include "Sprite.hpp"
 //for the GL_ERRORS() macro:
 #include "gl_errors.hpp"
 
@@ -11,8 +12,17 @@
 
 //for loading:
 #include "Load.hpp"
+#include "data_path.hpp"
 
 #include <random>
+
+Sprite const *menu_bg = nullptr;
+Load< SpriteAtlas > sprites_menu(LoadTagDefault, []() -> SpriteAtlas const * {
+	SpriteAtlas const *ret = new SpriteAtlas(data_path("space"));
+
+	menu_bg = &ret->lookup("dark_cabin");
+	return ret;
+});
 
 Load< Sound::Sample > sound_click(LoadTagDefault, []() -> Sound::Sample *{
 	std::vector< float > data(size_t(48000 * 0.2f), 0.0f);
@@ -175,7 +185,9 @@ void MenuMode::draw(glm::uvec2 const &drawable_size) {
 	{ //draw the menu using DrawSprites:
 		assert(atlas && "it is an error to try to draw a menu without an atlas");
 		DrawSprites draw_sprites(*atlas, view_min, view_max, drawable_size, DrawSprites::AlignPixelPerfect);
-
+		DrawSprites draw_bg(*sprites_menu, glm::vec2(0,0), glm::vec2(1920, 1200), drawable_size, DrawSprites::AlignPixelPerfect);
+		glm::vec2 ul = glm::vec2(0, 1200);
+		draw_bg.draw(*menu_bg, ul);
 		bool is_selected = false;
 
 		for (int i = 0; i < (int)items.size(); i++) {
@@ -212,7 +224,7 @@ void MenuMode::draw(glm::uvec2 const &drawable_size) {
 			}
 			if (is_selected) {
 				if (left_select) {
-					draw_sprites.draw(*left_select, glm::vec2(left - bounce, item.at.y), item.scale, left_select_tint);
+					draw_sprites.draw(*left_select, glm::vec2(left - bounce - 13.0f, item.at.y), item.scale, left_select_tint);
 				}
 				if (right_select) {
 					draw_sprites.draw(*right_select, glm::vec2(right + bounce, item.at.y), item.scale, right_select_tint);
