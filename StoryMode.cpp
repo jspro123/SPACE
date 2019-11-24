@@ -214,7 +214,30 @@ bool StoryMode::handle_event(SDL_Event const &evt, glm::uvec2 const &window_size
 				message_box_visible = false;
 			}
 		}
-	}
+	} else if (evt.type == SDL_MOUSEWHEEL) {
+        if (evt.wheel.y < 0) { // scroll up 
+			if (inventory_cur_page * 4 + 4 < inventory.interactables.size()) {
+				inventory_cur_page ++;
+			}
+        }
+        else if (evt.wheel.y > 0) { // scroll down
+             // Put code for handling "scroll down" here!
+			if (inventory_cur_page > 0) {
+				inventory_cur_page --;
+			}
+        }
+
+        if(evt.wheel.x < 0) { // scroll right
+			if (inventory_cur_page > 0) {
+				inventory_cur_page --;
+			}
+        }
+        else if(evt.wheel.x > 0) { // scroll left
+			if (inventory_cur_page * 4 + 4 < inventory.interactables.size()) {
+				inventory_cur_page ++;
+			}
+        }
+    }
 	if (inventory_visible) {
 		check_mouseWithItem(left_click, right_click);
 	}

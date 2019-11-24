@@ -187,7 +187,9 @@ void MenuMode::draw(glm::uvec2 const &drawable_size) {
 		DrawSprites draw_sprites(*atlas, view_min, view_max, drawable_size, DrawSprites::AlignPixelPerfect);
 		DrawSprites draw_bg(*sprites_menu, glm::vec2(0,0), glm::vec2(1920, 1200), drawable_size, DrawSprites::AlignPixelPerfect);
 		glm::vec2 ul = glm::vec2(0, 1200);
-		draw_bg.draw(*menu_bg, ul);
+		if (items.size() == 2) {
+			draw_bg.draw(*menu_bg, ul);
+		}
 		bool is_selected = false;
 
 		for (int i = 0; i < (int)items.size(); i++) {
