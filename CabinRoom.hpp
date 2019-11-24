@@ -1,4 +1,7 @@
 #include "Interactable.hpp"
+#include "Sound.hpp"
+#include "Load.hpp"
+#include "data_path.hpp"
 
 struct CabinRoom {
 

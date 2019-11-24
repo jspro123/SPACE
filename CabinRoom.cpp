@@ -1,6 +1,10 @@
 #include "CabinRoom.hpp"
 
 
+Load< Sound::Sample > emergency(LoadTagDefault, []() -> Sound::Sample* {
+	return new Sound::Sample(data_path("Emergency.opus"));
+	});
+
 CabinRoom::CabinRoom() {
 
 	Light_switch.position_min = glm::vec2(1655, 585);

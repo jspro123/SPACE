@@ -1,1 +1,10 @@
 ..\..\nest-libs\windows\opus-tools\bin\opusenc.exe --vbr --bitrate 128 cold-dunes.wav ..\dist\cold-dunes.opus
+..\..\nest-libs\windows\opus-tools\bin\opusenc.exe --vbr --bitrate 128 Finger1.wav ..\dist\Finger1.opus
+..\..\nest-libs\windows\opus-tools\bin\opusenc.exe --vbr --bitrate 128 Finger2.wav ..\dist\Finger2.opus
+..\..\nest-libs\windows\opus-tools\bin\opusenc.exe --vbr --bitrate 128 Emergency.wav ..\dist\Emergency.opus
+..\..\nest-libs\windows\opus-tools\bin\opusenc.exe --vbr --bitrate 128 Door_Air.wav ..\dist\Door_Air.opus
+..\..\nest-libs\windows\opus-tools\bin\opusenc.exe --vbr --bitrate 128 Door.wav ..\dist\Door.opus
+..\..\nest-libs\windows\opus-tools\bin\opusenc.exe --vbr --bitrate 128 Crowbar_Glass_2.wav ..\dist\Crowbar_Glass_2.opus
+..\..\nest-libs\windows\opus-tools\bin\opusenc.exe --vbr --bitrate 128 Crowbar_Glass_1.wav ..\dist\Crowbar_Glass_1.opus
+..\..\nest-libs\windows\opus-tools\bin\opusenc.exe --vbr --bitrate 128 Crash.wav ..\dist\Crash.opus
+..\..\nest-libs\windows\opus-tools\bin\opusenc.exe --vbr --bitrate 128 Ambience.wav ..\dist\Ambience.opus
