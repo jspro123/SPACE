@@ -1,5 +1,6 @@
 #include "StoryMode.hpp"
 #include "Sprite.hpp"
+#include "TerminalMode.hpp"
 #include "DrawSprites.hpp"
 #include "Load.hpp"
 #include "data_path.hpp"
@@ -37,6 +38,7 @@ Sprite const* control_fg = nullptr;
 Sprite const* control_crowbar = nullptr;
 Sprite const* control_blood = nullptr;
 Sprite const* all_black = nullptr;
+Sprite const* b[11];
 
 Load< SpriteAtlas > sprites(LoadTagDefault, []() -> SpriteAtlas const * {
 	SpriteAtlas const *ret = new SpriteAtlas(data_path("space"));
@@ -64,11 +66,21 @@ Load< SpriteAtlas > sprites(LoadTagDefault, []() -> SpriteAtlas const * {
 	control_fg = &ret->lookup("control_foreground");
 	control_crowbar = &ret->lookup("control_crowbar");
 	control_blood = &ret->lookup("control_blood");
-	all_black = &ret->lookup("black_screen");
-	bay_bg = &ret->lookup("bay_background");;
-	bay_pod = &ret->lookup("bay_pod");;
-	bay_junk = &ret->lookup("bay_junk");;
-	bay_tape = &ret->lookup("bay_tape");;
+	bay_bg = &ret->lookup("bay_background");
+	bay_pod = &ret->lookup("bay_pod");
+	bay_junk = &ret->lookup("bay_junk");
+	bay_tape = &ret->lookup("bay_tape");
+	all_black = &ret->lookup("b1");
+	b[1] = &ret->lookup("b1");
+	b[2] = &ret->lookup("b2");
+	b[3] = &ret->lookup("b3");
+	b[4] = &ret->lookup("b4");
+	b[5] = &ret->lookup("b5");
+	b[6] = &ret->lookup("b6");
+	b[7] = &ret->lookup("b7");
+	b[8] = &ret->lookup("b8");
+	b[9] = &ret->lookup("b9");
+	b[10] = &ret->lookup("b10");
 	return ret;
 });
 
@@ -104,8 +116,6 @@ StoryMode::StoryMode() {
 		sounds_playing.push_back(false);
 		sound_ptrs.push_back(nullptr);
 	}
-
-	terminal = std::make_shared< TerminalMode >();
 }
 
 StoryMode::~StoryMode() {
@@ -365,11 +375,6 @@ void StoryMode::update(float elapsed) {
 		background_music = Sound::play(*ambience, 1.0f);
 	}
 
-	if (terminal->door_opened && !hallwayone.hallwayone_state.door_3_open) {
-		hallwayone.hallwayone_state.door_3_open = true;
-		hallwayone.hallwayone_state.door_3_panel_descr = 3;
-	}
-
 	std::pair<std::vector<soundID>, std::vector<soundID>> pair;
 
 	//Check story
@@ -473,10 +478,12 @@ void StoryMode::check_mouse(bool left_click, bool right_click) {
 					activate_terminal = control_room.check_interactions(message_box, left_click, right_click, current.id, inventory, location);
 				}
 				if (activate_terminal) {
+					std::shared_ptr< TerminalMode > terminal = std::make_shared< TerminalMode >();
 					terminal->shared_from = shared_from_this();
 					terminal->log_permission = control_room.control_state.diary_bio;
 					terminal->door_permission = control_room.control_state.commander_bio;
 					Mode::set_current(terminal);
+					std::cout << hallwayone.hallwayone_state.door_3_open << std::endl;
 				}
 			}
 		}
@@ -570,13 +577,15 @@ void StoryMode::draw(glm::uvec2 const &drawable_size) {
 			}
 			if (!story_state.played_opening) {
 				draw.draw(*all_black, ul);
+			} else {
+				int ti = 10;
+				if (fading_interval < 10 * ti) {
+					draw.draw(*b[fading_interval / ti + 1], ul);
+					fading_interval++;
+				}
 			}
 		} else if (location == Hallway1) {
-			if (hallwayone.hallwayone_state.door_3_open) {
-				draw.draw(*hallwayone_door_green, ul);
-			} else {
-				draw.draw(*hallwayone_door_red, ul);
-			}
+			draw.draw(*hallwayone_door_red, ul);
 		} else if (location == Control) {
 			draw.draw(*control_bg, ul);
 			draw.draw(*control_fg, ul);
@@ -738,6 +747,7 @@ void StoryMode::draw(glm::uvec2 const &drawable_size) {
 			}
 		}
 	}
+	
 	GL_ERRORS(); //did the DrawSprites do something wrong?
 }
 
