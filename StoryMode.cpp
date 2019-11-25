@@ -27,8 +27,11 @@ Sprite const *sprite_msg_bg = nullptr;
 Sprite const* hallwayone_bg = nullptr;
 Sprite const* hallwayone_door_green = nullptr;
 Sprite const* hallwayone_door_red = nullptr;
-// Sprite const* hallwayone_door_3 = nullptr;
-// Sprite const* hallwayone_door_3_panel = nullptr;
+Sprite const* bay_bg = nullptr;
+Sprite const* bay_pod = nullptr;
+Sprite const* bay_junk = nullptr;
+Sprite const* bay_tape = nullptr;
+Sprite const* hallwayone_door_3_panel = nullptr;
 Sprite const* control_bg = nullptr;
 Sprite const* control_fg = nullptr;
 Sprite const* control_crowbar = nullptr;
@@ -62,6 +65,10 @@ Load< SpriteAtlas > sprites(LoadTagDefault, []() -> SpriteAtlas const * {
 	control_crowbar = &ret->lookup("control_crowbar");
 	control_blood = &ret->lookup("control_blood");
 	all_black = &ret->lookup("black_screen");
+	bay_bg = &ret->lookup("bay_background");;
+	bay_pod = &ret->lookup("bay_pod");;
+	bay_junk = &ret->lookup("bay_junk");;
+	bay_tape = &ret->lookup("bay_tape");;
 	return ret;
 });
 
@@ -577,6 +584,13 @@ void StoryMode::draw(glm::uvec2 const &drawable_size) {
 				draw.draw(*control_crowbar, ul); //Only if haven't picked up yet
 			}
 			draw.draw(*control_blood, ul);
+		}
+		else if (location == PodBay) {
+			draw.draw(*bay_bg, ul);
+			draw.draw(*bay_pod, ul);
+			draw.draw(*bay_junk, ul);
+			//If(applied tape)
+			//draw.draw(*bay_tape, ul);
 		}
 
 		if (inventory_visible || message_box_visible) {

@@ -7,6 +7,7 @@ gimp = "C:\\Program Files\\GIMP 2\\bin\\gimp-console-2.10.exe"
 name4 = "hallway"
 name5 = "control"
 name6 = "fade"
+name7 = "Escape_pod_bay"
 
 import subprocess
 import os
@@ -57,6 +58,14 @@ subprocess.run([
 	"python",
 	"extract-sprites.py",
 	name6 + ".list",
+	name,
+	"--gimp", gimp
+], check=True)
+
+subprocess.run([
+	"python",
+	"extract-sprites.py",
+	name7 + ".list",
 	name,
 	"--gimp", gimp
 ], check=True)

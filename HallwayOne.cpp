@@ -91,7 +91,7 @@ void HallwayOne::check_interactions(std::vector<std::string>& message_box, bool 
 				break;
 
 			case DoorThreeToHallwayTwo:
-				if (hallwayone_state.door_3_open) { location = Hallway2; }
+				if (hallwayone_state.door_3_open) { location = PodBay; }
 				else { prepare_message_box(Door_3_use_descr1); }
 				break;
 

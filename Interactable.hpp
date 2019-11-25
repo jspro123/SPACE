@@ -8,8 +8,9 @@
 enum itemID {lightSwitch, toolbox, brokenGlass, commanderBody, genericBody, cryoToHallway, playerPod, emptyPod, shipRail,
 			DoorOneToCryo, DoorTwoToControl, DoorThreeToHallwayTwo, DoorThreePanel, controlToHallway, controlScreen, 
 			controlBody, controlTerminal, controlControls, crowbar, controlLight, commanderFinger, killerFinger,
-			keyCard, redStone, hammer, spaceTape};
-enum locationID {Cabin, Hallway1, Control, Hallway2};
+			keyCard, redStone, hammer, spaceTape, windShield, escapePod, wrench, bayToHallway, bayToBroken,
+			podTech, bayToBrokenPanel};
+enum locationID {Cabin, Hallway1, Control, PodBay};
 
 enum soundID {none, SfingerOne, SfingerTwo, Semergency, Sambience, Sdoor_air, Sdoor_open, ScrowbarOne, ScrowbarTwo, SshipCrash, Sforced};
 

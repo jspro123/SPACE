@@ -163,6 +163,7 @@ GAME_NAMES =
 	Sound
 	load_wav
 	load_opus
+	PodRoom
 	Text
 	DrawSprites
 	Sprite

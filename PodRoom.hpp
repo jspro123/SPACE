@@ -1,0 +1,89 @@
+#include "Interactable.hpp"
+
+struct PodRoom {
+
+	PodRoom();
+
+	//See descriptions in the story section
+
+	Interactable Windshield = Interactable(windShield, "The pod's windshield. ", false, " . ");
+	Interactable Pod1 = Interactable(escapePod, "An escape pod. ", false, " . ");
+	Interactable Pod2 = Interactable(escapePod, "An escape pod. ", false, " . ");
+	Interactable Wrench = Interactable(wrench, "A wrench. ", false, " . ");
+	Interactable Door_Hallway = Interactable(bayToHallway, "A door. ", false, " . ");
+	Interactable Door_Broken = Interactable(bayToBroken, "A door. ", false, " . ");
+	Interactable Door_Broken_Panel = Interactable(bayToBrokenPanel, "A panel. ", false, " . ");
+	Interactable Tech = Interactable(podTech, "A bunch of tech. ", false, " . ");
+
+	std::vector<Interactable> pod_interactables;
+
+	bool check_interactions(std::vector<std::string>& message_box, bool left_click, bool right_click, itemID item,
+		Inventory& inventory, locationID& location);
+	void check_story(std::vector<std::string>& message_box);
+
+	//------ story state -------
+
+	// Cabin Interactables
+	// light
+	struct {
+
+		bool intro_text = false;
+		bool used_key_card = false;
+		bool commander_bio = false;
+		bool diary_bio = false;
+		bool picked_up_crowbar = false;
+		bool accessed_terminal = false;
+		bool took_finger = false;
+
+		int crowbar_descr = 1;
+		int screen_descr = 1;
+		int controls_descr = 1;
+		int terminal_descr = 1;
+		int body_descr = 1;
+		int interact_body_descr = 1;
+
+	} pod_state;
+	
+	/* ============= POD ROOM =============*/
+
+	std::vector<std::string> Door_Hallway_descr1;
+	std::string Door_Hallway_descr1_1 = "This'll take me back to the hallway. ";
+
+	std::vector<std::string> Door_Broken_descr1;
+	std::vector<std::string> Door_Broken_use_descr1;
+	std::string Door_Broken_descr1_1 = "This leads to the other escape pods. ";
+	std::string Door_Broken_use_descr1_1 = "That's not a good idea. ";
+
+	std::vector<std::string> Door_Broken_Panel_descr1;
+	std::vector<std::string> Door_Broken_Panel_use_descr1;
+	std::string Door_Broken_Panel_descr1_1 = "Looks like there's a massive air leak beyond this door. ";
+	std::string Door_Broken_Panel_use_descr1_1 = "It's just a screen. Nothing I can do.";
+
+	std::vector<std::string> Pod_descr1;
+	std::vector<std::string> Pod_descr2;
+	std::vector<std::string> Pod_use_descr1;
+	std::string Pod_descr1_1 = "An escape pod. My only chance at getting out of here. ";
+	std::string Pod_descr1_2 = "Looks like it's not in the best shape, though. . .  ";
+	std::string Pod_descr2_1 = "An escape pod. My only chance at getting out of here. ";
+	std::string Pod_use_descr1_1 = "I have to repair it first. ";
+
+	std::vector<std::string> Windshield_descr1;
+	std::vector<std::string> Windshield_descr2;
+	std::vector<std::string> Windshield_use_descr1;
+	std::string Windshield_descr1_1 = "Shit, it's broken pretty bad. ";
+	std::string Windshield_descr2_1 = "All better now. Hopefully. ";
+	std::string Windshield_use_descr1_1 = "Nothing I can really do with my bare hands. ";
+
+	std::vector<std::string> Wrench_descr1;
+	std::vector<std::string> Wrench_descr2;
+	std::vector<std::string> Wrench_use_descr1;
+	std::string Wrench_descr1_1 = "A wrench. Looks like the crashed knocked it out of the tool-box. ";
+	std::string Wrench_descr1_2 = "It's also probably what damaged the escape pod. Sigh.  ";
+	std::string Wrench_descr2_1 = "A wrench. Looks like the crashed knocked it out of the tool-box. ";
+	std::string Wrench_use_descr1_1 = "I have a really bad feeling all of a sudden. Better not touch it. ";
+
+	std::vector<std::string> Tech_descr1;
+	std::vector<std::string> Tech_use_descr1;
+	std::string Tech_descr1_1 = "A status-panel. Looks like the pod is launchable. ";
+	std::string Tech_use_descr1_1 = "I can't really do anything to it. ";
+};
