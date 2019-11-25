@@ -142,7 +142,7 @@ void TerminalMode::enter_scene() {
 		});
 
 		add_choice(&menu5, [this](MenuMode::Item const&) {
-			terminal = EXIT;
+			terminal = MENU;
 			Mode::current = shared_from;
 		});
 	};
@@ -218,7 +218,7 @@ void TerminalMode::enter_scene() {
 			add_text(&diseng1);
 			add_text(&lines);
 			create_menu();
-			// door_open_here = true;
+			door_opened = true;
 		}
 	} else if (terminal == LOG1) {
 		add_text(&log1_1);

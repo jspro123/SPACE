@@ -3,6 +3,7 @@
 #include "CabinRoom.hpp"
 #include "HallwayOne.hpp"
 #include "ControlRoom.hpp"
+#include "TerminalMode.hpp"
 #include <utility>
 
 struct StoryMode : Mode {
@@ -68,4 +69,6 @@ struct StoryMode : Mode {
 	std::shared_ptr< Sound::PlayingSample > background_music;
 	soundID soundeffect = none;
 	bool effect_playing = false;
+
+	std::shared_ptr< TerminalMode > terminal;
 };

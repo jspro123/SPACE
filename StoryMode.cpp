@@ -1,6 +1,5 @@
 #include "StoryMode.hpp"
 #include "Sprite.hpp"
-#include "TerminalMode.hpp"
 #include "DrawSprites.hpp"
 #include "Load.hpp"
 #include "data_path.hpp"
@@ -98,6 +97,8 @@ StoryMode::StoryMode() {
 		sounds_playing.push_back(false);
 		sound_ptrs.push_back(nullptr);
 	}
+
+	terminal = std::make_shared< TerminalMode >();
 }
 
 StoryMode::~StoryMode() {
@@ -357,6 +358,11 @@ void StoryMode::update(float elapsed) {
 		background_music = Sound::play(*ambience, 1.0f);
 	}
 
+	if (terminal->door_opened && !hallwayone.hallwayone_state.door_3_open) {
+		hallwayone.hallwayone_state.door_3_open = true;
+		hallwayone.hallwayone_state.door_3_panel_descr = 3;
+	}
+
 	std::pair<std::vector<soundID>, std::vector<soundID>> pair;
 
 	//Check story
@@ -460,12 +466,10 @@ void StoryMode::check_mouse(bool left_click, bool right_click) {
 					activate_terminal = control_room.check_interactions(message_box, left_click, right_click, current.id, inventory, location);
 				}
 				if (activate_terminal) {
-					std::shared_ptr< TerminalMode > terminal = std::make_shared< TerminalMode >();
 					terminal->shared_from = shared_from_this();
 					terminal->log_permission = control_room.control_state.diary_bio;
 					terminal->door_permission = control_room.control_state.commander_bio;
 					Mode::set_current(terminal);
-					std::cout << hallwayone.hallwayone_state.door_3_open << std::endl;
 				}
 			}
 		}
@@ -561,7 +565,11 @@ void StoryMode::draw(glm::uvec2 const &drawable_size) {
 				draw.draw(*all_black, ul);
 			}
 		} else if (location == Hallway1) {
-			draw.draw(*hallwayone_door_red, ul);
+			if (hallwayone.hallwayone_state.door_3_open) {
+				draw.draw(*hallwayone_door_green, ul);
+			} else {
+				draw.draw(*hallwayone_door_red, ul);
+			}
 		} else if (location == Control) {
 			draw.draw(*control_bg, ul);
 			draw.draw(*control_fg, ul);

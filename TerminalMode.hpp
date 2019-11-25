@@ -1,9 +1,4 @@
-
-/*
- * StoryMode implements a story about The Planet of Choices.
- *
- */
-
+#pragma once
 #include "Mode.hpp"
 #include "Sound.hpp"
 #include <queue>
@@ -166,6 +161,7 @@ struct TerminalMode : Mode {
 	bool displayed_boot = false;
 	bool log_permission = false;
 	bool door_permission = false;
+	bool door_opened = false; 
 
 	glm::vec2 view_min = glm::vec2(0,0);
 	glm::vec2 view_max = glm::vec2(1920, 1080);

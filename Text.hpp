@@ -1,3 +1,5 @@
+#pragma once
+
 #include "GL.hpp"
 
 #include <glm/glm.hpp>

@@ -43,5 +43,6 @@ struct HallwayOne {
 	std::string Door_3_panel_descr1_1 = "The door's control panel. Let's take a look. ";
 	std::string Door_3_panel_descr1_2 = "Looks like the doors been manually locked at some point. I'll need to use the terminal in the control room to open it.";
 	std::string Door_3_panel_descr2_1 = "I'll need to use the terminal in the control room to open it.";
+	std::string Door_3_panel_descr3_1 = "Looks like the door is open. ";
 	std::string Door_3_panel_use_descr1_1 = "It's just a screen. Nothing I can do from here.";
 };

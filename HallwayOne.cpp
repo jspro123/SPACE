@@ -12,8 +12,8 @@ HallwayOne::HallwayOne() {
 	Door_3.position_min = glm::vec2(1565, 470);
 	Door_3.position_max = glm::vec2(1835, 1000);
 
-	Door_3_panel.position_min = glm::vec2(1845, 660);
-	Door_3_panel.position_max = glm::vec2(1890, 710);
+	Door_3_panel.position_min = glm::vec2(1846, 600);
+	Door_3_panel.position_max = glm::vec2(1890, 715);
 
 	Door_1_descr1.push_back(Door_1_descr1_1);
 
@@ -25,6 +25,7 @@ HallwayOne::HallwayOne() {
 	Door_3_panel_descr1.push_back(Door_3_panel_descr1_1);
 	Door_3_panel_descr1.push_back(Door_3_panel_descr1_2);
 	Door_3_panel_descr2.push_back(Door_3_panel_descr2_1);
+	Door_3_panel_descr3.push_back(Door_3_panel_descr3_1);
 	Door_3_panel_use_descr1.push_back(Door_3_panel_use_descr1_1);
 
 	hallwayone_interactables.push_back(Door_1);
@@ -69,8 +70,11 @@ void HallwayOne::check_interactions(std::vector<std::string>& message_box, bool 
 				if (hallwayone_state.door_3_panel_descr == 1) {
 					prepare_message_box(Door_3_panel_descr1);
 					hallwayone_state.door_3_panel_descr++;
+				} else if (hallwayone_state.door_3_panel_descr == 2) {
+					prepare_message_box(Door_3_panel_descr2);
+				} else { 
+					prepare_message_box(Door_3_panel_descr3); 
 				}
-				else { prepare_message_box(Door_3_panel_descr2); }
 				break;
 		}
 
