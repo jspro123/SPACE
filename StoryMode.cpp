@@ -1,6 +1,5 @@
 #include "StoryMode.hpp"
 #include "Sprite.hpp"
-#include "TerminalMode.hpp"
 #include "DrawSprites.hpp"
 #include "Load.hpp"
 #include "data_path.hpp"
@@ -116,6 +115,8 @@ StoryMode::StoryMode() {
 		sounds_playing.push_back(false);
 		sound_ptrs.push_back(nullptr);
 	}
+
+	terminal = std::make_shared< TerminalMode >();
 }
 
 StoryMode::~StoryMode() {
@@ -375,6 +376,10 @@ void StoryMode::update(float elapsed) {
 		background_music = Sound::play(*ambience, 1.0f);
 	}
 
+	if (terminal->door_opened && !hallwayone.hallwayone_state.door_3_open) {
+		hallwayone.hallwayone_state.door_3_open = true;
+	}
+
 	std::pair<std::vector<soundID>, std::vector<soundID>> pair;
 
 	//Check story
@@ -478,17 +483,30 @@ void StoryMode::check_mouse(bool left_click, bool right_click) {
 					activate_terminal = control_room.check_interactions(message_box, left_click, right_click, current.id, inventory, location);
 				}
 				if (activate_terminal) {
-					std::shared_ptr< TerminalMode > terminal = std::make_shared< TerminalMode >();
 					terminal->shared_from = shared_from_this();
 					terminal->log_permission = control_room.control_state.diary_bio;
 					terminal->door_permission = control_room.control_state.commander_bio;
 					Mode::set_current(terminal);
-					std::cout << hallwayone.hallwayone_state.door_3_open << std::endl;
+				}
+			}
+		}
+	} else if (location == PodBay) {
+		for (int i = 0; i < pod_room.pod_interactables.size(); i++) {
+			Interactable current = pod_room.pod_interactables[i];
+			glm::vec2 tar_min = current.position_min;
+			glm::vec2 tar_max = current.position_max;
+			if (in_box(mouse_pos, tar_min, tar_max)) {
+				on_something = true;
+				hint_visible = true;
+				if (inventory_status == ShowDetail) {
+					check_usage(inventory.interactables[item_selected_ID].id, current.id, left_click);
+				}
+				else {
+					pod_room.check_interactions(message_box, left_click, right_click, current.id, inventory, location);
 				}
 			}
 		}
 	}
-
 	if(message_box.size() != 0) message_box_visible = true;
 	if (!on_something || message_box_visible || (inventory_visible && inventory_status != ShowDetail)) hint_visible = on_item;
 }
@@ -585,7 +603,12 @@ void StoryMode::draw(glm::uvec2 const &drawable_size) {
 				}
 			}
 		} else if (location == Hallway1) {
-			draw.draw(*hallwayone_door_red, ul);
+			if (hallwayone.hallwayone_state.door_3_open) {
+				draw.draw(*hallwayone_door_green, ul);
+			} else {
+				draw.draw(*hallwayone_door_red, ul);
+			}
+			
 		} else if (location == Control) {
 			draw.draw(*control_bg, ul);
 			draw.draw(*control_fg, ul);

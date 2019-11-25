@@ -51,6 +51,15 @@ PodRoom::PodRoom() {
 
 	Tech_descr1.push_back(Tech_descr1_1);
 	Tech_use_descr1.push_back(Tech_use_descr1_1);
+
+	pod_interactables.push_back(Wrench);
+	pod_interactables.push_back(Windshield);
+	pod_interactables.push_back(Pod1);
+	pod_interactables.push_back(Pod2);
+	pod_interactables.push_back(Door_Hallway);
+	pod_interactables.push_back(Door_Broken);
+	pod_interactables.push_back(Door_Broken_Panel);
+	pod_interactables.push_back(Tech);
 }
 
 
@@ -80,15 +89,19 @@ bool PodRoom::check_interactions(std::vector<std::string>& message_box, bool lef
 				} else {
 					prepare_message_box(Windshield_descr2);
 				}
+				break;
 			
 			case bayToHallway:
 				prepare_message_box(Door_Hallway_descr1);
+				break;
 
 			case bayToBroken:
 				prepare_message_box(Door_Broken_descr1);
+				break;
 
 			case bayToBrokenPanel:
 				prepare_message_box(Door_Broken_Panel_descr1);
+				break;
 
 			case escapePod:
 				if (pod_state.pod_descr == 1) {
@@ -98,6 +111,7 @@ bool PodRoom::check_interactions(std::vector<std::string>& message_box, bool lef
 				else {
 					prepare_message_box(Pod_descr2);
 				}
+				break;
 
 			case wrench:
 				if (pod_state.wrench_descr == 1) {
@@ -107,34 +121,42 @@ bool PodRoom::check_interactions(std::vector<std::string>& message_box, bool lef
 				else {
 					prepare_message_box(Wrench_descr1);
 				}
+				break;
 
 			case podTech:
 				prepare_message_box(Tech_descr1);
-		
+				break;
 		}
 
 	} else if (right_click) {
 		switch (item) {
 			case windShield:
 				prepare_message_box(Windshield_use_descr1);
+				break;
 
 			case bayToHallway:
 				location = Hallway1;
+				break;
 
 			case bayToBroken:
 				prepare_message_box(Door_Broken_use_descr1);
+				break;
 
 			case bayToBrokenPanel:
 				prepare_message_box(Door_Broken_Panel_use_descr1);
+				break;
 
 			case escapePod:
 				prepare_message_box(Pod_use_descr1);
+				break;
 
 			case wrench:
 				prepare_message_box(Wrench_use_descr1);
+				break;
 
 			case podTech:
 				prepare_message_box(Tech_use_descr1);
+				break;
 		}
 	}
 

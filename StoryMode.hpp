@@ -4,6 +4,7 @@
 #include "HallwayOne.hpp"
 #include "ControlRoom.hpp"
 #include "TerminalMode.hpp"
+#include "PodRoom.hpp"
 #include <utility>
 
 struct StoryMode : Mode {
@@ -25,6 +26,7 @@ struct StoryMode : Mode {
 	CabinRoom cabin_room = CabinRoom();
 	HallwayOne hallwayone = HallwayOne();
 	ControlRoom control_room = ControlRoom();
+	PodRoom pod_room = PodRoom();
 
 	std::vector<std::string> message_box;
 
