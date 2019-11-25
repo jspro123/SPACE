@@ -115,7 +115,7 @@ bool PodRoom::check_interactions(std::vector<std::string>& message_box, bool lef
 
 	} else if (right_click) {
 		switch (item) {
-/			case windShield:
+			case windShield:
 				prepare_message_box(Windshield_use_descr1);
 
 			case bayToHallway:
@@ -145,5 +145,3 @@ void PodRoom::check_story(std::vector<std::string>& message_box) {
 
 
 }
-//Engine start-up and failure
-//Smashing computer 
