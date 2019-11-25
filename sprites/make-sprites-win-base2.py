@@ -8,6 +8,7 @@ name4 = "hallway"
 name5 = "control"
 name6 = "fade"
 name7 = "Escape_pod_bay"
+name8 = "Escape_pod"
 
 import subprocess
 import os
@@ -66,6 +67,14 @@ subprocess.run([
 	"python",
 	"extract-sprites.py",
 	name7 + ".list",
+	name,
+	"--gimp", gimp
+], check=True)
+
+subprocess.run([
+	"python",
+	"extract-sprites.py",
+	name8 + ".list",
 	name,
 	"--gimp", gimp
 ], check=True)

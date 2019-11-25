@@ -41,6 +41,8 @@ struct StoryMode : Mode {
 	int floating_interval = 10;
 	bool floating_dir = false; //false - up, true - down
 	int fading_interval = 0;
+	glm::vec2 end_animation_interval = glm::vec2(0, -1);
+	bool end_flag = false;
 
 	void check_usage(itemID use, itemID on, bool click);
 

@@ -37,6 +37,8 @@ Sprite const* control_fg = nullptr;
 Sprite const* control_crowbar = nullptr;
 Sprite const* control_blood = nullptr;
 Sprite const* all_black = nullptr;
+Sprite const* space_pod = nullptr;
+Sprite const* space_background = nullptr;
 Sprite const* b[11];
 
 Load< SpriteAtlas > sprites(LoadTagDefault, []() -> SpriteAtlas const * {
@@ -70,6 +72,8 @@ Load< SpriteAtlas > sprites(LoadTagDefault, []() -> SpriteAtlas const * {
 	bay_junk = &ret->lookup("bay_junk");
 	bay_tape = &ret->lookup("bay_tape");
 	all_black = &ret->lookup("b1");
+	space_pod = &ret->lookup("space_pod");
+	space_background = &ret->lookup("space_background");
 	b[1] = &ret->lookup("b1");
 	b[2] = &ret->lookup("b2");
 	b[3] = &ret->lookup("b3");
@@ -580,7 +584,15 @@ void StoryMode::draw(glm::uvec2 const &drawable_size) {
 	{ //use a DrawSprites to do the drawing:
 		DrawSprites draw(*sprites, view_min, view_max, drawable_size, DrawSprites::AlignPixelPerfect);
 		glm::vec2 ul = glm::vec2(view_min.x, view_max.y);
-		
+		if (end_flag) {
+			draw.draw(*space_background, ul);
+			float space_scale = 1.0f - end_animation_interval.y / 500;
+			if (space_scale > 0.0f) {
+				draw.draw(*space_pod, ul + glm::vec2(view_max.x / 1.5f, -view_max.y / 1.5f) + end_animation_interval, space_scale);
+				end_animation_interval += glm::vec2(-0.5f * space_scale, 0.25f * space_scale);
+			}
+			return;
+		}
 		draw.draw(*demo_background, ul);
 		if (location == Cabin) {
 			if (cabin_room.cabin_state.light_on) {

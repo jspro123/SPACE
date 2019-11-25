@@ -17,3 +17,5 @@ Sources:
 (TODO: fill in information about the sources of any **artwork** or **sounds** you used in the game that you did not create yourself. Feel free to also credit yourself for things you did make.)
 
 This game was built with [NEST](NEST.md).
+
+https://wallpaperplay.com/walls/full/e/d/f/219506.jpg
