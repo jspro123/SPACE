@@ -22,7 +22,10 @@ struct CabinRoom {
 	Interactable Protag_pod = Interactable(playerPod, "My pod", false, "I woke up here.");
 	Interactable Empty_pod = Interactable(emptyPod, "Not my pod", false, "I woke up here.");
 	Interactable Ship_rail = Interactable(shipRail, "A rail", false, "We use these to get around.");
-	Interactable Commander_finger = Interactable(commanderFinger, "The Commander's finger. ", true, "It's dripping.");
+	Interactable Commander_finger = Interactable(commanderFinger, "The Commander's finger. ", true, "There's blood all around it.");
+	Interactable Tape = Interactable(spaceTape, "A roll of space-tape. ", true, "Stronger than duct tape.");
+	Interactable Hammer = Interactable(hammer, "A space-hammer. ", true, "Okay, it's just a hammer.");
+	Interactable Stone = Interactable(redStone, "A red stone. ", true, "What we came for. . . ");
 
 	std::vector<Interactable> cryo_interactables;
 
@@ -50,6 +53,7 @@ struct CabinRoom {
 		int body_descr = 1;
 		int light_switch_descr = 1;
 		int tool_box_descr = 1;
+		int tool_box_use_descr = 1;
 		int cabin_door_descr = 1;
 		int protag_pod_descr = 1;
 		int empty_pod_descr = 1;
@@ -146,11 +150,15 @@ struct CabinRoom {
 
 	std::vector<std::string> Tool_box_descr1;
 	std::vector<std::string> Tool_box_descr2;
+	std::vector<std::string> Tool_box_descr3;
 	std::vector<std::string> Tool_box_use_descr1;
+	std::vector<std::string> Tool_box_use_descr2;
 	std::string Tool_box_descr1_1 = "Hm. It's locked.";
 	std::string Tool_box_descr1_2 = "I feel like there's something important inside. I need to break in somehow.";
 	std::string Tool_box_descr2_1 = "There's something important inside. I need to break in somehow.";
+	std::string Tool_box_descr3_1 = "It's wide open. ";
 	std::string Tool_box_use_descr1_1 = "It's locked, but the lock seems weak.";
+	std::string Tool_box_use_descr2_1 = "It's already open. There's nothing left to take. ";
 
 	std::vector<std::string> Commander_body_descr1;
 	std::vector<std::string> Commander_body_use_descr1;

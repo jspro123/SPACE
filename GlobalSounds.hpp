@@ -5,6 +5,7 @@
 #include "data_path.hpp"
 
 
+
 Load< Sound::Sample > emergency = Load< Sound::Sample >(LoadTagDefault, []() -> Sound::Sample * {
 	return new Sound::Sample(data_path("Emergency.opus"));
 	});
@@ -39,4 +40,8 @@ Load< Sound::Sample > crowbar_two = Load< Sound::Sample >(LoadTagDefault, []() -
 
 Load< Sound::Sample > ship_crash = Load< Sound::Sample >(LoadTagDefault, []() -> Sound::Sample * {
 	return new Sound::Sample(data_path("Crash.opus"));
+	});
+
+Load< Sound::Sample > forced = Load< Sound::Sample >(LoadTagDefault, []() -> Sound::Sample * {
+	return new Sound::Sample(data_path("Forced.opus"));
 	});

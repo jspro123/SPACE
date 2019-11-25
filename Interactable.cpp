@@ -1,8 +1,33 @@
 #include "Interactable.hpp"
 
 
-//Need to add support for pages later
-//Need to make everything "chooseable"
+int sid_to_i (soundID id) {
+	switch (id) {
+	case SfingerOne:
+		return 0;
+	case SfingerTwo:
+		return 1;
+	case Semergency:
+		return 2;
+	case Sambience:
+		return 3;
+	case Sdoor_air:
+		return 4;
+	case Sdoor_open:
+		return 5;
+	case ScrowbarOne:
+		return 6;
+	case ScrowbarTwo:
+		return 7;
+	case SshipCrash:
+		return 8;
+	case Sforced:
+		return 9;
+	default:
+		return -1;
+	}
+}
+
 void Inventory :: update_inventory() {
 	
 	to_output.clear();

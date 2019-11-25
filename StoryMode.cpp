@@ -117,7 +117,7 @@ bool StoryMode::handle_event(SDL_Event const &evt, glm::uvec2 const &window_size
 	bool left_click = false; 
 	bool right_click = false;
 	if (evt.type == SDL_KEYDOWN) {
-		if (evt.key.keysym.sym == SDLK_i && !story_state.in_cutscene) {
+		if (evt.key.keysym.sym == SDLK_i && !story_state.in_cutscene && !message_box_visible) {
 			if (inventory_visible) inventory_status = ShowItem;
 			inventory_visible = !inventory_visible;
 			inventory.update_inventory();
@@ -199,7 +199,7 @@ bool StoryMode::handle_event(SDL_Event const &evt, glm::uvec2 const &window_size
 			}
 		} else if (evt.button.button == SDL_BUTTON_LEFT) {
 			left_click = true;
-		} else if (evt.button.button == SDL_BUTTON_MIDDLE && !story_state.in_cutscene) {
+		} else if (evt.button.button == SDL_BUTTON_MIDDLE && !story_state.in_cutscene && !message_box_visible) {
 			if (!inventory_visible) {
 				inventory_visible ^= 1;
 			} else if (inventory_status == ShowItem) {
@@ -210,7 +210,7 @@ bool StoryMode::handle_event(SDL_Event const &evt, glm::uvec2 const &window_size
 			if (check_mouseWithItem(left_click, right_click)) return false;
 		}
 		if (message_box_visible || (inventory_visible && inventory_status != ShowDetail)) { left_click = false; right_click = false; }
-		if (message_box_visible) {
+		if (message_box_visible && message_box[0] != "") {
 			message_box.erase(message_box.begin());
 			if (message_box.size() == 0) {
 				message_box_visible = false;
@@ -269,6 +269,8 @@ bool StoryMode::check_mouseWithItem(bool left_click, bool right_click) {
 
 void StoryMode::check_usage(itemID use, itemID on, bool click) {
 
+	std::shared_ptr< Sound::PlayingSample > temp;
+
 	if (!click) return;
 
 	if (use == brokenGlass && on == commanderBody && !control_room.control_state.accessed_terminal) {
@@ -276,13 +278,14 @@ void StoryMode::check_usage(itemID use, itemID on, bool click) {
 	}
 	else if (use == brokenGlass && on == commanderBody && control_room.control_state.accessed_terminal) {
 		message_box.push_back(". . . I'm sorry, commander. ");
-		//Cutting up noises
+		message_box.push_back("");
+		soundeffect = SfingerOne;
+		message_box.push_back("Okay, it's done. ");
 		inventory.interactables.push_back(cabin_room.Commander_finger);
 		cabin_room.cabin_state.took_finger = true;
 	}
 	else if (use == brokenGlass && on == commanderBody && cabin_room.cabin_state.took_finger) {
 		message_box.push_back("I won't mutilate the Commander twice. ");
-		//Cutting up noises
 	}
 	else if (use == commanderFinger && on == controlTerminal && !control_room.control_state.commander_bio) {
 		control_room.control_state.commander_bio = true;
@@ -305,30 +308,46 @@ void StoryMode::check_usage(itemID use, itemID on, bool click) {
 	}
 	else if (use == brokenGlass && on == controlBody && control_room.control_state.accessed_terminal) {
 		message_box.push_back(". . . guess I have to do this. ");
-		//Cutting up noises
+		message_box.push_back("");
+		message_box.push_back("Done. ");
+		soundeffect = SfingerTwo;
 		inventory.interactables.push_back(control_room.Killer_finger);
 		control_room.control_state.took_finger = true;
 	}
 	else if (use == brokenGlass && on == controlBody && control_room.control_state.took_finger) {
 		message_box.push_back("No. . . I'm not doing that again. ");
-		//Cutting up noises
 	}
 	else if (use == keyCard && on == controlTerminal && !control_room.control_state.used_key_card) {
 		control_room.control_state.used_key_card = true;
 		message_box.push_back("I've unlocked the terminal. I should be able to use it now. ");
-		//For the sequel
 	}
 	else if (use == keyCard && on == controlTerminal && control_room.control_state.used_key_card) {
-		message_box.push_back("Swiping again didn't do anaything. ");
-		//For the sequel
+		message_box.push_back("Swiping again didn't do anything. ");
 	}
 	else if (use == crowbar && on == toolbox) {
-		message_box.push_back("This should work. . . but not right now! ");
+		message_box.push_back("Let's see if this works. ");
+		message_box.push_back("");
+		soundeffect = Sforced;
+		//Forced open noises
+		message_box.push_back("Alright, it's open. Let's take a look. ");
+		message_box.push_back("A hammer, some tape, and . . . I almost forgot about you. ");
+		message_box.push_back(". . . I should take everything here with me. ");
+		cabin_room.cabin_state.tool_box_descr = 3;
+		cabin_room.cabin_state.tool_box_use_descr++;
+		inventory.interactables.push_back(cabin_room.Tape);
+		inventory.interactables.push_back(cabin_room.Hammer);
+		inventory.interactables.push_back(cabin_room.Stone);
+		//For the sequel
+	}
+	else if (use == redStone) {
+		message_box.push_back("For some reason, I feel like that's a terrible idea. . . but why? ");
 		//For the sequel
 	}
 	else {
 		message_box.push_back("That didn't work. ");
 	}
+
+	if (message_box.size() != 0) message_box_visible = true;
 }
 
 void StoryMode::update(float elapsed) {
@@ -458,30 +477,33 @@ void StoryMode::check_mouse(bool left_click, bool right_click) {
 
 void StoryMode::check_sounds(std::vector<soundID> to_play, std::vector<soundID> to_kill) {
 
-	auto sid_to_i = [](soundID id) {
+	auto return_pointer = [](soundID id) {
 		switch (id) {
-		case SfingerOne:
-			return 0;
-		case SfingerTwo:
-			return 1;
-		case Semergency:
-			return 2;
-		case Sambience:
-			return 3;
-		case Sdoor_air:
-			return 4;
-		case Sdoor_open:
-			return 5;
-		case ScrowbarOne:
-			return 6;
-		case ScrowbarTwo:
-			return 7;
-		case SshipCrash:
-			return 8;
-		default:
-			return -1;
+			case SfingerOne:
+				return Sound::play(*finger_one, 1.0f);
+			case SfingerTwo:
+				return Sound::play(*finger_two, 1.0f);
+			case Semergency:
+				return Sound::play(*emergency, 1.0f);
+			case Sambience:
+				return Sound::play(*ambience, 1.0f);
+			case Sdoor_air:
+				return Sound::play(*door_air, 1.0f);
+			case Sdoor_open:
+				return Sound::play(*door_open, 1.0f);
+			case ScrowbarOne:
+				return Sound::play(*crowbar_one, 1.0f);
+			case ScrowbarTwo:
+				return Sound::play(*crowbar_two, 1.0f);
+			case SshipCrash:
+				return Sound::play(*ship_crash, 1.0f);
+			case Sforced:
+				return Sound::play(*forced, 1.0f);
+			default:
+				return Sound::play(*forced, 1.0f);;
 		}
 	};
+
 
 	int index = -1;
 
@@ -491,40 +513,12 @@ void StoryMode::check_sounds(std::vector<soundID> to_play, std::vector<soundID> 
 			continue;
 		}
 		sounds_playing[index] = true;
-		switch (to_play[i]) {
-			case SfingerOne:
-				sound_ptrs[index] = Sound::play(*finger_one, 1.0f);
-				break;
-			case SfingerTwo:
-				sound_ptrs[index] = Sound::play(*finger_two, 1.0f);
-				break;
-			case Semergency:
-				sound_ptrs[index] = Sound::play(*emergency, 1.0f);
-				break;
-			case Sambience:
-				sound_ptrs[index] = Sound::play(*ambience, 1.0f);
-				break;
-			case Sdoor_air:
-				sound_ptrs[index] = Sound::play(*door_air, 1.0f);
-				break;
-			case Sdoor_open:
-				sound_ptrs[index] = Sound::play(*door_open, 1.0f);
-				break;
-			case ScrowbarOne:
-				sound_ptrs[index] = Sound::play(*crowbar_one, 1.0f);
-				break;
-			case ScrowbarTwo:
-				sound_ptrs[index] = Sound::play(*crowbar_two, 1.0f);
-				break;
-			case SshipCrash:
-				sound_ptrs[index] = Sound::play(*ship_crash, 1.0f);
-				break;
-		}
+		sound_ptrs[index] = return_pointer(to_play[i]);
 	}
 
 	for (int i = 0; i < to_kill.size(); i++) {
 		index = sid_to_i(to_kill[i]);
-		if (sound_ptrs[index]) { sound_ptrs[index]->stop(5.0f); }
+		if (sound_ptrs[index]) { sound_ptrs[index]->stop(10.0f); }
 		sounds_playing[index] = false;
 	}
 
@@ -625,11 +619,31 @@ void StoryMode::draw(glm::uvec2 const &drawable_size) {
 		float old_f = 3.0f;
 		float new_f = 3.0f;
 		if (message_box_visible){
-			//Hacky way of using the auto-wrap code without creating a Sentence object
-			//for each message I want to print
-			int current_chr = -1; 
-			std::unordered_map <size_t, int> fit_list;
-			draw_text.draw_text(message_box[0], at, FONT_SIZE, glm::u8vec4(0xff, 0xff, 0xff, 0xff), current_chr, 1, fit_list, textbox_left.x + 20, textbox_right.x - 20);
+
+			if (message_box[0] == "") {
+				int index = sid_to_i(soundeffect);
+				assert(soundeffect != none);
+				if (effect_playing) {
+					if (sound_ptrs[index] && sound_ptrs[index]->stopped) {
+						std::cout << "Here" << std::endl;
+						soundeffect = none;
+						effect_playing = false;
+						message_box.erase(message_box.begin());
+					}
+				} else {
+					effect_playing = true;
+					std::vector<soundID> to_play; std::vector<soundID> to_kill;
+					to_play.push_back(soundeffect);
+					check_sounds(to_play, to_kill);
+				}
+			} else {
+				//Hacky way of using the auto-wrap code without creating a Sentence object
+				//for each message I want to print
+				int current_chr = -1;
+				std::unordered_map <size_t, int> fit_list;
+				draw_text.draw_text(message_box[0], at, FONT_SIZE, glm::u8vec4(0xff, 0xff, 0xff, 0xff), current_chr, 1, fit_list, textbox_left.x + 20, textbox_right.x - 20);
+			}
+
 		} else if (inventory_visible) {
 			inventory.update_inventory();
 			if (inventory_status == ShowItem) {

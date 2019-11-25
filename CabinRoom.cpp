@@ -61,7 +61,10 @@ CabinRoom::CabinRoom() {
 	Tool_box_descr1.push_back(Tool_box_descr1_1);
 	Tool_box_descr1.push_back(Tool_box_descr1_2);
 	Tool_box_descr2.push_back(Tool_box_descr2_1);
+	Tool_box_descr3.push_back(Tool_box_descr3_1);
 	Tool_box_use_descr1.push_back(Tool_box_use_descr1_1);
+	Tool_box_use_descr2.push_back(Tool_box_use_descr2_1);
+
 
 	Commander_body_descr1.push_back(Commander_body_descr1_1);
 	Commander_body_use_descr1.push_back(Commander_body_use_descr1_1);
@@ -117,8 +120,9 @@ void CabinRoom::check_interactions(std::vector<std::string>& message_box, bool l
 				else if (cabin_state.tool_box_descr == 1) {
 					prepare_message_box(Tool_box_descr1);
 					cabin_state.tool_box_descr += 1;
-				}
-				else { prepare_message_box(Tool_box_descr2); }
+				} else if (cabin_state.tool_box_descr == 2) {
+					prepare_message_box(Tool_box_descr2);
+				} else { prepare_message_box(Tool_box_descr3); }
 				break;
 
 			case commanderBody:
@@ -175,7 +179,11 @@ void CabinRoom::check_interactions(std::vector<std::string>& message_box, bool l
 
 			case toolbox:
 				if (!cabin_state.light_on) { message_box.push_back(cryo_dark_use_fail); }
-				else { prepare_message_box(Tool_box_use_descr1); }
+				else if (cabin_state.tool_box_use_descr == 1) {
+					prepare_message_box(Tool_box_use_descr1);
+				} else {
+					prepare_message_box(Tool_box_use_descr2);
+				}
 				break;
 
 			case commanderBody:
@@ -221,31 +229,6 @@ void CabinRoom::check_interactions(std::vector<std::string>& message_box, bool l
 
 std::pair<std::vector<soundID>, std::vector<soundID>> CabinRoom::check_story(
 	std::vector<std::string>& message_box, std::vector<bool> sounds_playing, float elapsed) {
-	
-	auto sid_to_i = [](soundID id) {
-		switch (id) {
-		case SfingerOne:
-			return 0;
-		case SfingerTwo:
-			return 1;
-		case Semergency:
-			return 2;
-		case Sambience:
-			return 3;
-		case Sdoor_air:
-			return 4;
-		case Sdoor_open:
-			return 5;
-		case ScrowbarOne:
-			return 6;
-		case ScrowbarTwo:
-			return 7;
-		case SshipCrash:
-			return 8;
-		default:
-			return -1;
-		}
-	};
 
 	std::vector<soundID> to_play;
 	std::vector<soundID> to_kill;

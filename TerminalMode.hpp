@@ -67,7 +67,7 @@ struct TerminalMode : Mode {
 	/* ================== LOG TEXT 5 ================== */
 
 	std::string s_log5_2 = "We've finally found it. A sample of the rock-thing that the scientists said would "
-		"be here. It looks almost like a ruby - very pretty. Soon as we found it, the commander grabbed it "
+		"be here. Looks almost like a ruby - very pretty. Soon as we found it, the commander grabbed it "
 		"and threw it in the toolbox near the cryo room. No idea why. Said we're done here and to start "
 		"preparations for departure. Told us to dump all the digging equipment out. To lighten the load "
 		"for the return trip. ";

@@ -66,4 +66,6 @@ struct StoryMode : Mode {
 	std::vector<bool> sounds_playing;
 	std::vector<std::shared_ptr< Sound::PlayingSample >> sound_ptrs;
 	std::shared_ptr< Sound::PlayingSample > background_music;
+	soundID soundeffect = none;
+	bool effect_playing = false;
 };

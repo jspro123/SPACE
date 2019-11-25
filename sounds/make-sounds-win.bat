@@ -8,3 +8,4 @@
 ..\..\nest-libs\windows\opus-tools\bin\opusenc.exe --vbr --bitrate 128 Crowbar_Glass_1.wav ..\dist\Crowbar_Glass_1.opus
 ..\..\nest-libs\windows\opus-tools\bin\opusenc.exe --vbr --bitrate 128 Crash.wav ..\dist\Crash.opus
 ..\..\nest-libs\windows\opus-tools\bin\opusenc.exe --vbr --bitrate 128 Ambience.wav ..\dist\Ambience.opus
+..\..\nest-libs\windows\opus-tools\bin\opusenc.exe --vbr --bitrate 128 Forced.wav ..\dist\Forced.opus
