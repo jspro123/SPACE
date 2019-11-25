@@ -72,9 +72,70 @@ bool PodRoom::check_interactions(std::vector<std::string>& message_box, bool lef
 
 	if (left_click) {
 
+		switch (item) {
+		
+			case windShield:
+				if (pod_state.windshield_descr == 1) {
+					prepare_message_box(Windshield_descr1);
+				} else {
+					prepare_message_box(Windshield_descr2);
+				}
+			
+			case bayToHallway:
+				prepare_message_box(Door_Hallway_descr1);
+
+			case bayToBroken:
+				prepare_message_box(Door_Broken_descr1);
+
+			case bayToBrokenPanel:
+				prepare_message_box(Door_Broken_Panel_descr1);
+
+			case escapePod:
+				if (pod_state.pod_descr == 1) {
+					prepare_message_box(Pod_descr1);
+					pod_state.pod_descr++;
+				}
+				else {
+					prepare_message_box(Pod_descr2);
+				}
+
+			case wrench:
+				if (pod_state.wrench_descr == 1) {
+					prepare_message_box(Wrench_descr1);
+					pod_state.wrench_descr++;
+				}
+				else {
+					prepare_message_box(Wrench_descr1);
+				}
+
+			case podTech:
+				prepare_message_box(Tech_descr1);
+		
+		}
 
 	} else if (right_click) {
+		switch (item) {
+/			case windShield:
+				prepare_message_box(Windshield_use_descr1);
 
+			case bayToHallway:
+				location = Hallway1;
+
+			case bayToBroken:
+				prepare_message_box(Door_Broken_use_descr1);
+
+			case bayToBrokenPanel:
+				prepare_message_box(Door_Broken_Panel_use_descr1);
+
+			case escapePod:
+				prepare_message_box(Pod_use_descr1);
+
+			case wrench:
+				prepare_message_box(Wrench_use_descr1);
+
+			case podTech:
+				prepare_message_box(Tech_use_descr1);
+		}
 	}
 
 	return false;
@@ -84,3 +145,5 @@ void PodRoom::check_story(std::vector<std::string>& message_box) {
 
 
 }
+//Engine start-up and failure
+//Smashing computer 

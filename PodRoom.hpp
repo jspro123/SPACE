@@ -27,20 +27,9 @@ struct PodRoom {
 	// light
 	struct {
 
-		bool intro_text = false;
-		bool used_key_card = false;
-		bool commander_bio = false;
-		bool diary_bio = false;
-		bool picked_up_crowbar = false;
-		bool accessed_terminal = false;
-		bool took_finger = false;
-
-		int crowbar_descr = 1;
-		int screen_descr = 1;
-		int controls_descr = 1;
-		int terminal_descr = 1;
-		int body_descr = 1;
-		int interact_body_descr = 1;
+		int windshield_descr = 1;
+		int pod_descr = 1;
+		int wrench_descr = 1;
 
 	} pod_state;
 	
