@@ -2,6 +2,8 @@
 #include "Sound.hpp"
 #include "Load.hpp"
 #include "data_path.hpp"
+#include <iostream> 
+#include <utility>
 
 struct CabinRoom {
 
@@ -27,7 +29,8 @@ struct CabinRoom {
 	//called to create menu for current scene:
 	void check_interactions(std::vector<std::string>& message_box, bool left_click, bool right_click, itemID item,
 		Inventory& inventory, locationID& location);
-	void check_story(std::vector<std::string>& message_box);
+	std::pair<std::vector<soundID>, std::vector<soundID>> check_story(std::vector<std::string>& message_box, 
+		std::vector<bool> sounds_playing, float elapsed);
 
 	//------ story state -------
 
@@ -54,6 +57,29 @@ struct CabinRoom {
 
 	} cabin_state;
 	
+	struct {
+
+		float silence_start = 5.0f;
+		bool played_door_open = false;
+		float silence_middle_one = 2.0f;
+		bool played_crowbar_hit_one_one = false; 
+		float silence_middle_two = 1.5f;
+		bool played_crowbar_hit_one_two = false; 
+		float silence_middle_three = 1.5f;
+		bool played_crowbar_hit_two = false;
+		float silence_middle_four = 4.0f;
+		bool played_crash = false;
+		float silence_middle_five = 1.0f;
+		bool played_emergency = false;
+
+		bool pushed_text_one = false;
+		bool pushed_text_two = false;
+		bool played_protag_open = false;
+		float silence_middle_six = 1.0f;
+
+	} cutscene_one;
+
+
 
 	/* ============= STORY TEXT ============= */
 
@@ -76,7 +102,7 @@ struct CabinRoom {
 	std::string cryo_dark_intro4 = "Ahhhhhh. . . my body's aching everywhere. . .";
 	std::string cryo_dark_intro5 = ". . .? What's that sound? ";
 	std::string cryo_dark_intro6 = "No. . . don't tell me. . . are we still in space? ";
-	std::string cryo_dark_intro7 = "It sounds like the ship is damaged. Shit. I need to go look into that, now. It sounds like the ship is damaged. Shit. I need to go look into that, now. ";
+	std::string cryo_dark_intro7 = "It sounds like the ship is damaged. Shit. I need to go look into that, now. ";
 	std::string cryo_dark_intro8 = ". . .";
 	std::string cryo_dark_intro9 = "But what's that smell? There's something in this room. . .";
 

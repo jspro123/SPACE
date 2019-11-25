@@ -3,12 +3,15 @@
 #include <vector>
 #include "Sprite.hpp"
 
+#define NUM_SOUNDS 9 
 
 enum itemID {lightSwitch, toolbox, brokenGlass, commanderBody, genericBody, cryoToHallway, playerPod, emptyPod, shipRail,
 			DoorOneToCryo, DoorTwoToControl, DoorThreeToHallwayTwo, DoorThreePanel, controlToHallway, controlScreen, 
 			controlBody, controlTerminal, controlControls, crowbar, controlLight, commanderFinger, killerFinger,
 			keyCard};
 enum locationID {Cabin, Hallway1, Control, Hallway2};
+
+enum soundID {SfingerOne, SfingerTwo, Semergency, Sambience, Sdoor_air, Sdoor_open, ScrowbarOne, ScrowbarTwo, SshipCrash};
 
 struct Interactable {
 

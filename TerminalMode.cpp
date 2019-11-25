@@ -35,10 +35,6 @@ Load< SpriteAtlas > sprites_terminal(LoadTagDefault, []() -> SpriteAtlas const* 
 	return ret;
 });
 
-Load< Sound::Sample > music_cold_dunes_terminal(LoadTagDefault, []() -> Sound::Sample* {
-	return new Sound::Sample(data_path("cold-dunes.opus"));
-});
-
 TerminalMode::TerminalMode() {
 	// door_open_here = door_open;
 }

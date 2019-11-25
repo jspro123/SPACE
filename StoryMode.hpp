@@ -3,6 +3,7 @@
 #include "CabinRoom.hpp"
 #include "HallwayOne.hpp"
 #include "ControlRoom.hpp"
+#include <utility>
 
 struct StoryMode : Mode {
 	StoryMode();
@@ -11,6 +12,7 @@ struct StoryMode : Mode {
 	virtual bool handle_event(SDL_Event const &, glm::uvec2 const &window_size) override;
 	virtual void update(float elapsed) override;
 	virtual void draw(glm::uvec2 const &drawable_size) override;
+	void check_sounds(std::vector<soundID> to_play, std::vector<soundID> to_kill);
 	void check_mouse(bool left_click, bool right_click);
 	bool check_mouseWithItem(bool left_click, bool right_click);
 	bool in_box(glm::vec2 pos_cur, glm::vec2 pos_min, glm::vec2 pos_max);
@@ -36,12 +38,16 @@ struct StoryMode : Mode {
 	int floating_interval = 10;
 	bool floating_dir = false; //false - up, true - down
 
-	//called to create menu for current scene:
 	void check_usage(itemID use, itemID on, bool click);
-	void enter_scene();
-	void check_story();
 
 	//------ story state -------
+
+	struct {
+
+		bool played_opening = false;
+		bool in_cutscene = true;
+
+	} story_state;
 
 	// Cabin Interactables
 	// light
@@ -57,10 +63,7 @@ struct StoryMode : Mode {
 	int item_selected_ID = -1;
 	int inventory_cur_page = 0;
 	enum inventoryStatus {ShowItem, ShowDetail, UseItem} inventory_status = ShowItem;
-	// std::set<std::pair(Interactable, Interactable)> item_interactions;
-
-	float shake_constant = 0.1f;
-	bool shake_left = false;
-	float shake_time = shake_constant;
+	std::vector<bool> sounds_playing;
+	std::vector<std::shared_ptr< Sound::PlayingSample >> sound_ptrs;
 	std::shared_ptr< Sound::PlayingSample > background_music;
 };

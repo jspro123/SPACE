@@ -8,6 +8,7 @@
 #include "MenuMode.hpp"
 #include "Sound.hpp"
 #include "stdlib.h"
+#include "GlobalSounds.hpp"
 #include <algorithm>
 
 Sprite const* demo_background = nullptr;
@@ -71,10 +72,6 @@ Load< SpriteAtlas > sprites_text(LoadTagDefault, []() -> SpriteAtlas const * {
 	return ret;
 });
 
-Load< Sound::Sample > music_cold_dunes(LoadTagDefault, []() -> Sound::Sample * {
-	return new Sound::Sample(data_path("bgm.wav"));
-});
-
 Load< Sound::Sample > music_correct(LoadTagDefault, []() -> Sound::Sample *{
 	return new Sound::Sample(data_path("correct.wav"));
 });
@@ -96,6 +93,11 @@ StoryMode::StoryMode() {
 
 	item_pos[3][0] = glm::vec2(150, 990);
 	item_pos[3][1] = glm::vec2(600, 1048);
+
+	for (int i = 0; i < NUM_SOUNDS; i++) {
+		sounds_playing.push_back(false);
+		sound_ptrs.push_back(nullptr);
+	}
 }
 
 StoryMode::~StoryMode() {
@@ -115,7 +117,7 @@ bool StoryMode::handle_event(SDL_Event const &evt, glm::uvec2 const &window_size
 	bool left_click = false; 
 	bool right_click = false;
 	if (evt.type == SDL_KEYDOWN) {
-		if (evt.key.keysym.sym == SDLK_i) {
+		if (evt.key.keysym.sym == SDLK_i && !story_state.in_cutscene) {
 			if (inventory_visible) inventory_status = ShowItem;
 			inventory_visible = !inventory_visible;
 			inventory.update_inventory();
@@ -197,7 +199,7 @@ bool StoryMode::handle_event(SDL_Event const &evt, glm::uvec2 const &window_size
 			}
 		} else if (evt.button.button == SDL_BUTTON_LEFT) {
 			left_click = true;
-		} else if (evt.button.button == SDL_BUTTON_MIDDLE) {
+		} else if (evt.button.button == SDL_BUTTON_MIDDLE && !story_state.in_cutscene) {
 			if (!inventory_visible) {
 				inventory_visible ^= 1;
 			} else if (inventory_status == ShowItem) {
@@ -332,14 +334,35 @@ void StoryMode::check_usage(itemID use, itemID on, bool click) {
 void StoryMode::update(float elapsed) {
 
 
-	shake_time -= elapsed;
-
-	if (shake_time < 0) {
-		shake_time = shake_constant;
-		shake_left = !shake_left;
+	if (story_state.played_opening && (!background_music || background_music->stopped)) {
+		background_music = Sound::play(*ambience, 1.0f);
 	}
-	check_story();
 
+	std::pair<std::vector<soundID>, std::vector<soundID>> pair;
+
+	//Check story
+	switch (location) {
+
+	case Cabin:
+		pair = cabin_room.check_story(message_box, sounds_playing, elapsed);
+		if (cabin_room.cabin_state.intro_text) {
+			story_state.played_opening = true;
+			story_state.in_cutscene = false;
+		}
+		break;
+
+	case Hallway1:
+		hallwayone.check_story(message_box);
+		break;
+
+	case Control:
+		control_room.check_story(message_box);
+
+	}
+
+	check_sounds(pair.first, pair.second);
+
+	if (message_box.size() != 0) message_box_visible = true;
 }
 
 bool StoryMode::in_box(glm::vec2 pos_cur, glm::vec2 pos_min, glm::vec2 pos_max) {
@@ -355,7 +378,7 @@ void StoryMode::check_mouse(bool left_click, bool right_click) {
 	//std::cout << left_click << " " << right_click << "\n";
 	//std::cout << mouse_pos.x << " " << mouse_pos.y << "\n";
 
-	if (on_item)
+	if (on_item || story_state.in_cutscene)
 		return;
 
 	auto prepare_message_box = [this](std::vector<std::string> to_add) {
@@ -433,42 +456,83 @@ void StoryMode::check_mouse(bool left_click, bool right_click) {
 	if (!on_something || message_box_visible || (inventory_visible && inventory_status != ShowDetail)) hint_visible = on_item;
 }
 
+void StoryMode::check_sounds(std::vector<soundID> to_play, std::vector<soundID> to_kill) {
 
-void StoryMode::check_story() {
+	auto sid_to_i = [](soundID id) {
+		switch (id) {
+		case SfingerOne:
+			return 0;
+		case SfingerTwo:
+			return 1;
+		case Semergency:
+			return 2;
+		case Sambience:
+			return 3;
+		case Sdoor_air:
+			return 4;
+		case Sdoor_open:
+			return 5;
+		case ScrowbarOne:
+			return 6;
+		case ScrowbarTwo:
+			return 7;
+		case SshipCrash:
+			return 8;
+		default:
+			return -1;
+		}
+	};
 
-	switch (location) {
-		
-		case Cabin:
-			cabin_room.check_story(message_box);
-			break;
+	int index = -1;
 
-		case Hallway1:
-			hallwayone.check_story(message_box);
-			break;
-
-		case Control:
-			control_room.check_story(message_box);
-	
+	for (int i = 0; i < to_play.size(); i++) {
+		index = sid_to_i(to_play[i]);
+		if (sounds_playing[index]) {
+			continue;
+		}
+		sounds_playing[index] = true;
+		switch (to_play[i]) {
+			case SfingerOne:
+				sound_ptrs[index] = Sound::play(*finger_one, 1.0f);
+				break;
+			case SfingerTwo:
+				sound_ptrs[index] = Sound::play(*finger_two, 1.0f);
+				break;
+			case Semergency:
+				sound_ptrs[index] = Sound::play(*emergency, 1.0f);
+				break;
+			case Sambience:
+				sound_ptrs[index] = Sound::play(*ambience, 1.0f);
+				break;
+			case Sdoor_air:
+				sound_ptrs[index] = Sound::play(*door_air, 1.0f);
+				break;
+			case Sdoor_open:
+				sound_ptrs[index] = Sound::play(*door_open, 1.0f);
+				break;
+			case ScrowbarOne:
+				sound_ptrs[index] = Sound::play(*crowbar_one, 1.0f);
+				break;
+			case ScrowbarTwo:
+				sound_ptrs[index] = Sound::play(*crowbar_two, 1.0f);
+				break;
+			case SshipCrash:
+				sound_ptrs[index] = Sound::play(*ship_crash, 1.0f);
+				break;
+		}
 	}
 
-	if (message_box.size() != 0) message_box_visible = true;
+	for (int i = 0; i < to_kill.size(); i++) {
+		index = sid_to_i(to_kill[i]);
+		if (sound_ptrs[index]) { sound_ptrs[index]->stop(5.0f); }
+		sounds_playing[index] = false;
+	}
 
-}
-
-void StoryMode::enter_scene() {
-	//just entered this scene, adjust flags and build menu as appropriate:
-	/*
-	std::vector< MenuMode::Item > items;
-	glm::vec2 at(new_f, view_max.y - 1new_f);
-
-	std::shared_ptr< MenuMode > menu = std::make_shared< MenuMode >(items);
-	menu->atlas = sprites;
-	menu->left_select = sprite_left_select;
-	menu->view_min = view_min;
-	menu->view_max = view_max;
-	menu->background = shared_from_this();
-	Mode::current = menu;
-	*/
+	for (int i = 0; i < sound_ptrs.size(); i++) {
+		if (sound_ptrs[i] && sound_ptrs[i]->stopped) {
+			sounds_playing[i] = false;
+		}
+	}
 }
 
 void StoryMode::draw(glm::uvec2 const &drawable_size) {
@@ -499,6 +563,9 @@ void StoryMode::draw(glm::uvec2 const &drawable_size) {
 				draw.draw(*sprite_dark_cabin, ul);
 				draw.draw(*sprite_dark_glass, ul);
 			}
+			if (!story_state.played_opening) {
+				draw.draw(*all_black, ul);
+			}
 		} else if (location == Hallway1) {
 			draw.draw(*hallwayone_door_red, ul);
 		} else if (location == Control) {
@@ -509,6 +576,7 @@ void StoryMode::draw(glm::uvec2 const &drawable_size) {
 			}
 			draw.draw(*control_blood, ul);
 		}
+
 		if (inventory_visible || message_box_visible) {
 			draw.draw(*demo_text_area, ul);
 		}

@@ -159,6 +159,7 @@ GAME_NAMES =
 	CabinRoom
 	HallwayOne
 	ControlRoom
+	GlobalSounds
 	Sound
 	load_wav
 	load_opus

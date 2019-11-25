@@ -1,10 +1,5 @@
 #include "CabinRoom.hpp"
 
-
-Load< Sound::Sample > emergency(LoadTagDefault, []() -> Sound::Sample* {
-	return new Sound::Sample(data_path("Emergency.opus"));
-	});
-
 CabinRoom::CabinRoom() {
 
 	Light_switch.position_min = glm::vec2(1655, 585);
@@ -224,24 +219,143 @@ void CabinRoom::check_interactions(std::vector<std::string>& message_box, bool l
 	}
 }
 
-void CabinRoom::check_story(std::vector<std::string>& message_box) {
+std::pair<std::vector<soundID>, std::vector<soundID>> CabinRoom::check_story(
+	std::vector<std::string>& message_box, std::vector<bool> sounds_playing, float elapsed) {
+	
+	auto sid_to_i = [](soundID id) {
+		switch (id) {
+		case SfingerOne:
+			return 0;
+		case SfingerTwo:
+			return 1;
+		case Semergency:
+			return 2;
+		case Sambience:
+			return 3;
+		case Sdoor_air:
+			return 4;
+		case Sdoor_open:
+			return 5;
+		case ScrowbarOne:
+			return 6;
+		case ScrowbarTwo:
+			return 7;
+		case SshipCrash:
+			return 8;
+		default:
+			return -1;
+		}
+	};
+
+	std::vector<soundID> to_play;
+	std::vector<soundID> to_kill;
 
 	if (!cabin_state.intro_text) {
 
-		//Sounds and shit later
-		message_box.push_back(cryo_dark_intro1);
-		message_box.push_back(cryo_dark_intro2);
-		message_box.push_back(cryo_dark_intro3);
-		//More sounds and shit
-		message_box.push_back(cryo_dark_intro4);
-		message_box.push_back(cryo_dark_intro5);
-		message_box.push_back(cryo_dark_intro6);
-		message_box.push_back(cryo_dark_intro7);
-		message_box.push_back(cryo_dark_intro8);
-		message_box.push_back(cryo_dark_intro9);
-		cabin_state.intro_text = true;
+		if (cutscene_one.silence_start > 0) {
+			cutscene_one.silence_start -= elapsed;
+			return std::make_pair(to_play, to_kill);
+		}
 
+		if (!cutscene_one.played_door_open) {
+			to_play.push_back(Sdoor_open);
+			cutscene_one.played_door_open = true;
+			return std::make_pair(to_play, to_kill);
+		} else if (cutscene_one.played_door_open && sounds_playing[sid_to_i(Sdoor_open)]) {
+			return std::make_pair(to_play, to_kill);
+		}
+
+		if (cutscene_one.silence_middle_one > 0) {
+			cutscene_one.silence_middle_one -= elapsed;
+			return std::make_pair(to_play, to_kill);
+		}
+
+		if (!cutscene_one.played_crowbar_hit_one_one) {
+			to_play.push_back(ScrowbarOne);
+			cutscene_one.played_crowbar_hit_one_one = true;
+			return std::make_pair(to_play, to_kill);
+		} else if (cutscene_one.played_crowbar_hit_one_one && sounds_playing[sid_to_i(ScrowbarOne)]) {
+			return std::make_pair(to_play, to_kill);
+		}
+
+		if (cutscene_one.silence_middle_two > 0) {
+			cutscene_one.silence_middle_two -= elapsed;
+			return std::make_pair(to_play, to_kill);
+		}
+
+		if (!cutscene_one.played_crowbar_hit_one_two) {
+			to_play.push_back(ScrowbarOne);
+			cutscene_one.played_crowbar_hit_one_two = true;
+			return std::make_pair(to_play, to_kill);
+		} else if (cutscene_one.played_crowbar_hit_one_two && sounds_playing[sid_to_i(ScrowbarOne)]) {
+			return std::make_pair(to_play, to_kill);
+		}
+
+		if (cutscene_one.silence_middle_three > 0) {
+			cutscene_one.silence_middle_three -= elapsed;
+			return std::make_pair(to_play, to_kill);
+		}
+
+		if (!cutscene_one.played_crowbar_hit_two) {
+			to_play.push_back(ScrowbarTwo);
+			cutscene_one.played_crowbar_hit_two = true;
+			return std::make_pair(to_play, to_kill);
+		} else if (cutscene_one.played_crowbar_hit_two && sounds_playing[sid_to_i(ScrowbarTwo)]) {
+			return std::make_pair(to_play, to_kill);
+		}
+
+		if (cutscene_one.silence_middle_four > 0) {
+			cutscene_one.silence_middle_four -= elapsed;
+			return std::make_pair(to_play, to_kill);
+		}
+
+		if (!cutscene_one.played_crash) {
+			to_play.push_back(SshipCrash);
+			cutscene_one.played_crash = true;
+			return std::make_pair(to_play, to_kill);
+		}
+
+		if (cutscene_one.silence_middle_five > 0) {
+			cutscene_one.silence_middle_five -= elapsed;
+			return std::make_pair(to_play, to_kill);
+		}
+
+		to_play.push_back(Semergency);
+
+		if (!cutscene_one.pushed_text_one) {
+			message_box.push_back(cryo_dark_intro1);
+			message_box.push_back(cryo_dark_intro2);
+			message_box.push_back(cryo_dark_intro3);
+			cutscene_one.pushed_text_one = true;
+		}
+		
+		if (!cutscene_one.played_protag_open && message_box.size() == 0) {
+			to_play.push_back(Sdoor_air);
+			cutscene_one.played_protag_open = true;
+			return std::make_pair(to_play, to_kill);
+		}
+		else if (cutscene_one.played_protag_open && sounds_playing[sid_to_i(Sdoor_air)]) {
+			return std::make_pair(to_play, to_kill);
+		}
+
+		if (cutscene_one.silence_middle_six > 0) {
+			cutscene_one.silence_middle_six -= elapsed;
+			return std::make_pair(to_play, to_kill);
+		}
+
+		if (cutscene_one.pushed_text_one && cutscene_one.played_protag_open &&
+			cutscene_one.silence_middle_six < 0) {
+			to_kill.push_back(Semergency);
+			message_box.push_back(cryo_dark_intro4);
+			message_box.push_back(cryo_dark_intro5);
+			message_box.push_back(cryo_dark_intro6);
+			message_box.push_back(cryo_dark_intro7);
+			message_box.push_back(cryo_dark_intro8);
+			message_box.push_back(cryo_dark_intro9);
+			cabin_state.intro_text = true;
+		}
 	}
+
 	else if (cabin_state.light_on && !cabin_state.light_on_text) {
 
 		cryo_interactables.push_back(Empty_pod);
@@ -258,4 +372,6 @@ void CabinRoom::check_story(std::vector<std::string>& message_box) {
 		cabin_state.light_on_text = true;
 
 	}
+
+	return std::make_pair(to_play, to_kill);
 }
