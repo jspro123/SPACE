@@ -32,8 +32,9 @@ Sources for sound effects:
 - Engine failure and launch: https://www.soundfishing.eu/sound/spaceship
 - Screen breaking: https://freesound.org/people/urupin/sounds/414047/
 
+Ending wallpaper: https://wallpaperplay.com/walls/full/e/d/f/219506.jpg
+
 If I missed anything, please let me know. 
 
 This game was built with [NEST](NEST.md).
 
-https://wallpaperplay.com/walls/full/e/d/f/219506.jpg
