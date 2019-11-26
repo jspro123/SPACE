@@ -387,17 +387,24 @@ void StoryMode::check_usage(itemID use, itemID on, bool click) {
 			control_room.control_state.use_terminal_descr = 2;
 		}
 	}
+	else if ((ouse == brokenGlassOne || ouse == brokenGlassTwo  || ouse == brokenGlassThree ) && (on == windShield || on == escapePod)) {
+		message_box.push_back("The shard is too small to cover the entire whole. ");
+	}
 	else if (ouse == bunchOfGlass && (on == windShield || on == escapePod)) {
 		message_box.push_back("Okay, I've set all the glass near the pod. Now to keep them in place. ");
 		pod_room.pod_state.glass_set_down = true;
 		inventory.erase_item(bunchOfGlass);
 	}
 	else if (pod_room.pod_state.glass_set_down && use == spaceTape && (on == windShield || on == escapePod)) {
-		message_box.push_back("");
-		soundeffect = Stape;
-		message_box.push_back("All fixed up, now. Hopefully. ");
-		pod_room.pod_state.glass_taped_up = true;
-		pod_room.pod_state.windshield_descr++;
+		if (!pod_room.pod_state.glass_set_down) {
+			message_box.push_back("That's not a bad idea, but I can't just cover the hole with tape. ");
+		} else {
+			message_box.push_back("");
+			soundeffect = Stape;
+			message_box.push_back("All fixed up, now. Hopefully. ");
+			pod_room.pod_state.glass_taped_up = true;
+			pod_room.pod_state.windshield_descr++;
+		}
 	}
 	else if (use == computerChip && (on == windShield || on == escapePod)) {
 		message_box.push_back("Let's try this. . .  ");
@@ -868,7 +875,6 @@ void StoryMode::draw(glm::uvec2 const &drawable_size) {
 				} else {
 					Interactable cur_item = inventory.interactables[item_selected_ID];
 					std::string tmp = cur_item.name;
-					tmp.append(". ");
 					tmp.append(cur_item.description);
 					draw_text.get_text_extents(tmp, at, old_f, &min, &max);
 					draw_text.draw_text_short(tmp, at, new_f, glm::u8vec4(0xff, 0xff, 0xff, 0xff));
