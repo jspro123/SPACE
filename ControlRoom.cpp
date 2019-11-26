@@ -172,7 +172,7 @@ bool ControlRoom::check_interactions(std::vector<std::string>& message_box, bool
 				break;
 
 			case controlTerminal:
-				if (control_state.used_key_card) {
+				if (control_state.used_key_card && control_state.use_terminal_descr != 2) {
 					control_state.accessed_terminal = true;
 					return true;
 				} else if(control_state.use_terminal_descr == 1){

@@ -23,6 +23,14 @@ int sid_to_i (soundID id) {
 		return 8;
 	case Sforced:
 		return 9;
+	case Stape:
+		return 10;
+	case SengineFail:
+		return 11;
+	case SengineStart:
+		return 12;
+	case SbreakScreen:
+		return 13;
 	default:
 		return -1;
 	}

@@ -11,7 +11,7 @@ Load< Sound::Sample > emergency = Load< Sound::Sample >(LoadTagDefault, []() -> 
 	});
 
 Load< Sound::Sample > ambience = Load< Sound::Sample >(LoadTagDefault, []() -> Sound::Sample * {
-	return new Sound::Sample(data_path("bgm.wav"));
+	return new Sound::Sample(data_path("ambience.opus"));
 	});
 
 Load< Sound::Sample > finger_one = Load< Sound::Sample >(LoadTagDefault, []() -> Sound::Sample * {
@@ -44,4 +44,20 @@ Load< Sound::Sample > ship_crash = Load< Sound::Sample >(LoadTagDefault, []() ->
 
 Load< Sound::Sample > forced = Load< Sound::Sample >(LoadTagDefault, []() -> Sound::Sample * {
 	return new Sound::Sample(data_path("Forced.opus"));
+	});
+
+Load< Sound::Sample > tape = Load< Sound::Sample >(LoadTagDefault, []() -> Sound::Sample * {
+	return new Sound::Sample(data_path("Tape.opus"));
+	});
+
+Load< Sound::Sample > engine_fail = Load< Sound::Sample >(LoadTagDefault, []() -> Sound::Sample * {
+	return new Sound::Sample(data_path("Engine_fail_stitch.opus"));
+	});
+
+Load< Sound::Sample > break_screen = Load< Sound::Sample >(LoadTagDefault, []() -> Sound::Sample * {
+	return new Sound::Sample(data_path("Break_Screen.opus"));
+	});
+
+Load< Sound::Sample > engine_start = Load< Sound::Sample >(LoadTagDefault, []() -> Sound::Sample * {
+	return new Sound::Sample(data_path("Engine_Start.opus"));
 	});

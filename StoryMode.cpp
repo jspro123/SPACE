@@ -378,8 +378,9 @@ void StoryMode::check_usage(itemID use, itemID on, bool click) {
 			message_box.push_back("I don't see any reason to do that. ");
 		} else {
 			message_box.push_back("Okay, gently now. . . ");
-			//Play breakage sounds
-			message_box.push_back("Damn it. . . all the logs are gone now. ");
+			message_box.push_back("");
+			soundeffect = SbreakScreen;
+			message_box.push_back("Damn it. . . all the logs are gone. . . ");
 			message_box.push_back("Still, I got the chip. ");
 			inventory.interactables.push_back(control_room.CCU);
 			control_room.control_state.terminal_descr = 3;
@@ -387,16 +388,24 @@ void StoryMode::check_usage(itemID use, itemID on, bool click) {
 		}
 	}
 	else if (ouse == bunchOfGlass && (on == windShield || on == escapePod)) {
-		message_box.push_back("Okay, I've set all the glass near the pod. Now to keep them in place. . . ");
+		message_box.push_back("Okay, I've set all the glass near the pod. Now to keep them in place. ");
 		pod_room.pod_state.glass_set_down = true;
 		inventory.erase_item(bunchOfGlass);
 	}
 	else if (pod_room.pod_state.glass_set_down && use == spaceTape && (on == windShield || on == escapePod)) {
-		message_box.push_back("Let's see here. . . ");
-		//Play sounds of tape 
+		message_box.push_back("");
+		soundeffect = Stape;
 		message_box.push_back("All fixed up, now. Hopefully. ");
 		pod_room.pod_state.glass_taped_up = true;
 		pod_room.pod_state.windshield_descr++;
+	}
+	else if (use == computerChip && (on == windShield || on == escapePod)) {
+		message_box.push_back("Let's try this. . .  ");
+		message_box.push_back(". . .  ");
+		message_box.push_back("Okay, done. If I did everything right, the pod should be able to fly now. ");
+		inventory.erase_item(computerChip);
+		pod_room.pod_state.pod_fixed = true;
+		pod_room.pod_state.pod_descr = 3;
 	}
 	else if (use == redStone) {
 		message_box.push_back("For some reason, I feel like that's a terrible idea. . . but why? ");
@@ -411,7 +420,7 @@ void StoryMode::check_usage(itemID use, itemID on, bool click) {
 void StoryMode::update(float elapsed) {
 
 
-	if (story_state.played_opening && (!background_music || background_music->stopped)) {
+	if ((!background_music || background_music->stopped)) {
 		background_music = Sound::play(*ambience, 1.0f);
 	}
 
@@ -447,9 +456,21 @@ void StoryMode::update(float elapsed) {
 			else if (pod_room.pod_state.attempt_take_off && pod_room.pod_state.attempted_take_off) {
 				story_state.in_cutscene = false;
 			}
+			if (pod_room.pod_state.leave_ship && !pod_room.pod_state.finished_launch) {
+				story_state.in_cutscene = true;
+			}
+			else if (pod_room.pod_state.leave_ship && pod_room.pod_state.finished_launch) {
+				story_state.in_cutscene = false;
+				end_flag = true;
+				location = Space;
+			}
 	}
 
 	check_sounds(pair.first, pair.second);
+
+	if (end_flag && story_state.some_time_later > 0) {
+		story_state.some_time_later -= elapsed;
+	}
 
 	if (message_box.size() != 0) message_box_visible = true;
 }
@@ -467,8 +488,9 @@ void StoryMode::check_mouse(bool left_click, bool right_click) {
 	//std::cout << left_click << " " << right_click << "\n";
 	//std::cout << mouse_pos.x << " " << mouse_pos.y << "\n";
 
+	if (story_state.in_cutscene) { hint_visible = false; }
+
 	if (on_item || story_state.in_cutscene) {
-		hint_visible = false;
 		return;
 	}
 
@@ -585,8 +607,16 @@ void StoryMode::check_sounds(std::vector<soundID> to_play, std::vector<soundID> 
 				return Sound::play(*ship_crash, 1.0f);
 			case Sforced:
 				return Sound::play(*forced, 1.0f);
+			case Stape:
+				return Sound::play(*tape, 1.0f);
+			case SengineFail:
+				return Sound::play(*engine_fail, 1.0f);
+			case SengineStart:
+				return Sound::play(*engine_start, 1.0f);
+			case SbreakScreen:
+				return Sound::play(*break_screen, 1.0f);
 			default:
-				return Sound::play(*forced, 1.0f);;
+				return Sound::play(*forced, 1.0f);
 		}
 	};
 
@@ -630,15 +660,6 @@ void StoryMode::draw(glm::uvec2 const &drawable_size) {
 	{ //use a DrawSprites to do the drawing:
 		DrawSprites draw(*sprites, view_min, view_max, drawable_size, DrawSprites::AlignPixelPerfect);
 		glm::vec2 ul = glm::vec2(view_min.x, view_max.y);
-		if (end_flag) {
-			draw.draw(*space_background, ul);
-			float space_scale = 1.0f - end_animation_interval.y / 500;
-			if (space_scale > 0.0f) {
-				draw.draw(*space_pod, ul + glm::vec2(view_max.x / 1.5f, -view_max.y / 1.5f) + end_animation_interval, space_scale);
-				end_animation_interval += glm::vec2(-0.5f * space_scale, 0.25f * space_scale);
-			}
-			return;
-		}
 		draw.draw(*demo_background, ul);
 		if (location == Cabin) {
 			if (cabin_room.cabin_state.light_on) {
@@ -660,13 +681,20 @@ void StoryMode::draw(glm::uvec2 const &drawable_size) {
 				draw.draw(*sprite_dark_cabin, ul);
 				draw.draw(*sprite_dark_glass, ul);
 			}
-			if (!story_state.played_opening) {
-				draw.draw(*all_black, ul);
-			} else {
-				int ti = 10;
-				if (fading_interval < 10 * ti) {
-					draw.draw(*b[fading_interval / ti + 1], ul);
-					fading_interval++;
+			if (!story_state.faded_opening) {
+				if (!story_state.played_opening) {
+					draw.draw(*all_black, ul);
+				}
+				else {
+					int ti = 10;
+					if (fading_interval < 10 * ti) {
+						draw.draw(*b[fading_interval / ti + 1], ul);
+						fading_interval++;
+					}
+					if (fading_interval == 10 * ti) {
+						story_state.faded_opening = true;
+						fading_interval = 100;
+					}
 				}
 			}
 		} else if (location == Hallway1) {
@@ -690,6 +718,47 @@ void StoryMode::draw(glm::uvec2 const &drawable_size) {
 			draw.draw(*bay_junk, ul);
 			if(pod_room.pod_state.glass_taped_up) {
 				draw.draw(*bay_tape, ul);
+			}
+
+			if (pod_room.pod_state.attempt_take_off && !pod_room.pod_state.attempted_take_off) {
+				int ti = 10;
+				draw.draw(*b[(fading_interval)/ ti + 1], ul);
+				fading_interval = fading_interval > 0 ? fading_interval - 1 : 0;
+			} else if (pod_room.pod_state.attempted_take_off && !story_state.faded_out_pod_one) {
+				int ti = 10;
+				if (fading_interval < 10 * ti) {
+					draw.draw(*b[fading_interval / ti + 1], ul);
+					fading_interval++;
+				}
+				if (fading_interval == 10 * ti) {
+					story_state.faded_out_pod_one = true;
+					fading_interval = 100;
+				}
+			}
+
+			if (pod_room.pod_state.leave_ship && !pod_room.pod_state.finished_launch) {
+				int ti = 10;
+				draw.draw(*b[(fading_interval) / ti + 1], ul);
+				fading_interval = fading_interval > 0 ? fading_interval - 1 : 0;
+			}
+
+		} else if (location == Space) {
+			inventory_visible = false;
+			int ti = 10;
+			if (fading_interval < 10 * ti) {
+				draw.draw(*b[fading_interval / ti + 1], ul);
+				fading_interval++;
+			}
+			if (story_state.some_time_later < 0 && !story_state.pushed_text) {
+				story_state.pushed_text = true;
+				message_box.push_back("Time to go back. ");
+				message_box.push_back("But not to Earth. ");
+			}
+			draw.draw(*space_background, ul);
+			float space_scale = 1.0f - end_animation_interval.y / 500;
+			if (space_scale > 0.0f) {
+				draw.draw(*space_pod, ul + glm::vec2(view_max.x / 1.5f, -view_max.y / 1.5f) + end_animation_interval, space_scale);
+				end_animation_interval += glm::vec2(-0.5f * space_scale, 0.25f * space_scale);
 			}
 		}
 

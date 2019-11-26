@@ -52,7 +52,16 @@ struct StoryMode : Mode {
 
 		bool played_opening = false;
 		bool in_cutscene = true;
-		bool faded_in = false;
+		bool faded_opening = false;
+
+		bool faded_in_pod_one = false;
+		bool faded_out_pod_one = false;
+
+		bool faded_in_pod_two = false;
+		bool faded_out_pod_two = false;
+
+		float some_time_later = 10.0f;
+		bool pushed_text = false;
 
 	} story_state;
 

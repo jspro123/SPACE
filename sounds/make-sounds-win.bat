@@ -9,3 +9,7 @@
 ..\..\nest-libs\windows\opus-tools\bin\opusenc.exe --vbr --bitrate 128 Crash.wav ..\dist\Crash.opus
 ..\..\nest-libs\windows\opus-tools\bin\opusenc.exe --vbr --bitrate 128 Ambience.wav ..\dist\Ambience.opus
 ..\..\nest-libs\windows\opus-tools\bin\opusenc.exe --vbr --bitrate 128 Forced.wav ..\dist\Forced.opus
+..\..\nest-libs\windows\opus-tools\bin\opusenc.exe --vbr --bitrate 128 Tape.wav ..\dist\Tape.opus
+..\..\nest-libs\windows\opus-tools\bin\opusenc.exe --vbr --bitrate 128 Engine_fail_stitch.wav ..\dist\Engine_fail_stitch.opus
+..\..\nest-libs\windows\opus-tools\bin\opusenc.exe --vbr --bitrate 128 Engine_Start.wav ..\dist\Engine_Start.opus
+..\..\nest-libs\windows\opus-tools\bin\opusenc.exe --vbr --bitrate 128 Break_Screen.wav ..\dist\Break_Screen.opus

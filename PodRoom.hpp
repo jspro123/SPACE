@@ -33,6 +33,9 @@ struct PodRoom {
 		bool need_chip = false;
 		bool attempt_take_off = false;
 		bool attempted_take_off = false;
+		bool leave_ship = false;
+		bool pod_fixed = false;
+		bool finished_launch = false;
 
 		int windshield_descr = 1;
 		int pod_descr = 1;
@@ -46,6 +49,13 @@ struct PodRoom {
 		bool played_failed_launch = false;
 
 	} cutscene_one;
+
+	struct {
+
+		bool played_launch = false;
+		float timer = 4.0f;
+
+	} cutscene_two;
 	
 	/* ============= POD ROOM =============*/
 
@@ -64,10 +74,12 @@ struct PodRoom {
 
 	std::vector<std::string> Pod_descr1;
 	std::vector<std::string> Pod_descr2;
+	std::vector<std::string> Pod_descr3;
 	std::vector<std::string> Pod_use_descr1;
 	std::string Pod_descr1_1 = "An escape pod. My only chance at getting out of here. ";
 	std::string Pod_descr1_2 = "Looks like it's not in the best shape, though. . .  ";
 	std::string Pod_descr2_1 = "An escape pod. My only chance at getting out of here. ";
+	std::string Pod_descr3_1 = "Looks like it's good to go. ";
 	std::string Pod_use_descr1_1 = "I have to repair it first. ";
 
 	std::vector<std::string> Windshield_descr1;

@@ -10,11 +10,12 @@ enum itemID {lightSwitch, toolbox, brokenGlass, commanderBody, genericBody, cryo
 			controlBody, controlTerminal, controlControls, crowbar, controlLight, commanderFinger, killerFinger,
 			keyCard, redStone, hammer, spaceTape, windShield, escapePod, wrench, bayToHallway, bayToBroken,
 			podTech, bayToBrokenPanel, computerChip, brokenGlassOne, brokenGlassTwo, brokenGlassThree, bunchOfGlass};
-enum locationID {Cabin, Hallway1, Control, PodBay};
+enum locationID {Cabin, Hallway1, Control, PodBay, Space};
 
-enum soundID {none, SfingerOne, SfingerTwo, Semergency, Sambience, Sdoor_air, Sdoor_open, ScrowbarOne, ScrowbarTwo, SshipCrash, Sforced};
+enum soundID {none, SfingerOne, SfingerTwo, Semergency, Sambience, Sdoor_air, Sdoor_open, ScrowbarOne, ScrowbarTwo, SshipCrash, Sforced, 
+			Stape, SengineFail, SengineStart, SbreakScreen};
 
-#define NUM_SOUNDS 10
+#define NUM_SOUNDS 14
 
 int sid_to_i(soundID);
 

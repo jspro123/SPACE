@@ -38,6 +38,7 @@ PodRoom::PodRoom() {
 	Pod_descr1.push_back(Pod_descr1_1);
 	Pod_descr1.push_back(Pod_descr1_2);
 	Pod_descr2.push_back(Pod_descr2_1);
+	Pod_descr3.push_back(Pod_descr3_1);
 	Pod_use_descr1.push_back(Pod_use_descr1_1);
 
 	Windshield_descr1.push_back(Windshield_descr1_1);
@@ -107,9 +108,10 @@ bool PodRoom::check_interactions(std::vector<std::string>& message_box, bool lef
 				if (pod_state.pod_descr == 1) {
 					prepare_message_box(Pod_descr1);
 					pod_state.pod_descr++;
-				}
-				else {
+				} else if (pod_state.pod_descr == 2) {
 					prepare_message_box(Pod_descr2);
+				} else {
+					prepare_message_box(Pod_descr3);
 				}
 				break;
 
@@ -131,15 +133,20 @@ bool PodRoom::check_interactions(std::vector<std::string>& message_box, bool lef
 	} else if (right_click) {
 		switch (item) {
 			case windShield:
-				if (!pod_state.attempt_take_off) {
-					if (pod_state.glass_taped_up) {
-						pod_state.attempt_take_off = true;
+				if (!pod_state.pod_fixed) {
+					if (!pod_state.attempt_take_off) {
+						if (pod_state.glass_taped_up) {
+							pod_state.attempt_take_off = true;
+						}
+						else {
+							prepare_message_box(Windshield_use_descr1);
+						}
 					}
 					else {
 						prepare_message_box(Windshield_use_descr1);
 					}
 				} else {
-					prepare_message_box(Windshield_use_descr1);
+					pod_state.leave_ship = true;
 				}
 				break;
 
@@ -158,6 +165,8 @@ bool PodRoom::check_interactions(std::vector<std::string>& message_box, bool lef
 			case escapePod:
 				if (pod_state.glass_taped_up) {
 					pod_state.attempt_take_off = true;
+				} else if(pod_state.pod_fixed){
+					pod_state.leave_ship = true;
 				} else {
 					prepare_message_box(Pod_use_descr1);
 				}
@@ -191,11 +200,11 @@ std::pair<std::vector<soundID>, std::vector<soundID>> PodRoom::check_story(
 		}
 
 		if (!cutscene_one.played_failed_launch && message_box.size() == 0) {
-			to_play.push_back(Sdoor_air);
+			to_play.push_back(SengineFail);
 			cutscene_one.played_failed_launch = true;
 			return std::make_pair(to_play, to_kill);
 		}
-		else if (cutscene_one.played_failed_launch && sounds_playing[sid_to_i(Sdoor_air)]) {
+		else if (cutscene_one.played_failed_launch && sounds_playing[sid_to_i(SengineFail)]) {
 			return std::make_pair(to_play, to_kill);
 		}
 
@@ -208,6 +217,27 @@ std::pair<std::vector<soundID>, std::vector<soundID>> PodRoom::check_story(
 			pod_state.attempted_take_off = true;
 			pod_state.need_chip = true;
 		}
+
+	}
+
+	if (pod_state.leave_ship && !pod_state.finished_launch) {
+
+		if (!cutscene_two.played_launch) {
+			to_play.push_back(SengineStart);
+			to_kill.push_back(Sambience);
+			cutscene_two.played_launch = true;
+			return std::make_pair(to_play, to_kill);
+		}
+		else if (cutscene_two.played_launch && sounds_playing[sid_to_i(SengineStart)]) {
+			return std::make_pair(to_play, to_kill);
+		}
+
+		if (cutscene_two.timer > 0) {
+			cutscene_two.timer -= elapsed;
+			return std::make_pair(to_play, to_kill);
+		}
+
+		pod_state.finished_launch = true;
 
 	}
 
