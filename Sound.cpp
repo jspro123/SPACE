@@ -9,6 +9,10 @@
 #include <exception>
 #include <iostream>
 #include <algorithm>
+#include <iterator>
+#include <vector>
+
+#include <fstream> // looks like we need this too (edit by π)
 
 //local (to this file) data used by the audio system:
 namespace {
@@ -36,13 +40,27 @@ void mix_audio(void *, Uint8 *buffer_, int len);
 //------------------------ public-facing --------------------------------
 
 Sound::Sample::Sample(std::string const &filename) {
-	if (filename.size() >= 4 && filename.substr(filename.size()-4) == ".wav") {
-		load_wav(filename, &data);
-	} else if (filename.size() >= 5 && filename.substr(filename.size()-5) == ".opus") {
-		load_opus(filename, &data);
+	std::string binary_file = filename.substr(0, filename.size() - 5) + ".bin";
+	std::ifstream fin(binary_file);
+	if(!fin){
+		if (filename.size() >= 4 && filename.substr(filename.size()-4) == ".wav") {
+			load_wav(filename, &data);
+		} else if (filename.size() >= 5 && filename.substr(filename.size()-5) == ".opus") {
+			load_opus(filename, &data);
+		} else {
+			throw std::runtime_error("Sample '" + filename + "' doesn't end in either \".png\" or \".opus\" -- unsure how to load.");
+		}
+		// save data file to binary file
+		std::ofstream ofs(binary_file, std::ios::out | std::ofstream::binary);
+    	std::ostream_iterator<double> osi{ofs," "};
+		std::copy(data.begin(), data.end(), osi);
 	} else {
-		throw std::runtime_error("Sample '" + filename + "' doesn't end in either \".png\" or \".opus\" -- unsure how to load.");
+		std::ifstream ifs(binary_file, std::ios::in | std::ifstream::binary);
+		std::istream_iterator<float> iter{ifs};
+		std::istream_iterator<float> end{};
+		std::copy(iter, end, std::back_inserter(data));
 	}
+
 }
 
 Sound::Sample::Sample(std::vector< float > const &data_) : data(data_) {
@@ -132,8 +150,6 @@ void Sound::set_volume(float new_volume, float ramp) {
 
 
 //------------------------ internals --------------------------------
-
-
 //helper: equal-power panning
 inline void compute_pan_weights(float pan, float *left, float *right) {
 	//clamp pan to -1 to 1 range:

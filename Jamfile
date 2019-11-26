@@ -61,9 +61,9 @@ if $(OS) = NT { #Windows
 } else if $(OS) = MACOSX { #MacOS
 	NEST_LIBS = ../nest-libs/macos ;
 	C++ = clang++ ;
-	C++FLAGS = -std=c++14 -g -Wall -Werror ;
+	C++FLAGS = -std=c++14 -g -Wall ;
 	LINK = clang++ ;
-	LINKFLAGS = -std=c++14 -g -Wall -Werror ;
+	LINKFLAGS = -std=c++14 -g -Wall ;
 	LINKLIBS = ;
 	
 	#SDL2:
