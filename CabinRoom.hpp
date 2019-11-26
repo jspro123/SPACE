@@ -10,9 +10,9 @@ struct CabinRoom {
 	CabinRoom();
 
 	//See descriptions in the story section
-	Interactable Broken_Glass = Interactable(brokenGlassOne, "A piece of glass", true, "It's sharp.");
-	Interactable Broken_Glass2 = Interactable(brokenGlassTwo, "A piece of glass", true, "It's sharp.");
-	Interactable Broken_Glass3 = Interactable(brokenGlassThree, "A piece of glass", true, "It's sharp.");
+	Interactable Broken_Glass = Interactable(brokenGlassOne, "A piece of glass. ", true, "It's sharp.");
+	Interactable Broken_Glass2 = Interactable(brokenGlassTwo, "A piece of glass. ", true, "It's sharp.");
+	Interactable Broken_Glass3 = Interactable(brokenGlassThree, "A piece of glass. ", true, "It's sharp.");
 	Interactable Bunch_Glass = Interactable(bunchOfGlass, "A bunch of glass pieces. ", true, "They're quite sharp.");
 	Interactable Light_switch = Interactable(lightSwitch, "Light switch", false, "Turns on the light");
 	Interactable Tool_box = Interactable(toolbox, "Toolbox", false, "Stores things.");

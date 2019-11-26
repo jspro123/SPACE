@@ -15,7 +15,7 @@
 
 #include <vector>
 
-#define LINE_SKIP 12.0F
+#define LINE_SKIP 14.0F
 #define FONT_SIZE 3.0f
 #define DRAWING_SPEED 1
 #define INDENT 20

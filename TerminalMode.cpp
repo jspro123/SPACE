@@ -222,64 +222,72 @@ void TerminalMode::enter_scene() {
 		}
 	} else if (terminal == LOG1) {
 		add_text(&log1_1);
-		add_text(&lines);
 		add_text(&log1_2);
+		skip_lines();
 		add_text(&log1_3);
+		skip_lines();
 		add_text(&log1_4);
+		skip_lines();
 		add_choice(&back, [this](MenuMode::Item const&) {
 			terminal = LOG;
 			Mode::current = shared_from_this();
 			});
 	} else if (terminal == LOG2) {
 		add_text(&log2_1);
-		add_text(&lines);
 		add_text(&log2_2);
+		skip_lines();
 		add_text(&log2_3);
+		skip_lines();
 		add_choice(&back, [this](MenuMode::Item const&) {
 			terminal = LOG;
 			Mode::current = shared_from_this();
 			});
 	} else if (terminal == LOG3) {
 		add_text(&log3_1);
-		add_text(&lines);
 		add_text(&log3_2);
+		skip_lines();
 		add_text(&log3_3);
+		skip_lines();
 		add_text(&log3_4);
+		skip_lines();
 		add_choice(&back, [this](MenuMode::Item const&) {
 			terminal = LOG;
 			Mode::current = shared_from_this();
 			});
 	} else if (terminal == LOG4) {
 		add_text(&log4_1);
-		add_text(&lines);
 		add_text(&log4_2);
+		skip_lines();
 		add_text(&log4_3);
+		skip_lines();
 		add_choice(&back, [this](MenuMode::Item const&) {
 			terminal = LOG;
 			Mode::current = shared_from_this();
 			});
 	} else if (terminal == LOG5) {
 		add_text(&log5_1);
-		add_text(&lines);
 		add_text(&log5_2);
+		skip_lines();
 		add_text(&log5_3);
+		skip_lines();
 		add_text(&log5_4);
+		skip_lines();
 		add_choice(&back, [this](MenuMode::Item const&) {
 			terminal = LOG;
 			Mode::current = shared_from_this();
 			});
 	} else if (terminal == LOG6) {
 		add_text(&log6_1);
-		add_text(&lines);
 		add_text(&log6_2);
+		skip_lines();
 		add_text(&log6_3);
+		skip_lines();
 		add_choice(&back, [this](MenuMode::Item const&) {
 			terminal = LOG;
 			Mode::current = shared_from_this();
 			});
 	} else if (terminal == LOG7) {
 		add_text(&log7_1);
-		add_text(&lines);
 		add_text(&log7_2);
 		add_choice(&back, [this](MenuMode::Item const&) {
 			terminal = LOG;

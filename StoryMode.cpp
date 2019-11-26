@@ -310,7 +310,7 @@ void StoryMode::check_usage(itemID use, itemID on, bool click) {
 	if (use == brokenGlass && on == commanderBody && !control_room.control_state.accessed_terminal) {
 		message_box.push_back("Why the fuck would I do that? ");
 	}
-	else if (use == brokenGlass && on == commanderBody && control_room.control_state.accessed_terminal) {
+	else if (use == brokenGlass && on == commanderBody && control_room.control_state.accessed_terminal && !cabin_room.cabin_state.took_finger) {
 		message_box.push_back(". . . I'm sorry, commander. ");
 		message_box.push_back("");
 		soundeffect = SfingerOne;
@@ -340,7 +340,7 @@ void StoryMode::check_usage(itemID use, itemID on, bool click) {
 	else if (use == brokenGlass && on == controlBody && !control_room.control_state.accessed_terminal) {
 		message_box.push_back(". . . it isn't right. Even after what he did. ");
 	}
-	else if (use == brokenGlass && on == controlBody && control_room.control_state.accessed_terminal) {
+	else if (use == brokenGlass && on == controlBody && control_room.control_state.accessed_terminal && !control_room.control_state.took_finger) {
 		message_box.push_back(". . . guess I have to do this. ");
 		message_box.push_back("");
 		message_box.push_back("Done. ");
@@ -371,7 +371,7 @@ void StoryMode::check_usage(itemID use, itemID on, bool click) {
 		inventory.interactables.push_back(cabin_room.Hammer);
 		inventory.interactables.push_back(cabin_room.Stone);
 	}
-	else if (use == crowbar || use == hammer && on == controlTerminal) {
+	else if ((use == crowbar || use == hammer) && on == controlTerminal) {
 		if (!hallwayone.hallwayone_state.door_3_open) {
 			message_box.push_back("If I break this thing, I won't be able to reach the emergency pod. ");
 		} else if (!pod_room.pod_state.need_chip) {
@@ -395,7 +395,7 @@ void StoryMode::check_usage(itemID use, itemID on, bool click) {
 		pod_room.pod_state.glass_set_down = true;
 		inventory.erase_item(bunchOfGlass);
 	}
-	else if (pod_room.pod_state.glass_set_down && use == spaceTape && (on == windShield || on == escapePod)) {
+	else if (use == spaceTape && (on == windShield || on == escapePod)) {
 		if (!pod_room.pod_state.glass_set_down) {
 			message_box.push_back("That's not a bad idea, but I can't just cover the hole with tape. ");
 		} else {
