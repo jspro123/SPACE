@@ -52,6 +52,7 @@ struct StoryMode : Mode {
 
 		bool played_opening = false;
 		bool in_cutscene = true;
+		bool faded_in = false;
 
 	} story_state;
 

@@ -14,11 +14,13 @@ Sprite const* demo_background = nullptr;
 Sprite const* demo_text_area = nullptr;
 
 Sprite const *sprite_left_select = nullptr;
-
 Sprite const *sprite_astronaut_bg = nullptr;
 Sprite const *sprite_key_bg = nullptr;
 Sprite const *sprite_light_upper_glass = nullptr;
 Sprite const *sprite_light_body1 = nullptr;
+Sprite const* cabin_glass1 = nullptr;
+Sprite const* cabin_glass2 = nullptr;
+Sprite const* cabin_glass3 = nullptr;
 Sprite const *sprite_light_body2 = nullptr;
 Sprite const *sprite_light_cabin = nullptr;
 Sprite const *sprite_dark_cabin = nullptr;
@@ -51,7 +53,10 @@ Load< SpriteAtlas > sprites(LoadTagDefault, []() -> SpriteAtlas const * {
 	sprite_msg_bg = const_cast<Sprite*> (&ret->lookup("msg_bg"));
 
 	demo_background = &ret->lookup("demo_screen_background");
-	demo_text_area = &ret->lookup("textbox_area");
+	demo_text_area = &ret->lookup("textbox_area"); 
+	cabin_glass1 = &ret->lookup("cryo_glass_1");
+	cabin_glass2 = &ret->lookup("cryo_glass_2");
+	cabin_glass3 = &ret->lookup("cryo_glass_3");
 	sprite_light_upper_glass = &ret->lookup("light_upper_glass");
 	sprite_light_body1 = &ret->lookup("light_body1");
 	sprite_light_body2 = &ret->lookup("light_body2");
@@ -72,8 +77,8 @@ Load< SpriteAtlas > sprites(LoadTagDefault, []() -> SpriteAtlas const * {
 	bay_junk = &ret->lookup("bay_junk");
 	bay_tape = &ret->lookup("bay_tape");
 	all_black = &ret->lookup("b1");
-	space_pod = &ret->lookup("space_pod");
-	space_background = &ret->lookup("space_background");
+	space_pod = &ret->lookup("end_pod");
+	space_background = &ret->lookup("end_background");
 	b[1] = &ret->lookup("b1");
 	b[2] = &ret->lookup("b2");
 	b[3] = &ret->lookup("b3");
@@ -296,6 +301,12 @@ void StoryMode::check_usage(itemID use, itemID on, bool click) {
 
 	if (!click) return;
 
+	itemID ouse = use;
+
+	if (use == brokenGlassOne || use == brokenGlassTwo || use == brokenGlassThree || use == bunchOfGlass) {
+		use = brokenGlass;
+	}
+
 	if (use == brokenGlass && on == commanderBody && !control_room.control_state.accessed_terminal) {
 		message_box.push_back("Why the fuck would I do that? ");
 	}
@@ -351,7 +362,6 @@ void StoryMode::check_usage(itemID use, itemID on, bool click) {
 		message_box.push_back("Let's see if this works. ");
 		message_box.push_back("");
 		soundeffect = Sforced;
-		//Forced open noises
 		message_box.push_back("Alright, it's open. Let's take a look. ");
 		message_box.push_back("A hammer, some tape, and . . . I almost forgot about you. ");
 		message_box.push_back(". . . I should take everything here with me. ");
@@ -360,11 +370,36 @@ void StoryMode::check_usage(itemID use, itemID on, bool click) {
 		inventory.interactables.push_back(cabin_room.Tape);
 		inventory.interactables.push_back(cabin_room.Hammer);
 		inventory.interactables.push_back(cabin_room.Stone);
-		//For the sequel
+	}
+	else if (use == crowbar || use == hammer && on == controlTerminal) {
+		if (!hallwayone.hallwayone_state.door_3_open) {
+			message_box.push_back("If I break this thing, I won't be able to reach the emergency pod. ");
+		} else if (!pod_room.pod_state.need_chip) {
+			message_box.push_back("I don't see any reason to do that. ");
+		} else {
+			message_box.push_back("Okay, gently now. . . ");
+			//Play breakage sounds
+			message_box.push_back("Damn it. . . all the logs are gone now. ");
+			message_box.push_back("Still, I got the chip. ");
+			inventory.interactables.push_back(control_room.CCU);
+			control_room.control_state.terminal_descr = 3;
+			control_room.control_state.use_terminal_descr = 2;
+		}
+	}
+	else if (ouse == bunchOfGlass && (on == windShield || on == escapePod)) {
+		message_box.push_back("Okay, I've set all the glass near the pod. Now to keep them in place. . . ");
+		pod_room.pod_state.glass_set_down = true;
+		inventory.erase_item(bunchOfGlass);
+	}
+	else if (pod_room.pod_state.glass_set_down && use == spaceTape && (on == windShield || on == escapePod)) {
+		message_box.push_back("Let's see here. . . ");
+		//Play sounds of tape 
+		message_box.push_back("All fixed up, now. Hopefully. ");
+		pod_room.pod_state.glass_taped_up = true;
+		pod_room.pod_state.windshield_descr++;
 	}
 	else if (use == redStone) {
 		message_box.push_back("For some reason, I feel like that's a terrible idea. . . but why? ");
-		//For the sequel
 	}
 	else {
 		message_box.push_back("That didn't work. ");
@@ -389,21 +424,29 @@ void StoryMode::update(float elapsed) {
 	//Check story
 	switch (location) {
 
-	case Cabin:
-		pair = cabin_room.check_story(message_box, sounds_playing, elapsed);
-		if (cabin_room.cabin_state.intro_text) {
-			story_state.played_opening = true;
-			story_state.in_cutscene = false;
-		}
-		break;
+		case Cabin:
+			pair = cabin_room.check_story(message_box, sounds_playing, elapsed);
+			if (cabin_room.cabin_state.intro_text) {
+				story_state.played_opening = true;
+				story_state.in_cutscene = false;
+			}
+			break;
 
-	case Hallway1:
-		hallwayone.check_story(message_box);
-		break;
+		case Hallway1:
+			hallwayone.check_story(message_box);
+			break;
 
-	case Control:
-		control_room.check_story(message_box);
+		case Control:
+			control_room.check_story(message_box);
 
+		case PodBay:
+			pair = pod_room.check_story(message_box, sounds_playing, elapsed);
+			if (pod_room.pod_state.attempt_take_off && !pod_room.pod_state.attempted_take_off) {
+				story_state.in_cutscene = true;
+			}
+			else if (pod_room.pod_state.attempt_take_off && pod_room.pod_state.attempted_take_off) {
+				story_state.in_cutscene = false;
+			}
 	}
 
 	check_sounds(pair.first, pair.second);
@@ -424,8 +467,10 @@ void StoryMode::check_mouse(bool left_click, bool right_click) {
 	//std::cout << left_click << " " << right_click << "\n";
 	//std::cout << mouse_pos.x << " " << mouse_pos.y << "\n";
 
-	if (on_item || story_state.in_cutscene)
+	if (on_item || story_state.in_cutscene) {
+		hint_visible = false;
 		return;
+	}
 
 	auto prepare_message_box = [this](std::vector<std::string> to_add) {
 		for (int i = 0; i < to_add.size(); i++) {
@@ -440,7 +485,8 @@ void StoryMode::check_mouse(bool left_click, bool right_click) {
 			Interactable current = cabin_room.cryo_interactables[i];
 			glm::vec2 tar_min = current.position_min;
 			glm::vec2 tar_max = current.position_max;
-			if (current.id == brokenGlass || current.id == genericBody || current.id == commanderBody) {
+			if (current.id == brokenGlassOne || current.id == genericBody || current.id == commanderBody
+				|| current.id == brokenGlassThree || current.id == brokenGlassTwo) {
 				tar_min -= floating_animation;
 				tar_max -= floating_animation;
 			}
@@ -600,6 +646,15 @@ void StoryMode::draw(glm::uvec2 const &drawable_size) {
 				draw.draw(*sprite_light_body1, ul + floating_animation);
 				draw.draw(*sprite_light_body2, ul + floating_animation * glm::vec2(0.5, 0.5));
 				draw.draw(*sprite_light_upper_glass, ul + floating_animation);
+				if (!cabin_room.cabin_state.took_glass_one) {
+					draw.draw(*cabin_glass1, ul + floating_animation);
+				}
+				if (!cabin_room.cabin_state.took_glass_two) {
+					draw.draw(*cabin_glass2, ul + floating_animation);
+				}
+				if (!cabin_room.cabin_state.took_glass_three) {
+					draw.draw(*cabin_glass3, ul + floating_animation);
+				}
 			}
 			else {
 				draw.draw(*sprite_dark_cabin, ul);
@@ -633,8 +688,9 @@ void StoryMode::draw(glm::uvec2 const &drawable_size) {
 			draw.draw(*bay_bg, ul);
 			draw.draw(*bay_pod, ul);
 			draw.draw(*bay_junk, ul);
-			//If(applied tape)
-			//draw.draw(*bay_tape, ul);
+			if(pod_room.pod_state.glass_taped_up) {
+				draw.draw(*bay_tape, ul);
+			}
 		}
 
 		if (inventory_visible || message_box_visible) {
@@ -691,7 +747,6 @@ void StoryMode::draw(glm::uvec2 const &drawable_size) {
 				assert(soundeffect != none);
 				if (effect_playing) {
 					if (sound_ptrs[index] && sound_ptrs[index]->stopped) {
-						std::cout << "Here" << std::endl;
 						soundeffect = none;
 						effect_playing = false;
 						message_box.erase(message_box.begin());

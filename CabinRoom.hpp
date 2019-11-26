@@ -10,9 +10,10 @@ struct CabinRoom {
 	CabinRoom();
 
 	//See descriptions in the story section
-	Interactable Broken_Glass = Interactable(brokenGlass, "A piece of glass", true, "It's sharp.");
-	Interactable Broken_Glass2 = Broken_Glass;
-	Interactable Broken_Glass3 = Broken_Glass;
+	Interactable Broken_Glass = Interactable(brokenGlassOne, "A piece of glass", true, "It's sharp.");
+	Interactable Broken_Glass2 = Interactable(brokenGlassTwo, "A piece of glass", true, "It's sharp.");
+	Interactable Broken_Glass3 = Interactable(brokenGlassThree, "A piece of glass", true, "It's sharp.");
+	Interactable Bunch_Glass = Interactable(bunchOfGlass, "A bunch of glass pieces. ", true, "They're quite sharp.");
 	Interactable Light_switch = Interactable(lightSwitch, "Light switch", false, "Turns on the light");
 	Interactable Tool_box = Interactable(toolbox, "Toolbox", false, "Stores things.");
 	Interactable Commander_body = Interactable(commanderBody, "The Commander", false, "Commander...");
@@ -47,8 +48,12 @@ struct CabinRoom {
 		bool tool_open = false;
 		bool tool_open_text = false;
 		bool took_finger = false;
+		bool took_glass_one = false;
+		bool took_glass_two = false;
+		bool took_glass_three = false;
 
 		int broken_glass_descr = 1;
+		int use_broken_glass_descr = 1;
 		int commander_descr = 1;
 		int body_descr = 1;
 		int light_switch_descr = 1;
@@ -133,15 +138,18 @@ struct CabinRoom {
 
 	std::vector<std::string> Broken_glass_descr1;
 	std::vector<std::string> Broken_glass_descr2;
+	std::vector<std::string> Broken_glass_descr3;
 	std::vector<std::string> Broken_glass_use_descr1;
 	std::vector<std::string> Broken_glass_use_descr2;
+	std::vector<std::string> Broken_glass_use_descr3;
 	std::string Broken_glass_descr1_1 = "A shard from one of the pods screens. ";
 	std::string Broken_glass_descr1_2 = "It's strange. The screens are made to be pretty tough. To break one of them, you'd need a lot of force.";
 	std::string Broken_glass_descr1_3 = ". . .";
 	std::string Broken_glass_descr1_4 = ". . . or a lot of time. ";
 	std::string Broken_glass_descr2_1 = "A shard from one of the pods screens. ";
 	std::string Broken_glass_use_descr1_1 = "I should take one, might be useful.";
-	std::string Broken_glass_use_descr2_1 = "I already have one, and I don't want to cut myself. ";
+	std::string Broken_glass_use_descr2_1 = "I'll take another one, why not. ";
+	std::string Broken_glass_use_descr3_1 = "And a third. . .  think I've got all the glass I'll ever need, now. ";
 
 	std::vector<std::string> Light_switch_descr1;
 	std::vector<std::string> Light_switch_use_descr1;

@@ -33,7 +33,7 @@ PodRoom::PodRoom() {
 	Door_Broken_use_descr1.push_back(Door_Broken_use_descr1_1);
 
 	Door_Broken_Panel_descr1.push_back(Door_Broken_Panel_descr1_1);
-	Door_Broken_Panel_use_descr1.push_back(Door_Broken_Panel_descr1_1);
+	Door_Broken_Panel_use_descr1.push_back(Door_Broken_Panel_use_descr1_1);
 
 	Pod_descr1.push_back(Pod_descr1_1);
 	Pod_descr1.push_back(Pod_descr1_2);
@@ -131,7 +131,16 @@ bool PodRoom::check_interactions(std::vector<std::string>& message_box, bool lef
 	} else if (right_click) {
 		switch (item) {
 			case windShield:
-				prepare_message_box(Windshield_use_descr1);
+				if (!pod_state.attempt_take_off) {
+					if (pod_state.glass_taped_up) {
+						pod_state.attempt_take_off = true;
+					}
+					else {
+						prepare_message_box(Windshield_use_descr1);
+					}
+				} else {
+					prepare_message_box(Windshield_use_descr1);
+				}
 				break;
 
 			case bayToHallway:
@@ -147,7 +156,11 @@ bool PodRoom::check_interactions(std::vector<std::string>& message_box, bool lef
 				break;
 
 			case escapePod:
-				prepare_message_box(Pod_use_descr1);
+				if (pod_state.glass_taped_up) {
+					pod_state.attempt_take_off = true;
+				} else {
+					prepare_message_box(Pod_use_descr1);
+				}
 				break;
 
 			case wrench:
@@ -163,7 +176,40 @@ bool PodRoom::check_interactions(std::vector<std::string>& message_box, bool lef
 	return false;
 }
 
-void PodRoom::check_story(std::vector<std::string>& message_box) {
+std::pair<std::vector<soundID>, std::vector<soundID>> PodRoom::check_story(
+	std::vector<std::string>& message_box, std::vector<bool> sounds_playing, float elapsed) {
 
+	std::vector<soundID> to_play;
+	std::vector<soundID> to_kill;
 
+	if (pod_state.attempt_take_off && !pod_state.attempted_take_off) {
+
+		if (!cutscene_one.pushed_text_one) {
+			cutscene_one.pushed_text_one = true;
+			message_box.push_back(takeoff1_1);
+			message_box.push_back(takeoff1_2);
+		}
+
+		if (!cutscene_one.played_failed_launch && message_box.size() == 0) {
+			to_play.push_back(Sdoor_air);
+			cutscene_one.played_failed_launch = true;
+			return std::make_pair(to_play, to_kill);
+		}
+		else if (cutscene_one.played_failed_launch && sounds_playing[sid_to_i(Sdoor_air)]) {
+			return std::make_pair(to_play, to_kill);
+		}
+
+		if (cutscene_one.pushed_text_one && cutscene_one.played_failed_launch) {
+			message_box.push_back(takeoff1_3);
+			message_box.push_back(takeoff1_4);
+			message_box.push_back(takeoff1_5);
+			message_box.push_back(takeoff1_6);
+			message_box.push_back(takeoff1_7);
+			pod_state.attempted_take_off = true;
+			pod_state.need_chip = true;
+		}
+
+	}
+
+	return std::make_pair(to_play, to_kill);
 }

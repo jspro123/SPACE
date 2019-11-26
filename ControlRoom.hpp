@@ -15,6 +15,7 @@ struct ControlRoom {
 	Interactable Controls = Interactable(controlControls, "Controls", false, " . ");
 	Interactable Killer_finger = Interactable(killerFinger, "A finger", true, "It looks a bit off.");
 	Interactable Key_card = Interactable(keyCard, "A key-card", true, "I can use this to access the terminal.");
+	Interactable CCU = Interactable(computerChip, "A CCU chip. ", true, "It's used for communications and navigation. ");
 
 	std::vector<Interactable> control_interactables;
 
@@ -40,6 +41,7 @@ struct ControlRoom {
 		int screen_descr = 1;
 		int controls_descr = 1;
 		int terminal_descr = 1;
+		int use_terminal_descr = 1;
 		int body_descr = 1;
 		int interact_body_descr = 1;
 
@@ -92,11 +94,15 @@ struct ControlRoom {
 
 	std::vector<std::string> Terminal_descr1;
 	std::vector<std::string> Terminal_descr2;
+	std::vector<std::string> Terminal_descr3;
 	std::vector<std::string> Terminal_use_descr1;
+	std::vector<std::string> Terminal_use_descr2;
 	std::string Terminal_descr1_1 = "The ship's computer terminal. Looks like it's still working. ";
 	std::string Terminal_descr1_2 = ". . . 2039. So it's been two years since we started heading back. ";
 	std::string Terminal_descr2_1 = "The ship's computer terminal. Looks like it's still working. ";
-	std::string Terminal_use_descr1_1 = "You need to use a key-card to gain access. ";
+	std::string Terminal_descr3_1 = "Smashed to pieces. . . (even though you can't see it.)";
+	std::string Terminal_use_descr1_1 = "I need to use a key-card to gain access. ";
+	std::string Terminal_use_descr2_1 = "It's broken beyond repair. No way. ";
 
 	std::vector<std::string> Body_descr1;
 	std::vector<std::string> Body_descr2;

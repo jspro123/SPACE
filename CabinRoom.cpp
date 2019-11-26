@@ -54,6 +54,7 @@ CabinRoom::CabinRoom() {
 	Broken_glass_descr2.push_back(Broken_glass_descr2_1);
 	Broken_glass_use_descr1.push_back(Broken_glass_use_descr1_1);
 	Broken_glass_use_descr2.push_back(Broken_glass_use_descr2_1);
+	Broken_glass_use_descr3.push_back(Broken_glass_use_descr3_1);
 
 	Light_switch_descr1.push_back(Light_switch_descr1_1);
 	Light_switch_use_descr1.push_back(Light_switch_use_descr1_1);
@@ -107,6 +108,15 @@ void CabinRoom::check_interactions(std::vector<std::string>& message_box, bool l
 		return false;
 	};
 
+	auto remove_from_interactables = [this](itemID whatev) {
+		for (int i = 0; i < cryo_interactables.size(); i++) {
+			if (cryo_interactables[i].id == whatev) {
+				cryo_interactables.erase(cryo_interactables.begin() + i);
+				break;
+			}
+		}
+	};
+
 	if (left_click) {
 
 		switch (item) {
@@ -135,7 +145,9 @@ void CabinRoom::check_interactions(std::vector<std::string>& message_box, bool l
 				else if (cabin_state.commander_descr == 1) { prepare_message_box(Generic_body_descr1); }
 				break;
 
-			case brokenGlass:
+			case brokenGlassOne:
+			case brokenGlassTwo:
+			case brokenGlassThree:
 				if (!cabin_state.light_on) { message_box.push_back(cryo_dark_float); }
 				else if (cabin_state.broken_glass_descr == 1) {
 					prepare_message_box(Broken_glass_descr1);
@@ -196,12 +208,42 @@ void CabinRoom::check_interactions(std::vector<std::string>& message_box, bool l
 				else { prepare_message_box(Generic_body_use_descr1); }
 				break;
 
-			case brokenGlass:
+			case brokenGlassOne:
+			case brokenGlassTwo:
+			case brokenGlassThree:
 				if (!cabin_state.light_on) { message_box.push_back(cryo_dark_use_fail); }
-				else if (!in_inventory()) {
-					inventory.interactables.push_back(Broken_Glass);
-					prepare_message_box(Broken_glass_use_descr1);
-				} else { prepare_message_box(Broken_glass_use_descr2); }
+				else {
+					if (item == brokenGlassOne) { 
+						inventory.interactables.push_back(Broken_Glass); 
+						cabin_state.took_glass_one = true; 
+						remove_from_interactables(brokenGlassOne);
+					}
+					if (item == brokenGlassTwo) { 
+						inventory.interactables.push_back(Broken_Glass2);  
+						cabin_state.took_glass_two = true; 
+						remove_from_interactables(brokenGlassTwo);
+					}
+					if (item == brokenGlassThree) { 
+						inventory.interactables.push_back(Broken_Glass3);  
+						cabin_state.took_glass_three = true; 
+						remove_from_interactables(brokenGlassThree);
+					}
+
+					if (cabin_state.use_broken_glass_descr == 1) {
+						prepare_message_box(Broken_glass_use_descr1);
+						cabin_state.use_broken_glass_descr++;
+					} else if (cabin_state.use_broken_glass_descr == 2) {
+						prepare_message_box(Broken_glass_use_descr2);
+						cabin_state.use_broken_glass_descr++;
+					} else {
+						inventory.erase_item(brokenGlassOne);
+						inventory.erase_item(brokenGlassTwo);
+						inventory.erase_item(brokenGlassThree);
+						inventory.interactables.push_back(Bunch_Glass);
+						prepare_message_box(Broken_glass_use_descr3);
+					}
+
+				}
 				break;
 
 			case cryoToHallway:

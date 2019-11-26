@@ -50,7 +50,9 @@ ControlRoom::ControlRoom() {
 	Terminal_descr1.push_back(Terminal_descr1_1);
 	Terminal_descr1.push_back(Terminal_descr1_2);
 	Terminal_descr2.push_back(Terminal_descr2_1);
+	Terminal_descr3.push_back(Terminal_descr3_1);
 	Terminal_use_descr1.push_back(Terminal_use_descr1_1);
+	Terminal_use_descr2.push_back(Terminal_use_descr2_1);
 
 	Body_descr1.push_back(Body_descr1_1);
 	Body_descr1.push_back(Body_descr1_2);
@@ -85,6 +87,15 @@ bool ControlRoom::check_interactions(std::vector<std::string>& message_box, bool
 		return false;
 	};
 
+	auto remove_from_interactables = [this](itemID whatev) {
+		for (int i = 0; i < control_interactables.size(); i++) {
+			if (control_interactables[i].id == whatev) {
+				control_interactables.erase(control_interactables.begin() + i);
+				break;
+			}
+		}
+	};
+
 	if (left_click) {
 
 		switch (item) {
@@ -114,7 +125,11 @@ bool ControlRoom::check_interactions(std::vector<std::string>& message_box, bool
 				if (control_state.terminal_descr == 1) {
 					prepare_message_box(Terminal_descr1);
 					control_state.terminal_descr += 1;
-				} else { prepare_message_box(Terminal_descr2); }
+				} else if (control_state.terminal_descr == 2) {
+					prepare_message_box(Terminal_descr2); 
+				} else {
+					prepare_message_box(Terminal_descr3);
+				}
 				break;
 
 			case controlBody:
@@ -144,6 +159,7 @@ bool ControlRoom::check_interactions(std::vector<std::string>& message_box, bool
 					control_state.picked_up_crowbar = true;
 					prepare_message_box(Crowbar_use_descr1);
 					inventory.interactables.push_back(Crowbar);
+					remove_from_interactables(crowbar);
 				}
 				break;
 
@@ -159,8 +175,10 @@ bool ControlRoom::check_interactions(std::vector<std::string>& message_box, bool
 				if (control_state.used_key_card) {
 					control_state.accessed_terminal = true;
 					return true;
-				} else {
+				} else if(control_state.use_terminal_descr == 1){
 					prepare_message_box(Terminal_use_descr1);
+				} else {
+					prepare_message_box(Terminal_use_descr2);
 				}
 				break;
 

@@ -19,7 +19,8 @@ struct PodRoom {
 
 	bool check_interactions(std::vector<std::string>& message_box, bool left_click, bool right_click, itemID item,
 		Inventory& inventory, locationID& location);
-	void check_story(std::vector<std::string>& message_box);
+	std::pair<std::vector<soundID>, std::vector<soundID>> check_story(std::vector<std::string>& message_box,
+		std::vector<bool> sounds_playing, float elapsed);
 
 	//------ story state -------
 
@@ -27,11 +28,24 @@ struct PodRoom {
 	// light
 	struct {
 
+		bool glass_set_down = false;
+		bool glass_taped_up = false;
+		bool need_chip = false;
+		bool attempt_take_off = false;
+		bool attempted_take_off = false;
+
 		int windshield_descr = 1;
 		int pod_descr = 1;
 		int wrench_descr = 1;
 
 	} pod_state;
+
+	struct {
+
+		bool pushed_text_one = false;
+		bool played_failed_launch = false;
+
+	} cutscene_one;
 	
 	/* ============= POD ROOM =============*/
 
@@ -75,4 +89,15 @@ struct PodRoom {
 	std::vector<std::string> Tech_use_descr1;
 	std::string Tech_descr1_1 = "A status-panel. Looks like the pod is launchable. ";
 	std::string Tech_use_descr1_1 = "I can't really do anything to it. ";
+
+
+	/* ============= TAKE OFF - 1 =============*/
+
+	std::string takeoff1_1 = "Alright, okay, I can do this. ";
+	std::string takeoff1_2 = "Please work. . . please, please, work. . . ";
+	std::string takeoff1_3 = "No. . . fuck no. . .  ";
+	std::string takeoff1_4 = "It's all over for me. . .  ";
+	std::string takeoff1_5 = ". . .  ";
+	std::string takeoff1_6 = "Wait. . . looks like only the CCU chip is damaged.  ";
+	std::string takeoff1_7 = "Maybe I can fix this. . . ";
 };
