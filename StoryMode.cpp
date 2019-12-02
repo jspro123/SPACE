@@ -23,6 +23,7 @@ Sprite const* cabin_glass2 = nullptr;
 Sprite const* cabin_glass3 = nullptr;
 Sprite const *sprite_light_body2 = nullptr;
 Sprite const *sprite_light_cabin = nullptr;
+Sprite const *sprite_light_top = nullptr;
 Sprite const *sprite_dark_cabin = nullptr;
 Sprite const *sprite_dark_glass = nullptr;
 Sprite const *sprite_msg_bg = nullptr;
@@ -36,6 +37,7 @@ Sprite const* bay_tape = nullptr;
 Sprite const* hallwayone_door_3_panel = nullptr;
 Sprite const* control_bg = nullptr;
 Sprite const* control_fg = nullptr;
+Sprite const* control_fg_red = nullptr;
 Sprite const* control_crowbar = nullptr;
 Sprite const* control_blood = nullptr;
 Sprite const* all_black = nullptr;
@@ -60,16 +62,15 @@ Load< SpriteAtlas > sprites(LoadTagDefault, []() -> SpriteAtlas const * {
 	sprite_light_upper_glass = &ret->lookup("light_upper_glass");
 	sprite_light_body1 = &ret->lookup("light_body1");
 	sprite_light_body2 = &ret->lookup("light_body2");
+	sprite_light_top = &ret->lookup("light_top");
 	sprite_light_cabin = &ret->lookup("light_cabin");
 	sprite_dark_cabin = &ret->lookup("dark_cabin");
 	sprite_dark_glass = &ret->lookup("dark_glass");
-	// hallwayone_bg = &ret->lookup("hallway_background");
 	hallwayone_door_green = &ret->lookup("hallway_green");
 	hallwayone_door_red = &ret->lookup("hallway_red");
-	// hallwayone_door_3 = &ret->lookup("hallway_hallway");
-	// hallwayone_door_3_panel = &ret->lookup("hallway_panel");
 	control_bg = &ret->lookup("control_background");
 	control_fg = &ret->lookup("control_foreground");
+	control_fg_red = &ret->lookup("control_foreground_red");
 	control_crowbar = &ret->lookup("control_crowbar");
 	control_blood = &ret->lookup("control_blood");
 	bay_bg = &ret->lookup("bay_background");
@@ -671,6 +672,7 @@ void StoryMode::draw(glm::uvec2 const &drawable_size) {
 		if (location == Cabin) {
 			if (cabin_room.cabin_state.light_on) {
 				draw.draw(*sprite_light_cabin, ul);
+				draw.draw(*sprite_light_top, ul);
 				draw.draw(*sprite_light_body1, ul + floating_animation);
 				draw.draw(*sprite_light_body2, ul + floating_animation * glm::vec2(0.5, 0.5));
 				draw.draw(*sprite_light_upper_glass, ul + floating_animation);
@@ -713,7 +715,12 @@ void StoryMode::draw(glm::uvec2 const &drawable_size) {
 			
 		} else if (location == Control) {
 			draw.draw(*control_bg, ul);
-			draw.draw(*control_fg, ul);
+			if ((danger_flash / 20) % 2 == 0) {
+				draw.draw(*control_fg, ul);
+			} else {
+				draw.draw(*control_fg_red, ul);
+			}
+			danger_flash++;
 			if (!control_room.control_state.picked_up_crowbar) {
 				draw.draw(*control_crowbar, ul); //Only if haven't picked up yet
 			}

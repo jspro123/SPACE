@@ -8,6 +8,7 @@ space.xcf?light_upper_glass 0 0 1920 1200 0 0 light_upper_glass
 space.xcf?light_body1 0 0 1920 1200 0 0 light_body1
 space.xcf?light_body2 0 0 1920 1200 0 0 light_body2
 space.xcf?light_cabin 0 0 1920 1200 0 0 light_cabin
+space.xcf?light_top 0 0 1920 1200 0 0 light_top
 space.xcf?dark_cabin 0 0 1920 1200 0 0 dark_cabin
 space.xcf?dark_glass 0 0 1920 1200 0 0 dark_glass
 space.xcf?Glass1 702 815 774 960 0 0 cryo_glass_1
