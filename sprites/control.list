@@ -1,5 +1,11 @@
 control.xcf?Background 0 0 1920 1200 0 0 control_background
-control.xcf?Layer1 0 0 1920 1200 0 0 control_foreground
-control.xcf?Layer2 0 0 1920 1200 0 0 control_foreground_red
+control.xcf?Layer1 0 0 1920 1200 0 0 control_foreground_1
+control.xcf?Layer2 0 0 1920 1200 0 0 control_foreground_2
+control.xcf?Layer3 0 0 1920 1200 0 0 control_foreground_3
+control.xcf?Layer4 0 0 1920 1200 0 0 control_foreground_4
+control.xcf?Layer5 0 0 1920 1200 0 0 control_foreground_5
+control.xcf?Layer6 0 0 1920 1200 0 0 control_foreground_6
+control.xcf?Layer7 0 0 1920 1200 0 0 control_foreground_7
+control.xcf?Layer8 0 0 1920 1200 0 0 control_foreground_8
 control.xcf?Crowbar 1200 590 1360 730 0 0 control_crowbar
 control.xcf?Blood 1380 430 1650 750 0 0 control_blood

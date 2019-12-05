@@ -36,8 +36,7 @@ Sprite const* bay_junk = nullptr;
 Sprite const* bay_tape = nullptr;
 Sprite const* hallwayone_door_3_panel = nullptr;
 Sprite const* control_bg = nullptr;
-Sprite const* control_fg = nullptr;
-Sprite const* control_fg_red = nullptr;
+Sprite const* control_fg[9];
 Sprite const* control_crowbar = nullptr;
 Sprite const* control_blood = nullptr;
 Sprite const* all_black = nullptr;
@@ -69,8 +68,14 @@ Load< SpriteAtlas > sprites(LoadTagDefault, []() -> SpriteAtlas const * {
 	hallwayone_door_green = &ret->lookup("hallway_green");
 	hallwayone_door_red = &ret->lookup("hallway_red");
 	control_bg = &ret->lookup("control_background");
-	control_fg = &ret->lookup("control_foreground");
-	control_fg_red = &ret->lookup("control_foreground_red");
+	control_fg[1] = &ret->lookup("control_foreground_1");
+	control_fg[2] = &ret->lookup("control_foreground_2");
+	control_fg[3] = &ret->lookup("control_foreground_3");
+	control_fg[4] = &ret->lookup("control_foreground_4");
+	control_fg[5] = &ret->lookup("control_foreground_5");
+	control_fg[6] = &ret->lookup("control_foreground_6");
+	control_fg[7] = &ret->lookup("control_foreground_7");
+	control_fg[8] = &ret->lookup("control_foreground_8");
 	control_crowbar = &ret->lookup("control_crowbar");
 	control_blood = &ret->lookup("control_blood");
 	bay_bg = &ret->lookup("bay_background");
@@ -715,11 +720,10 @@ void StoryMode::draw(glm::uvec2 const &drawable_size) {
 			
 		} else if (location == Control) {
 			draw.draw(*control_bg, ul);
-			if ((danger_flash / 20) % 2 == 0) {
-				draw.draw(*control_fg, ul);
-			} else {
-				draw.draw(*control_fg_red, ul);
-			}
+			int tmp_int = danger_flash / 20;
+			tmp_int %= 7;
+			tmp_int++;
+			draw.draw(*control_fg[tmp_int], ul);
 			danger_flash++;
 			if (!control_room.control_state.picked_up_crowbar) {
 				draw.draw(*control_crowbar, ul); //Only if haven't picked up yet
