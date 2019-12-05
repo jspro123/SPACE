@@ -334,6 +334,9 @@ void StoryMode::check_usage(itemID use, itemID on, bool click) {
 		inventory.interactables.push_back(cabin_room.Commander_finger);
 		cabin_room.cabin_state.took_finger = true;
 	}
+	else if (use == spaceTape && on == commanderBody && control_room.control_state.accessed_terminal && !cabin_room.cabin_state.took_finger) {
+		message_box.push_back("I think I'll need more than his print for the terminal. . . ");
+	}
 	else if (use == brokenGlass && on == commanderBody && cabin_room.cabin_state.took_finger) {
 		message_box.push_back("I won't mutilate the Commander twice. ");
 	}
@@ -363,6 +366,9 @@ void StoryMode::check_usage(itemID use, itemID on, bool click) {
 		soundeffect = SfingerTwo;
 		inventory.interactables.push_back(control_room.Killer_finger);
 		control_room.control_state.took_finger = true;
+	}
+	else if (use == spaceTape && on == controlBody && control_room.control_state.accessed_terminal && !control_room.control_state.took_finger) {
+		message_box.push_back("I think I'll need more than his print for the terminal. . . ");
 	}
 	else if (use == brokenGlass && on == controlBody && control_room.control_state.took_finger) {
 		message_box.push_back("No. . . I'm not doing that again. ");
