@@ -40,6 +40,7 @@ struct StoryMode : Mode {
 	glm::vec2 floating_animation = glm::vec2(0, -1);
 	int floating_interval = 10;
 	int danger_flash = 10;
+	int pod_flash = 10;
 	bool floating_dir = false; //false - up, true - down
 	int fading_interval = 0;
 	glm::vec2 end_animation_interval = glm::vec2(0, -1);

@@ -31,7 +31,7 @@ Sprite const* hallwayone_bg = nullptr;
 Sprite const* hallwayone_door_green = nullptr;
 Sprite const* hallwayone_door_red = nullptr;
 Sprite const* bay_bg = nullptr;
-Sprite const* bay_pod = nullptr;
+Sprite const* bay_pod[11];
 Sprite const* bay_junk = nullptr;
 Sprite const* bay_tape = nullptr;
 Sprite const* hallwayone_door_3_panel = nullptr;
@@ -79,7 +79,17 @@ Load< SpriteAtlas > sprites(LoadTagDefault, []() -> SpriteAtlas const * {
 	control_crowbar = &ret->lookup("control_crowbar");
 	control_blood = &ret->lookup("control_blood");
 	bay_bg = &ret->lookup("bay_background");
-	bay_pod = &ret->lookup("bay_pod");
+	bay_pod[0] = &ret->lookup("bay_pod");
+	bay_pod[1] = &ret->lookup("bay_pod1");
+	bay_pod[2] = &ret->lookup("bay_pod2");
+	bay_pod[3] = &ret->lookup("bay_pod3");
+	bay_pod[4] = &ret->lookup("bay_pod4");
+	bay_pod[5] = &ret->lookup("bay_pod5");
+	bay_pod[6] = &ret->lookup("bay_pod6");
+	bay_pod[7] = &ret->lookup("bay_pod7");
+	bay_pod[8] = &ret->lookup("bay_pod8");
+	bay_pod[9] = &ret->lookup("bay_pod9");
+	bay_pod[10] = &ret->lookup("bay_pod10");
 	bay_junk = &ret->lookup("bay_junk");
 	bay_tape = &ret->lookup("bay_tape");
 	all_black = &ret->lookup("b1");
@@ -732,7 +742,10 @@ void StoryMode::draw(glm::uvec2 const &drawable_size) {
 		}
 		else if (location == PodBay) {
 			draw.draw(*bay_bg, ul);
-			draw.draw(*bay_pod, ul);
+			int tmp_int = pod_flash / 20;
+			tmp_int %= 11;
+			draw.draw(*bay_pod[tmp_int], ul);
+			pod_flash++;
 			draw.draw(*bay_junk, ul);
 			if(pod_room.pod_state.glass_taped_up) {
 				draw.draw(*bay_tape, ul);
