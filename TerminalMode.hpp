@@ -145,7 +145,7 @@ struct TerminalMode : Mode {
 	Sentence const diag1 = Sentence("AIR LEAK IN HALLWAY 2", 0.5, 1);
 	Sentence const diag2 = Sentence("ENGINE 2 DESTROYED", 0.5, 1);
 	Sentence const diag3 = Sentence("ENGINE 3 DESTROYED", 0.5, 1);
-	Sentence const diag4 = Sentence("COMMUNICATIONS CHIP FUNCTIONAL", 0.5, 1);
+	Sentence const diag4 = Sentence("TERMINAL CCU FUNCTIONAL", 0.5, 1);
 
 	/* ================== DISENGAGE LOCKS ================== */
 

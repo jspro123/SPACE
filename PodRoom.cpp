@@ -39,6 +39,7 @@ PodRoom::PodRoom() {
 	Pod_descr1.push_back(Pod_descr1_2);
 	Pod_descr2.push_back(Pod_descr2_1);
 	Pod_descr3.push_back(Pod_descr3_1);
+	Pod_descr4.push_back(Pod_descr4_1);
 	Pod_use_descr1.push_back(Pod_use_descr1_1);
 
 	Windshield_descr1.push_back(Windshield_descr1_1);
@@ -110,8 +111,10 @@ bool PodRoom::check_interactions(std::vector<std::string>& message_box, bool lef
 					pod_state.pod_descr++;
 				} else if (pod_state.pod_descr == 2) {
 					prepare_message_box(Pod_descr2);
-				} else {
+				} else if(pod_state.pod_descr == 3){
 					prepare_message_box(Pod_descr3);
+				} else {
+					prepare_message_box(Pod_descr4);
 				}
 				break;
 
@@ -192,7 +195,6 @@ std::pair<std::vector<soundID>, std::vector<soundID>> PodRoom::check_story(
 	std::vector<soundID> to_kill;
 
 	if (pod_state.attempt_take_off && !pod_state.attempted_take_off) {
-
 		if (!cutscene_one.pushed_text_one) {
 			cutscene_one.pushed_text_one = true;
 			message_box.push_back(takeoff1_1);
@@ -216,6 +218,7 @@ std::pair<std::vector<soundID>, std::vector<soundID>> PodRoom::check_story(
 			message_box.push_back(takeoff1_7);
 			pod_state.attempted_take_off = true;
 			pod_state.need_chip = true;
+			pod_state.pod_descr = 3;
 		}
 
 	}

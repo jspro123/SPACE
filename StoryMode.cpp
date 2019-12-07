@@ -434,7 +434,7 @@ void StoryMode::check_usage(itemID use, itemID on, bool click) {
 		message_box.push_back("Okay, done. If I did everything right, the pod should be able to fly now. ");
 		inventory.erase_item(computerChip);
 		pod_room.pod_state.pod_fixed = true;
-		pod_room.pod_state.pod_descr = 3;
+		pod_room.pod_state.pod_descr = 4;
 	}
 	else if (use == redStone) {
 		message_box.push_back("For some reason, I feel like that's a terrible idea. . . but why? ");

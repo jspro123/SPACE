@@ -75,11 +75,13 @@ struct PodRoom {
 	std::vector<std::string> Pod_descr1;
 	std::vector<std::string> Pod_descr2;
 	std::vector<std::string> Pod_descr3;
+	std::vector<std::string> Pod_descr4;
 	std::vector<std::string> Pod_use_descr1;
 	std::string Pod_descr1_1 = "An escape pod. My only chance at getting out of here. ";
 	std::string Pod_descr1_2 = "Looks like it's not in the best shape, though. . .  ";
 	std::string Pod_descr2_1 = "An escape pod. My only chance at getting out of here. ";
-	std::string Pod_descr3_1 = "Looks like it's good to go. ";
+	std::string Pod_descr3_1 = "It won't run without a CCU chip. ";
+	std::string Pod_descr4_1 = "Looks like it's good to go. ";
 	std::string Pod_use_descr1_1 = "I have to repair it first. ";
 
 	std::vector<std::string> Windshield_descr1;
